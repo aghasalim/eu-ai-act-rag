@@ -5,6 +5,16 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+# Must happen before anything imports chromadb. Streamlit Community Cloud runs a
+# Debian image whose system sqlite3 predates 3.35, which chromadb refuses to
+# start on. pysqlite3-binary ships a modern build; we swap it in under the
+# stdlib name. Linux-only -- macOS and Windows sqlite3 are new enough.
+try:  # noqa: SIM105
+    __import__("pysqlite3")
+    sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+except ImportError:
+    pass
+
 import streamlit as st
 from dotenv import load_dotenv
 
@@ -16,10 +26,24 @@ from src.euactrag import config, llm, pipeline  # noqa: E402
 st.set_page_config(page_title="EU AI Act RAG", page_icon="⚖️", layout="wide")
 
 
-@st.cache_resource(show_spinner="Loading index and embedding model...")
+@st.cache_resource(show_spinner="Loading index and embedding model (first run "
+                                "builds the index, ~2 min)...")
 def warm():
-    from src.euactrag import retrieve
+    """Load the index, building it first if this host has none.
 
+    `data/index/` is deliberately not in git -- a committed Chroma store is a
+    binary tied to one chromadb version, and it silently rots on upgrade. The
+    chunks are committed instead, so any host can rebuild the index from them.
+    On a platform like Streamlit Community Cloud that clones the repo and runs
+    the app directly, this is the difference between working and crashing on
+    first request.
+    """
+    from src.euactrag import index as idx, retrieve
+
+    try:
+        idx.get_collection().count()
+    except Exception:
+        idx.build()
     retrieve.search("warmup", k=1, mode="hybrid")
     return True
 
