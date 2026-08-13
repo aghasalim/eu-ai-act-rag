@@ -285,6 +285,23 @@ Whichever you pick, set `GROQ_API_KEY` as a **secret**, never as a plain environ
 variable. Without it the app still runs and still shows retrieved passages, it just
 won't generate prose answers.
 
+For Streamlit Community Cloud the settings are:
+
+| field | value |
+|---|---|
+| Repository | `aghasalim/eu-ai-act-rag` |
+| Branch | `main` |
+| Main file path | `app/streamlit_app.py` |
+| Python version | `3.12` (also pinned in `.python-version`) |
+
+Then under **Advanced settings → Secrets**, paste `GROQ_API_KEY = "your_key"`.
+
+The app builds its vector index on first boot if it doesn't find one, so the first
+load takes a couple of minutes and every load after that is instant. `data/index/` is
+deliberately not committed: a Chroma store is a binary tied to one chromadb version and
+rots silently when that version moves, whereas the chunks it's built from are plain
+JSONL in the repo.
+
 ---
 
 ## Credit
