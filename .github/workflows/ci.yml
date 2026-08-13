@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # The heavy ML stack (torch, chromadb) is imported lazily, so the corpus
+      # and metric tests run without it. Keeps CI at ~30s instead of ~6min.
+      - name: Install light deps
+        run: pip install beautifulsoup4 lxml httpx pytest
+
+      - name: Rebuild corpus from the committed source document
+        run: python -m src.euactrag.ingest
+
+      - name: Test
+        run: python -m pytest tests/ -q

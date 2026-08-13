@@ -1,0 +1,8 @@
+# Optional: RAGAS cross-check for faithfulness / answer relevancy.
+# Kept out of requirements.txt because it pulls a large LangChain dependency tree
+# that is not needed to run the app, and the harness degrades gracefully without
+# it (the built-in claim-level judge remains the primary measurement).
+-r requirements.txt
+ragas>=0.2
+datasets>=2.19
+langchain-groq>=0.2
