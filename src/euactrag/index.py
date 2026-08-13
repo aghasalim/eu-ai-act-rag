@@ -6,6 +6,7 @@ avoids shipping a pickle in the image. See `retrieve.load_bm25`.
 """
 from __future__ import annotations
 
+import os
 import re
 
 from . import config
@@ -28,6 +29,10 @@ def get_encoder():
 
 
 def get_collection(create: bool = False):
+    # Must be set before chromadb is imported. The Settings flag below is not
+    # enough on 0.6.x, whose telemetry hook raises a signature error on every
+    # call and floods stderr.
+    os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
     import chromadb
     from chromadb.config import Settings
 

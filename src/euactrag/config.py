@@ -33,6 +33,16 @@ TOP_K = int(os.getenv("TOP_K", "6"))
 RRF_K = 60  # reciprocal-rank-fusion damping constant (Cormack et al. 2009)
 RETRIEVAL_MODE = os.getenv("RETRIEVAL_MODE", "hybrid")  # dense | bm25 | hybrid
 
+# Recitals restate the operative rules in flowing prose, which makes them score
+# *higher* against a natural-language question than the terse article that
+# actually contains the rule -- they were crowding binding provisions out of the
+# top-k. The Regulation itself treats recitals as non-binding interpretive aids,
+# so down-weighting them in the ranking is a domain prior, not a tuned constant:
+# 0.5 = "half the evidential weight of a binding provision". Set to 1.0 to
+# disable, 0.0 to drop recitals from the ranking entirely (both reported in
+# RESULTS.md).
+RECITAL_WEIGHT = float(os.getenv("RECITAL_WEIGHT", "0.5"))
+
 # --- Generation -----------------------------------------------------------
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")  # groq|openai|gemini|ollama|extractive
 LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")

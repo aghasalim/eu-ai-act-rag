@@ -70,6 +70,26 @@ def score_retrieval(qa: list[dict], modes: list[str], ks: list[int]) -> dict:
     return out
 
 
+def ablate_recital_weight(qa: list[dict], k: int,
+                          weights=(1.0, 0.75, 0.5, 0.25, 0.0)) -> dict:
+    """Sweep the recital down-weighting prior.
+
+    Reported so a reader can see whether the default is a tuned argmax or a
+    plateau. If the metric is flat across weights, the prior is doing something
+    structural (pushing non-binding text below binding text) rather than being
+    fitted to this particular question set.
+    """
+    answerable = [q for q in qa if q["gold_units"]]
+    out = {}
+    for w in weights:
+        sc = [M.retrieval_scores(
+                  retrieve.hybrid(q["question"], k, recital_weight=w),
+                  q["gold_units"], k)
+              for q in answerable]
+        out[str(w)] = {n: mean([s[n] for s in sc]) for n in M.RETRIEVAL_METRICS}
+    return out
+
+
 # --------------------------------------------------------------------------
 # Pass 2: generation (needs an LLM)
 # --------------------------------------------------------------------------
@@ -210,7 +230,9 @@ def main() -> None:
     if a.limit:
         qa = qa[: a.limit]
     modes = a.modes.split(",")
-    ks = [int(x) for x in a.ks.split(",")]
+    # The headline k must always be in the sweep, otherwise the summary and the
+    # report have no row to read.
+    ks = sorted({int(x) for x in a.ks.split(",")} | {a.k})
     n_chunks = len(load_chunks())
 
     print(f"corpus: {n_chunks} chunks | qa: {len(qa)} questions")
@@ -221,13 +243,21 @@ def main() -> None:
         print(f"  {mode:<7} @{a.k}  hit={s['hit_rate']}  recall={s['recall']}  "
               f"full={s['full_recall']}  mrr={s['mrr']}  ndcg={s['ndcg']}")
 
+    print("\n== ablation: recital down-weighting ==")
+    abl = ablate_recital_weight(qa, a.k)
+    for w, s in abl.items():
+        print(f"  w={w:<5} hit={s['hit_rate']}  full={s['full_recall']}  "
+              f"mrr={s['mrr']}  ndcg={s['ndcg']}")
+
     out = {
         "config": {
             "embed_model": config.EMBED_MODEL, "top_k": a.k,
             "gen_mode": a.gen_mode, "rrf_k": config.RRF_K,
+            "recital_weight": config.RECITAL_WEIGHT,
             "n_chunks": n_chunks, "n_questions": len(qa),
         },
         "retrieval": ret,
+        "ablation_recital_weight": abl,
     }
 
     if not a.no_generation and llm.available():

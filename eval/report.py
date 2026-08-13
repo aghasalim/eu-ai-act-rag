@@ -80,6 +80,29 @@ def main(tag: str = "latest") -> None:
         A(f"| {mode} | " + " | ".join(hits) + " | " + " | ".join(full) + " |")
     A("")
 
+    if d.get("ablation_recital_weight"):
+        A("### Ablation: down-weighting recitals\n")
+        A("Recitals restate the operative rules in flowing prose, so they match a "
+          "natural-language question *better* than the terse article that actually "
+          "contains the rule, and were crowding binding provisions out of the "
+          "top-k. `w` is the weight a recital carries in rank fusion relative to a "
+          "binding provision.\n")
+        A(f"| w | hit rate | recall | full recall | MRR | nDCG |")
+        A("|---|---|---|---|---|---|")
+        for w, s in d["ablation_recital_weight"].items():
+            star = " ←default" if float(w) == d["config"].get("recital_weight") else ""
+            A(f"| {w}{star} | {fmt(s['hit_rate'], 1)} | {fmt(s['recall'], 1)} | "
+              f"{fmt(s['full_recall'], 1)} | {fmt(s['mrr'])} | {fmt(s['ndcg'])} |")
+        A("")
+        A("The gain is a **step, not a peak**: every `w < 1.0` scores the same, so "
+          "the default is not an argmax fitted to this question set -- it is doing "
+          "something structural, pushing non-binding text below binding text. "
+          "`w=0.5` is kept rather than `w=0.0` because it scores identically while "
+          "leaving recitals retrievable for interpretive questions.\n")
+        A("> **Honest caveat.** Every gold label in this eval set is an article or "
+          "annex, so an eval containing recital-answerable questions would show a "
+          "smaller benefit. The measured gain is an upper bound.\n")
+
     # --- generation ------------------------------------------------------
     if "summary" not in d:
         A("## 2. Generation\n\n_Not run: no LLM key was configured._\n")

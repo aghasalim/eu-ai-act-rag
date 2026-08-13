@@ -68,15 +68,23 @@ def bm25(query: str, k: int = 10) -> list[dict]:
     ]
 
 
-def hybrid(query: str, k: int = 10, pool: int = 30) -> list[dict]:
-    """Fuse dense and lexical rankings by RRF: score = sum 1 / (K + rank)."""
+def hybrid(query: str, k: int = 10, pool: int = 30,
+           recital_weight: float | None = None) -> list[dict]:
+    """Fuse dense and lexical rankings by RRF: score = sum w / (K + rank).
+
+    `w` is 1.0 for binding provisions (articles, annexes) and
+    `config.RECITAL_WEIGHT` for recitals -- see the note there for why.
+    """
+    w = config.RECITAL_WEIGHT if recital_weight is None else recital_weight
     runs = [dense(query, pool), bm25(query, pool)]
     fused: dict[str, dict] = {}
     for run in runs:
         for h in run:
             e = fused.setdefault(h["chunk_id"], {**h, "score": 0.0})
-            e["score"] += 1.0 / (config.RRF_K + h["rank"])
-    out = sorted(fused.values(), key=lambda h: -h["score"])[:k]
+            e["score"] += (w if h["kind"] == "recital" else 1.0) / (
+                config.RRF_K + h["rank"])
+    out = [h for h in sorted(fused.values(), key=lambda h: -h["score"])
+           if not (w == 0.0 and h["kind"] == "recital")][:k]
     for rank, h in enumerate(out, 1):
         h["rank"] = rank
     return out
