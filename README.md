@@ -1,5 +1,8 @@
 # EU AI Act RAG — with an evaluation I actually ran
 
+**[▶ Live demo](https://eu-ai-act-rag-fdhdgvcx8ushlxwdluv9oc.streamlit.app/)** · every
+answer shows the passages it came from.
+
 [![ci](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/ci.yml)
 [![publish-image](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/publish-image.yml/badge.svg)](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/publish-image.yml)
 [![python](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
@@ -285,7 +288,10 @@ Whichever you pick, set `GROQ_API_KEY` as a **secret**, never as a plain environ
 variable. Without it the app still runs and still shows retrieved passages, it just
 won't generate prose answers.
 
-For Streamlit Community Cloud the settings are:
+This one is deployed on Streamlit Community Cloud:
+**https://eu-ai-act-rag-fdhdgvcx8ushlxwdluv9oc.streamlit.app/**
+
+The settings are:
 
 | field | value |
 |---|---|
