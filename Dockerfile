@@ -9,9 +9,16 @@ WORKDIR /app
 
 # CPU-only torch. The default wheel pulls ~2 GB of CUDA libraries that are dead
 # weight on a Hugging Face Space or any CPU host.
+#
+# The `||` fallback to PyPI is not belt-and-braces: download.pytorch.org is a
+# single point of failure that intermittently returns an empty index, which
+# fails the build outright with "No matching distribution found for torch".
+# On arm64 the PyPI wheel is CPU-only anyway; on amd64 it is larger but builds.
 COPY requirements.txt .
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
- && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --retries 5 --timeout 120 torch \
+        --index-url https://download.pytorch.org/whl/cpu \
+ || pip install --no-cache-dir --retries 5 --timeout 120 torch
+RUN pip install --no-cache-dir --retries 5 --timeout 120 -r requirements.txt
 
 COPY src/ src/
 COPY app/ app/

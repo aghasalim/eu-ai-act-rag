@@ -1,0 +1,17 @@
+# Without this the build context ships the 1.5 GB virtualenv and the local
+# Chroma index, which is both slow and would let a stale index shadow the one
+# built inside the image.
+.venv/
+.git/
+.github/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+data/index/
+data/processed/
+eval/results/
+tests/
+deploy/
+*.md
+!README.md

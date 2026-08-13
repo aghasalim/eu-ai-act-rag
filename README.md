@@ -216,8 +216,20 @@ deploy/          Hugging Face Space template
 
 ## Deploying the demo
 
+```bash
+make docker
+```
+
 `Dockerfile` builds the index at image-build time so a cold container answers its
-first query without downloading a model. For a free hosted demo, copy
+first query without downloading a model. Built and verified on `linux/arm64`:
+image is **2.8 GB**, ~4 min cold build, container reports healthy and answers
+correctly from inside the image. The size is dominated by `torch` (635 MB) plus
+transitive weight from `chromadb` (`onnxruntime`, `kubernetes`) and `streamlit`
+(`pyarrow`) — swapping the encoder to ONNX Runtime, which `chromadb` already
+installs, would remove `torch` entirely and is the obvious slimming step if the
+image ever needs to be small.
+
+For a free hosted demo, copy
 [`deploy/HF_SPACE_README.md`](deploy/HF_SPACE_README.md) to the root of a Hugging
 Face Space as `README.md`, push the repo, and set `GROQ_API_KEY` as a Space
 **secret**.

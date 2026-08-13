@@ -8,5 +8,7 @@ rank-bm25>=0.2.2
 httpx>=0.27
 python-dotenv>=1.0
 streamlit>=1.36
-numpy>=1.26
-pandas>=2.0
+# numpy/pandas/pyarrow/scikit-learn are deliberately absent: nothing here imports
+# them directly, and they arrive transitively via chromadb, sentence-transformers
+# and streamlit. Declaring dependencies you do not import hides what the project
+# actually needs.
