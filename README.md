@@ -266,9 +266,24 @@ things I don't use directly but that come along with `chromadb` (onnxruntime, ku
 and `streamlit` (pyarrow). Exporting the encoder to ONNX Runtime — which chromadb
 installs anyway — would drop torch entirely. I haven't done it yet.
 
-For a free hosted demo, copy [`deploy/HF_SPACE_README.md`](deploy/HF_SPACE_README.md) to
-the root of a Hugging Face Space as `README.md`, push, and set `GROQ_API_KEY` as a Space
-**secret** (not a variable).
+### Hosting it
+
+Heads-up if you're following an older RAG tutorial: **Hugging Face Spaces is no longer
+free for this.** Their API now rejects Docker and Gradio Spaces on free `cpu-basic` with
+a 402 unless you have PRO, and the Streamlit SDK has been removed entirely — the only
+free tier left is `static`, which can't run Python. I found this out by trying it.
+
+So the options are:
+
+| host | cost | notes |
+|---|---|---|
+| Streamlit Community Cloud | free | Built for exactly this. Points at this repo and `app/streamlit_app.py`. |
+| Hugging Face Space (docker) | PRO, $9/mo | [`deploy/HF_SPACE_README.md`](deploy/HF_SPACE_README.md) has the config; works as soon as the account has PRO. |
+| Anything that runs a container | varies | `docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest` |
+
+Whichever you pick, set `GROQ_API_KEY` as a **secret**, never as a plain environment
+variable. Without it the app still runs and still shows retrieved passages, it just
+won't generate prose answers.
 
 ---
 

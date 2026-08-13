@@ -1,4 +1,15 @@
 <!--
+REQUIRES HUGGING FACE PRO. As of 2026, the Hub rejects Docker and Gradio Spaces on
+free cpu-basic hardware with HTTP 402:
+
+  "Static Spaces are free for everyone, but hosting Gradio and Docker Spaces on
+   free cpu-basic requires a PRO subscription."
+
+The Streamlit SDK has also been removed (the API now accepts only gradio|docker|
+static). So this config is correct and ready, but it will only deploy on a PRO
+account. For a free host, see the hosting table in the main README -- Streamlit
+Community Cloud runs app/streamlit_app.py directly from the GitHub repo.
+
 Copy this file to the ROOT of your Hugging Face Space repo as README.md.
 The YAML front matter is how a Space is configured; it must be the first thing
 in the file. Then set GROQ_API_KEY as a Space *secret* (Settings -> Variables
