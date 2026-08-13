@@ -15,11 +15,26 @@ try:  # noqa: SIM105
 except ImportError:
     pass
 
+import os
+
 import streamlit as st
 from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 load_dotenv()
+
+# Streamlit Community Cloud delivers secrets through st.secrets, but everything
+# below app/ reads os.getenv so it stays host-agnostic (a .env locally, real env
+# vars in Docker). Bridge the two here, and do it *before* importing config,
+# which snapshots these values at import time. Accessing st.secrets raises when
+# no secrets are configured at all, hence the guard.
+for _key in ("GROQ_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY",
+             "LLM_PROVIDER", "LLM_MODEL", "RETRIEVAL_MODE", "TOP_K"):
+    try:
+        if not os.getenv(_key) and _key in st.secrets:
+            os.environ[_key] = str(st.secrets[_key])
+    except Exception:
+        break
 
 from src.euactrag import config, llm, pipeline  # noqa: E402
 
@@ -75,8 +90,9 @@ with st.sidebar:
         st.success(f"{config.LLM_PROVIDER} · {config.LLM_MODEL}")
     else:
         st.warning(
-            "No API key set — running in retrieval-only mode. "
-            "Add `GROQ_API_KEY` to `.env` to enable generated answers."
+            "No API key set — running in retrieval-only mode. Retrieval below is "
+            "fully live; only the written answer is disabled. To enable it set "
+            "`GROQ_API_KEY` — in **app secrets** when hosted, or in `.env` locally."
         )
     st.divider()
     st.markdown(
