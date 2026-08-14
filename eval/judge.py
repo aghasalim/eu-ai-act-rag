@@ -31,9 +31,9 @@ from src.euactrag import config, llm  # noqa: E402
 # family than the generator is acceptable.
 JUDGE_PREFERENCE = [
     "openai/gpt-oss-120b",
-    "qwen/qwen3-32b",
-    "gemma2-9b-it",
+    "qwen/qwen3.6-27b",
     "llama-3.3-70b-versatile",
+    "openai/gpt-oss-20b",
     "llama-3.1-8b-instant",
 ]
 
@@ -124,7 +124,7 @@ def faithfulness(answer: str, contexts: list[str], model: str) -> dict:
     """RAGAS-style claim-level faithfulness, implemented directly so the harness
     has no hard dependency on RAGAS being installable."""
     raw = llm.chat([{"role": "user", "content": CLAIMS_PROMPT.format(answer=answer)}],
-                   model=model, temperature=0.0, max_tokens=800)
+                   model=model, temperature=0.0, max_tokens=1000, reasoning_effort="none")
     claims = _json(raw)
     if not isinstance(claims, list) or not claims:
         return {"score": None, "n_claims": 0, "claims": []}
@@ -134,7 +134,7 @@ def faithfulness(answer: str, contexts: list[str], model: str) -> dict:
     raw = llm.chat(
         [{"role": "user", "content": VERIFY_PROMPT.format(
             context="\n\n".join(contexts), claims=numbered)}],
-        model=model, temperature=0.0, max_tokens=1500)
+        model=model, temperature=0.0, max_tokens=2000, reasoning_effort="none")
     verdicts = _json(raw)
     if not isinstance(verdicts, list) or not verdicts:
         return {"score": None, "n_claims": len(claims), "claims": claims}
@@ -155,7 +155,7 @@ def correctness(question: str, reference: str, candidate: str, model: str) -> di
         [{"role": "user", "content": CORRECTNESS_PROMPT.format(
             question=question, reference=reference, candidate=candidate,
             abstain=config.ABSTAIN_STRING)}],
-        model=model, temperature=0.0, max_tokens=300)
+        model=model, temperature=0.0, max_tokens=600, reasoning_effort="none")
     d = _json(raw)
     if not isinstance(d, dict) or d.get("grade") not in {"correct", "partial", "incorrect"}:
         return {"grade": "unscored", "reason": "judge returned unparseable output"}

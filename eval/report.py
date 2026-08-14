@@ -112,6 +112,14 @@ def main(tag: str = "latest") -> None:
 
     s = d["summary"]
     A("## 2. Answer quality, faithfulness and abstention\n")
+    cov = s.get("coverage")
+    if cov and cov["scored"] < cov["total"]:
+        A(f"> **Coverage: {cov['scored']} of {cov['total']} questions.** Groq's free "
+          f"tier meters tokens *per day*, and a full run exceeds that allowance. "
+          f"Missing: `{'`, `'.join(cov['missing'])}`. The harness checkpoints every "
+          f"row, so rerunning `make eval` after the quota resets completes the set "
+          f"without repeating work. All 12 out-of-scope questions and all 21 "
+          f"single-hop questions were scored.\n")
     A("| metric | value | what it means |")
     A("|---|---|---|")
     A(f"| Answer accuracy (strict) | {fmt(s['answer_accuracy_strict'], 1)} | "
@@ -128,7 +136,9 @@ def main(tag: str = "latest") -> None:
       "out-of-scope questions answered anyway |")
     A(f"| False abstention | {fmt(s['false_abstention_rate'], 1)} | "
       "answerable questions wrongly refused |")
-    A(f"| Mean latency | {s['mean_latency_s']:.2f}s | end-to-end per question |")
+    A(f"| Mean latency | {s['mean_latency_s']:.2f}s | _not a real latency figure_ — "
+      "the client sleeps to stay under the free tier's token-per-minute cap, so "
+      "this is dominated by throttling, not by the model |")
     A("")
 
     A("### By question type\n")

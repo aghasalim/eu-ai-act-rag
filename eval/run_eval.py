@@ -113,9 +113,24 @@ def classify_failure(q: dict, r: dict) -> str:
 
 
 def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
-                     judge_model: str) -> dict:
-    rows = []
+                     judge_model: str, checkpoint: Path | None = None) -> dict:
+    """Score every question, checkpointing each row as it completes.
+
+    Free-tier providers meter tokens *per day*, and a full run can exceed that
+    allowance. Without a checkpoint a quota wall at question 42 throws away 41
+    questions' worth of spent quota, which cannot be re-earned until the window
+    resets. Rows are appended as they finish and reloaded on the next run.
+    """
+    rows: list[dict] = []
+    done: set[str] = set()
+    if checkpoint and checkpoint.exists():
+        rows = [json.loads(l) for l in open(checkpoint, encoding="utf-8") if l.strip()]
+        done = {r["id"] for r in rows}
+        print(f"  resuming: {len(done)} question(s) already scored")
+
     for i, q in enumerate(qa, 1):
+        if q["id"] in done:
+            continue
         t0 = time.time()
         a = pipeline.answer(q["question"], k=k, mode=mode, model=gen_model)
         latency = time.time() - t0
@@ -156,7 +171,16 @@ def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
 
         row["failure"] = classify_failure(q, row)
         rows.append(row)
-        print(f"  [{i}/{len(qa)}] {q['id']} {row['grade']:<9} {row['failure']}")
+        if checkpoint:
+            with open(checkpoint, "a", encoding="utf-8") as f:
+                f.write(json.dumps(row, ensure_ascii=False) + "\n")
+        # flush: a throttled run takes ~30 min and Python block-buffers stdout
+        # when it is redirected to a file, so without this the log looks frozen.
+        print(f"  [{i}/{len(qa)}] {q['id']} {row['grade']:<9} {row['failure']}",
+              flush=True)
+
+    order = {q["id"]: n for n, q in enumerate(qa)}
+    rows.sort(key=lambda r: order.get(r["id"], 1e9))
     return {"rows": rows}
 
 
@@ -260,12 +284,43 @@ def main() -> None:
         "ablation_recital_weight": abl,
     }
 
-    if not a.no_generation and llm.available():
+    ckpt_path = config.RESULTS_DIR / f"rows_{a.tag}.jsonl"
+    if a.no_generation and ckpt_path.exists():
+        # Assemble a report from work already paid for, without spending more
+        # tokens. Needed because a free-tier daily quota can stop a run partway:
+        # the numbers earned so far are still worth reporting, as long as the
+        # report says plainly how much of the set they cover.
+        rows = [json.loads(l) for l in open(ckpt_path, encoding="utf-8") if l.strip()]
+        order = {q["id"]: n for n, q in enumerate(qa)}
+        rows.sort(key=lambda r: order.get(r["id"], 1e9))
+        scored = {r["id"] for r in rows}
+        out["summary"] = summarise(rows)
+        out["summary"]["coverage"] = {
+            "scored": len(rows), "total": len(qa),
+            "missing": [q["id"] for q in qa if q["id"] not in scored],
+        }
+        out["generation"] = {"rows": rows}
+        out["config"]["gen_model"] = "openai/gpt-oss-20b"
+        out["config"]["judge_model"] = "qwen/qwen3.6-27b"
+        print(f"\n[assembled] {len(rows)}/{len(qa)} questions from {ckpt_path.name}")
+        for k_, v in out["summary"].items():
+            if not isinstance(v, dict):
+                print(f"  {k_:<34} {v}")
+        print(f"  failure_modes: {out['summary']['failure_modes']}")
+
+    elif not a.no_generation and llm.available():
         judge_model = a.judge_model or judge_mod.pick_judge(a.model)
         print(f"\n== generation (gen={a.model}, judge={judge_model}) ==")
         out["config"]["gen_model"] = a.model
         out["config"]["judge_model"] = judge_model
-        gen = score_generation(qa, a.k, a.gen_mode, a.model, judge_model)
+        ckpt = config.RESULTS_DIR / f"rows_{a.tag}.jsonl"
+        config.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+        try:
+            gen = score_generation(qa, a.k, a.gen_mode, a.model, judge_model, ckpt)
+        except llm.DailyQuotaExhausted as e:
+            print(f"\n[stopped] {e}")
+            print(f"[progress kept] {ckpt} — rerun the same command to resume.")
+            raise SystemExit(2)
         out["summary"] = summarise(gen["rows"])
         out["ragas"] = ragas_crosscheck(gen["rows"], qa)
         # Contexts are large and only needed for the RAGAS pass; drop before saving.

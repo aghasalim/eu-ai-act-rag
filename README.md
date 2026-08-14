@@ -77,12 +77,47 @@ something structural — pushing non-binding text below binding text. I kept the
 they're genuinely useful. Caveat I should state: none of my 45 questions have a recital
 as the correct answer, so this measurement flatters the change.
 
-### What I haven't measured yet
+### Answer quality, faithfulness and hallucination
 
-Faithfulness, hallucination rate and answer accuracy need an LLM API key. The harness is
-written and tested, but I'm not putting numbers in this README that the repo can't
-reproduce, so this section stays empty until `make eval` has been run. It takes one free
-key and one command (see below).
+Answered by `openai/gpt-oss-20b`, graded by `qwen/qwen3.6-27b` — a different model
+family, so it isn't marking its own work. 41 of the 45 questions (see the note below).
+
+| metric | value |
+|---|---|
+| **Faithfulness** (claims entailed by retrieved text) | **92.6%** |
+| **Citation validity** (citations pointing at retrieved passages) | **100%** |
+| **Correct abstention** on out-of-scope questions | **100%** (12/12) |
+| **Hallucination rate** on out-of-scope questions | **0%** |
+| Answer accuracy, strict | 58.6% |
+| Answer accuracy, incl. partially correct | 69.0% |
+| False abstention (refused a question it could answer) | 17.2% |
+
+Broken out, the retrieval story repeats itself almost exactly:
+
+| type | n | accuracy | faithfulness |
+|---|---|---|---|
+| single-hop | 21 | 71.4% | 96.4% |
+| **multi-hop** | 8 | **25.0%** | 75.4% |
+| unanswerable | 12 | 100% | — |
+
+**The evaluation explains its own failure.** Multi-hop answer accuracy (25%) tracks
+multi-hop retrieval full-recall (41.7%): when the system only finds one of the two
+articles a question needs, it produces a confident, well-cited, half-right answer.
+Faithfulness stays high (75%) precisely *because* the answer is faithful — to an
+incomplete set of passages. That is the failure a faithfulness metric alone would miss,
+and it is why full recall is reported separately.
+
+The good news is the refusal behaviour: **12 out of 12 out-of-scope questions were
+refused, none hallucinated** — including ones designed to bait it, like asking for a
+FLOP count when the corpus contains a similar-looking FLOP threshold. It errs toward
+refusing, which is also why false abstention is 17%. For a legal assistant I would take
+that trade.
+
+> **Coverage: 41 of 45.** Groq's free tier meters tokens *per day* (100k for
+> `llama-3.3-70b`, 200k for `gpt-oss-120b`/`qwen3.6-27b`), and one full run exceeds that.
+> `m10`–`m13` (four multi-hop questions) are pending. The harness checkpoints every row, so
+> `make eval` after the quota resets finishes the set without redoing work. All 21
+> single-hop and all 12 out-of-scope questions were scored.
 
 ---
 
