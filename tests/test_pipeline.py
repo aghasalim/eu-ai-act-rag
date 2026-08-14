@@ -132,6 +132,13 @@ def test_parse_citations():
     assert pipeline.parse_citations(txt) == ["art_99", "anx_III", "rct_53"]
 
 
+def test_parse_citations_accepts_full_width_brackets():
+    """gpt-oss models cite with 【...】; llama uses [...]. Both must parse, or
+    citation validity silently reads as 'no citations made'."""
+    txt = "The cap is EUR 35 000 000 【Article 99 - Penalties】 and 【ANNEX III - x】."
+    assert pipeline.parse_citations(txt) == ["art_99", "anx_III"]
+
+
 def test_parse_citations_dedupes_and_ignores_prose():
     txt = "[Article 6 - X] then [Article 6 - X] again, but Article 7 is not cited."
     assert pipeline.parse_citations(txt) == ["art_6"]
