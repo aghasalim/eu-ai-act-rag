@@ -37,7 +37,7 @@ anyone can reproduce these numbers for free. Full breakdown in
 |---|---|---|---|---|---|---|
 | dense (bge-small) | 81.8% | 67.2% | 51.5% | 0.521 | 0.537 | 0.402 |
 | BM25 | 84.9% | 73.2% | 63.6% | 0.561 | 0.571 | 0.002 |
-| **hybrid (RRF)** | **90.9%** | **80.3%** | **69.7%** | **0.790** | **0.754** | 0.032 |
+| **hybrid (RRF)** | **90.9%** | **80.3%** | **69.7%** | **0.795** | **0.756** | 0.011 |
 
 "Hit rate" means at least one required article showed up. "Full recall" means *all* of
 them did. That second column is the one I care about, because a question needing two
@@ -68,7 +68,7 @@ but quietly drop the exception or the deadline.
 paragraphs at the top. They explain the rules in normal flowing sentences, which means
 they look *more* like an answer to a plain-English question than the actual article
 does. They were pushing real articles out of the top results. Giving them less weight
-in the ranking moved MRR from 0.581 to 0.790.
+in the ranking moved MRR from 0.586 to 0.795.
 
 I checked whether I was just fitting a number to my own test set, and I don't think so:
 every weight below 1.0 gives an identical score, so it's a step rather than a peak
@@ -81,44 +81,56 @@ as the correct answer, so this measurement flatters the change.
 ### Answer quality, faithfulness and hallucination
 
 Answered by `openai/gpt-oss-20b`, graded by `qwen/qwen3.6-27b` — a different model
-family, so it isn't marking its own work. 41 of the 45 questions (see the note below).
+family, so it isn't marking its own work. **All 45 questions.**
 
 | metric | value |
 |---|---|
-| **Faithfulness** (claims entailed by retrieved text) | **92.6%** |
+| **Faithfulness** (claims entailed by retrieved text) | **90.2%** |
 | **Citation validity** (citations pointing at retrieved passages) | **100%** |
 | **Correct abstention** on out-of-scope questions | **100%** (12/12) |
 | **Hallucination rate** on out-of-scope questions | **0%** |
-| Answer accuracy, strict | 58.6% |
-| Answer accuracy, incl. partially correct | 69.0% |
-| False abstention (refused a question it could answer) | 17.2% |
+| Answer accuracy, strict | 66.7% |
+| Answer accuracy, incl. partially correct | 69.7% |
+| False abstention (refused a question it could answer) | 21.2% |
 
-Broken out, the retrieval story repeats itself almost exactly:
+Broken out:
 
 | type | n | accuracy | faithfulness |
 |---|---|---|---|
-| single-hop | 21 | 71.4% | 96.4% |
-| **multi-hop** | 8 | **25.0%** | 75.4% |
+| single-hop | 21 | 76.2% | 97.2% |
+| **multi-hop** | 12 | **50.0%** | 74.3% |
 | unanswerable | 12 | 100% | — |
 
-**The evaluation explains its own failure.** Multi-hop answer accuracy (25%) tracks
-multi-hop retrieval full-recall (41.7%): when the system only finds one of the two
-articles a question needs, it produces a confident, well-cited, half-right answer.
-Faithfulness stays high (75%) precisely *because* the answer is faithful — to an
-incomplete set of passages. That is the failure a faithfulness metric alone would miss,
-and it is why full recall is reported separately.
+**A measurement bug was costing me 12 points of accuracy, and it hit the hardest
+questions hardest.** `LLM_MAX_TOKENS` was 800. On a reasoning model that cap is a
+*shared* budget — the `<think>` block is billed against it before any content is
+emitted — so a question that reasons for 800 tokens returns an **empty string**, with
+no error and a ~60s latency. Four answers came back empty. All four were multi-hop,
+because those reason longest. Raising the cap to 2500:
 
-The good news is the refusal behaviour: **12 out of 12 out-of-scope questions were
-refused, none hallucinated** — including ones designed to bait it, like asking for a
-FLOP count when the corpus contains a similar-looking FLOP threshold. It errs toward
-refusing, which is also why false abstention is 17%. For a legal assistant I would take
-that trade.
+| | 800-token cap | 2500-token cap |
+|---|---|---|
+| accuracy, strict | 54.5% | **66.7%** |
+| **multi-hop accuracy** | **25.0%** | **50.0%** |
+| answers returned empty | 4 | 0 |
 
-> **Coverage: 41 of 45.** Groq's free tier meters tokens *per day* (100k for
-> `llama-3.3-70b`, 200k for `gpt-oss-120b`/`qwen3.6-27b`), and one full run exceeds that.
-> `m10`–`m13` (four multi-hop questions) are pending. The harness checkpoints every row, so
-> `make eval` after the quota resets finishes the set without redoing work. All 21
-> single-hop and all 12 out-of-scope questions were scored.
+Multi-hop accuracy **doubled**. I had written up 25% as a retrieval story — the system
+finds one of the two articles and answers half the question. That story was partly
+true and partly my own truncation, and I could not tell the difference until the empty
+answers were gone. It is a good argument for looking at raw model output rather than
+only at aggregate metrics: an empty string scores identically to a wrong answer, and
+nothing in the summary distinguishes them.
+
+Multi-hop is still the weak half at 50% against single-hop's 76%, and it still tracks
+multi-hop retrieval full-recall (41.7%). Faithfulness on multi-hop *fell* (82.7% →
+74.3%) once the answers were no longer truncated, which makes sense: a longer answer
+makes more claims, and more claims means more chances for one to be unsupported.
+
+The refusal behaviour is the strongest result here: **12 out of 12 out-of-scope
+questions refused, none hallucinated** — including ones designed to bait it, like
+asking for a FLOP count when the corpus contains a similar-looking FLOP threshold. It
+errs toward refusing, which is why false abstention is 21%. For a legal assistant I
+would take that trade.
 
 ---
 
