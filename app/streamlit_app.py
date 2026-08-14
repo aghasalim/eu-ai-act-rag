@@ -15,6 +15,7 @@ try:  # noqa: SIM105
 except ImportError:
     pass
 
+import json
 import os
 
 import streamlit as st
@@ -96,10 +97,74 @@ with st.sidebar:
         )
     st.divider()
     st.markdown(
-        "**Measured, not asserted.** Retrieval and faithfulness metrics for this "
-        "exact configuration are in [`eval/results/`](https://github.com/aghasalim/eu-ai-act-rag/tree/main/eval/results) "
-        "and summarised in the README."
+        "**Measured, not asserted.** The scores below come from "
+        "[`eval/results/eval_latest.json`](https://github.com/aghasalim/eu-ai-act-rag/tree/main/eval/results), "
+        "the same file `make eval` writes — nothing here is typed in by hand."
     )
+
+@st.cache_data
+def scores() -> dict | None:
+    """The measured evaluation, read from disk rather than written into the page.
+
+    Every metric shown below is looked up from this file. That is deliberate: the
+    README of this project drifted from the generated results twice (an MRR cell
+    and an nDCG cell), and a demo that hardcodes its own numbers is the same bug
+    with a wider audience.
+    """
+    p = Path(__file__).resolve().parents[1] / "eval" / "results" / "eval_latest.json"
+    try:
+        return json.loads(p.read_text())
+    except (OSError, ValueError):
+        return None
+
+
+_ev = scores()
+if _ev:
+    cfg, summ = _ev["config"], _ev["summary"]
+    hyb = _ev["retrieval"]["hybrid"]["at_k"].get(str(cfg["top_k"]), {}).get("overall", {})
+    with st.expander(
+        f"How well does this actually work? — measured on {cfg['n_questions']} "
+        f"hand-written questions", expanded=False,
+    ):
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Faithfulness", f"{summ['faithfulness']:.1%}",
+                  help="Share of generated claims entailed by the retrieved passages.")
+        c2.metric("Citation validity", f"{summ['citation_validity']:.0%}",
+                  help="Citations that point at a passage actually retrieved.")
+        c3.metric("Refused out-of-scope", f"{summ['correct_abstention_rate']:.0%}",
+                  f"{summ['hallucination_rate_unanswerable']:.0%} hallucinated")
+        c4.metric("Retrieval hit rate", f"{hyb.get('hit_rate', 0):.1%}",
+                  f"full recall {hyb.get('full_recall', 0):.1%}")
+
+        by = summ["by_type"]
+        st.markdown(
+            f"Answer accuracy is **{summ['answer_accuracy_strict']:.1%}** strict "
+            f"(**{summ['answer_accuracy_lenient']:.1%}** counting partial credit), and it "
+            f"splits hard by question type: **{by['single_hop']['accuracy_strict']:.1%}** on "
+            f"single-hop questions against **{by['multi_hop']['accuracy_strict']:.1%}** on "
+            f"multi-hop ones that need two articles at once. It refuses "
+            f"{summ['false_abstention_rate']:.1%} of questions it could have answered — "
+            "erring toward refusal, which for a legal assistant is the right direction "
+            "to err in.\n\n"
+            f"Answered by `{cfg['gen_model']}`, graded by `{cfg['judge_model']}` — a "
+            "different model family, so it is not marking its own work."
+        )
+
+    # The running configuration can differ from the evaluated one -- via the
+    # sidebar, or because this host answers with a different model than the eval
+    # used. Either way the numbers above stop describing what the visitor is
+    # getting, and a score that silently borrows authority from a different setup
+    # is the exact failure this project exists to argue against.
+    drift = []
+    if mode != cfg["gen_mode"] or k != cfg["top_k"]:
+        drift.append(f"retrieval is **{mode}, k={k}** here vs **{cfg['gen_mode']}, "
+                     f"k={cfg['top_k']}** when measured")
+    if llm.available() and config.LLM_MODEL != cfg["gen_model"]:
+        drift.append(f"answers come from **{config.LLM_MODEL}** here vs "
+                     f"**{cfg['gen_model']}** when measured")
+    if drift:
+        st.caption("⚠️ " + "; ".join(drift)
+                   + ". The scores above do not describe this configuration.")
 
 warm()
 

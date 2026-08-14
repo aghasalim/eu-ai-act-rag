@@ -12,7 +12,7 @@
   },
   "retrieval": {
     "dense": {
-      "latency_s_per_query": 0.2448,
+      "latency_s_per_query": 0.2666,
       "at_k": {
         "3": {
           "overall": {
@@ -2374,7 +2374,7 @@
       }
     },
     "hybrid": {
-      "latency_s_per_query": 0.0096,
+      "latency_s_per_query": 0.0104,
       "at_k": {
         "3": {
           "overall": {
@@ -3671,7 +3671,9 @@
         "unsupported_claims": [],
         "grade": "incorrect",
         "grade_reason": "The candidate provides the wrong fine amount (EUR 1,500,000 instead of EUR 35,000,000 or 7% of turnover) and cites the incorrect article.",
-        "failure": "generation_error"
+        "failure": "generation_error",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s02",
@@ -3704,7 +3706,9 @@
         "grade": "incorrect",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "retrieval_miss"
+        "failure": "retrieval_miss",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s03",
@@ -3741,7 +3745,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately identifies the threshold of 10^25 floating-point operations as specified in the reference.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s04",
@@ -3777,7 +3783,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately reproduces the substantive definition of an AI system from the reference, including all key elements such as autonomy, adaptiveness, and the nature of outputs.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s05",
@@ -3818,7 +3826,9 @@
         ],
         "grade": "correct",
         "grade_reason": "The candidate answer correctly identifies that the Regulation does not apply to AI systems used exclusively for military, defence, or national security purposes and accurately cites Article 2(3) with the relevant details.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s06",
@@ -3853,7 +3863,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately captures both the 15-day deadline and the immediate reporting requirement upon establishing a causal link as stated in the reference.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s07",
@@ -3888,7 +3900,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately conveys all substantive elements of the reference, including the immediate reporting trigger and the 10-day maximum deadline.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s08",
@@ -3929,7 +3943,9 @@
         ],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately conveys the reporting deadline specified in the reference, including the immediate requirement and the two-day limit.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s09",
@@ -3964,7 +3980,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately conveys the prohibition and the specific exceptions for medical or safety reasons as stated in the reference.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s10",
@@ -4000,7 +4018,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately conveys all substantive requirements from the reference, including the machine-readable marking, detectability, and the specific technical qualities (effective, interoperable, robust, reliable) subject to technical feasibility.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s11",
@@ -4037,7 +4057,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer correctly identifies the exclusion of AI systems for scientific research and development and accurately cites the relevant legal provisions.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s12",
@@ -4067,7 +4089,9 @@
         "grade": "incorrect",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "retrieval_miss"
+        "failure": "retrieval_miss",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s13",
@@ -4102,7 +4126,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately captures all substantive elements of the reference, including the requirement to implement a copyright compliance policy, identify and comply with reservations of rights under Article 4(3) of Directive (EU) 2019/790, and the use of state-of-the-art technologies.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s14",
@@ -4138,7 +4164,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer correctly identifies that the practice is prohibited and cites the specific article and paragraph consistent with the reference.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s15",
@@ -4174,7 +4202,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer correctly identifies the application date as 2 February 2025, matching the reference exactly.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s16",
@@ -4209,7 +4239,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately conveys the maximum fine amounts and conditions specified in the reference answer.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s17",
@@ -4245,7 +4277,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer correctly identifies that the fine is capped at the lower of the percentage or fixed amount, aligning with the substantive content of the reference.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s18",
@@ -4281,7 +4315,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately identifies the compliance deadline of 2 August 2027, matching the substantive content of the reference answer.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s19",
@@ -4317,7 +4353,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer correctly identifies that the system is not high-risk and accurately cites the specific exclusion in Annex III point 1(a) regarding biometric verification for identity confirmation.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s20",
@@ -4348,7 +4386,9 @@
         "grade": "incorrect",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "retrieval_miss"
+        "failure": "retrieval_miss",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m01",
@@ -4403,7 +4443,9 @@
         ],
         "grade": "correct",
         "grade_reason": "The candidate correctly identifies that the deployment is not prohibited due to the medical exemption and accurately states the obligation to inform patients under Article 50(3).",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m02",
@@ -4464,7 +4506,9 @@
         ],
         "grade": "correct",
         "grade_reason": "The candidate correctly identifies that the system is high-risk due to profiling and accurately cites the relevant legal provisions overriding the derogation.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m03",
@@ -4506,7 +4550,9 @@
         ],
         "grade": "incorrect",
         "grade_reason": "The candidate incorrectly concludes that the exemption applies, failing to recognize that 10^26 FLOPs exceeds the 10^25 threshold for systemic risk, which explicitly excludes the model from the open-source exemption under Article 53(2).",
-        "failure": "partial_retrieval"
+        "failure": "partial_retrieval",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m04",
@@ -4555,7 +4601,9 @@
         ],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately lists all the specific articles and conditions mentioned in the reference answer regarding the scope of Regulation (EU) 2024/1689 for high-risk AI systems that are safety components.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m05",
@@ -4585,7 +4633,9 @@
         "grade": "incorrect",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "false_abstention"
+        "failure": "false_abstention",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m06",
@@ -4620,7 +4670,9 @@
         "grade": "incorrect",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "false_abstention"
+        "failure": "false_abstention",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m07",
@@ -4667,7 +4719,9 @@
         ],
         "grade": "incorrect",
         "grade_reason": "The candidate incorrectly states that the obligations start applying when the Regulation enters into force, whereas the reference specifies they apply from 2 August 2025.",
-        "failure": "partial_retrieval"
+        "failure": "partial_retrieval",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m08",
@@ -4707,7 +4761,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately conveys all substantive content of the reference, including the prohibition in educational institutions with medical/safety exceptions and the high-risk classification for permitted systems.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "s21",
@@ -4744,7 +4800,9 @@
         "unsupported_claims": [],
         "grade": "partial",
         "grade_reason": "The candidate answer correctly identifies the documentation and registration requirements but omits the obligation to provide the documentation to national competent authorities on request.",
-        "failure": "incomplete_answer"
+        "failure": "incomplete_answer",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m10",
@@ -4779,7 +4837,9 @@
         "unsupported_claims": [],
         "grade": "correct",
         "grade_reason": "The candidate answer accurately identifies the specific obligations and the correct article (Article 55) as stated in the reference, despite a minor formatting difference in the article citation.",
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m11",
@@ -4812,7 +4872,9 @@
         "grade": "incorrect",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "false_abstention"
+        "failure": "false_abstention",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m12",
@@ -4845,7 +4907,9 @@
         "grade": "incorrect",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "false_abstention"
+        "failure": "false_abstention",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "m13",
@@ -4889,7 +4953,9 @@
         ],
         "grade": "correct",
         "grade_reason": "The candidate answer correctly confirms the Regulation's applicability to the US provider and accurately lists the required documentation, including the specific Annexes and additional obligations mentioned in the reference.",
-        "failure": "partial_retrieval"
+        "failure": "partial_retrieval",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u01",
@@ -4910,7 +4976,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u02",
@@ -4933,7 +5001,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u03",
@@ -4956,7 +5026,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u04",
@@ -4980,7 +5052,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u05",
@@ -5002,7 +5076,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u06",
@@ -5025,7 +5101,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u07",
@@ -5049,7 +5127,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u08",
@@ -5071,7 +5151,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u09",
@@ -5093,7 +5175,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u10",
@@ -5115,7 +5199,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u11",
@@ -5138,7 +5224,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       },
       {
         "id": "u12",
@@ -5161,7 +5249,9 @@
         "grade": "correct",
         "faithfulness": null,
         "n_claims": 0,
-        "failure": "ok"
+        "failure": "ok",
+        "gen_model": "openai/gpt-oss-20b",
+        "judge_model": "qwen/qwen3.6-27b"
       }
     ]
   }

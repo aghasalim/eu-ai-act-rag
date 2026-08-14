@@ -45,7 +45,12 @@ RECITAL_WEIGHT = float(os.getenv("RECITAL_WEIGHT", "0.5"))
 
 # --- Generation -----------------------------------------------------------
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")  # groq|openai|gemini|ollama|extractive
-LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+# The evaluated model, so that `make eval` with no flags reproduces the numbers
+# in the README. The previous default (llama-3.3-70b-versatile) was never the one
+# measured, which meant the documented command produced different figures than
+# the documentation it was supposed to reproduce -- and the hosted demo answered
+# with one model while advertising another's scores.
+LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-oss-20b")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.0"))
 # 800 was too small and it cost me four answers. On a reasoning model this cap is
 # a *shared* budget: the <think> block is billed against it before any content is
@@ -59,6 +64,6 @@ LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "2500"))
 
 # Judge model for faithfulness scoring. Kept separate from the answering model so
 # the system is never grading its own homework with the identical config.
-JUDGE_MODEL = os.getenv("JUDGE_MODEL", "llama-3.1-8b-instant")
+JUDGE_MODEL = os.getenv("JUDGE_MODEL", "qwen/qwen3.6-27b")
 
 ABSTAIN_STRING = "NOT_IN_CORPUS"

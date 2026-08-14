@@ -112,6 +112,21 @@ def classify_failure(q: dict, r: dict) -> str:
     return "ok"
 
 
+def models_from(rows: list[dict]) -> dict:
+    """Read the answering/judging models off the rows themselves.
+
+    Reporting the CLI flags instead is how 45 answers from `gpt-oss-20b` came to
+    be labelled `llama-3.3-70b-versatile`: a later no-op resume with default flags
+    rewrote the summary without regenerating a single row. Rows written before
+    this field existed report "unknown" rather than borrowing a plausible name.
+    """
+    out = {}
+    for field in ("gen_model", "judge_model"):
+        seen = sorted({r.get(field) or "unknown" for r in rows})
+        out[field] = " + ".join(seen) if seen else "unknown"
+    return out
+
+
 def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
                      judge_model: str, checkpoint: Path | None = None) -> dict:
     """Score every question, checkpointing each row as it completes.
@@ -170,6 +185,14 @@ def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
             row["grade_reason"] = c.get("reason", "")
 
         row["failure"] = classify_failure(q, row)
+        # Stamp provenance onto the row itself. The run-level config records the
+        # models named on *this* invocation, which is not the same thing: a resume
+        # skips every scored question, so `make eval` (defaults) over a checkpoint
+        # produced by `--model X` regenerates the summary and labels X's answers
+        # with the default model name. That happened here and silently misattributed
+        # all 45 rows. Provenance belongs with the data that has it.
+        row["gen_model"] = gen_model
+        row["judge_model"] = judge_model
         rows.append(row)
         if checkpoint:
             with open(checkpoint, "a", encoding="utf-8") as f:
@@ -300,8 +323,7 @@ def main() -> None:
             "missing": [q["id"] for q in qa if q["id"] not in scored],
         }
         out["generation"] = {"rows": rows}
-        out["config"]["gen_model"] = "openai/gpt-oss-20b"
-        out["config"]["judge_model"] = "qwen/qwen3.6-27b"
+        out["config"].update(models_from(rows))
         print(f"\n[assembled] {len(rows)}/{len(qa)} questions from {ckpt_path.name}")
         for k_, v in out["summary"].items():
             if not isinstance(v, dict):
@@ -322,6 +344,11 @@ def main() -> None:
             print(f"[progress kept] {ckpt} — rerun the same command to resume.")
             raise SystemExit(2)
         out["summary"] = summarise(gen["rows"])
+        # Overrides the CLI-derived values set above. A resume mixes rows this
+        # invocation generated with rows a previous one did, so only the rows know
+        # what actually answered them; if the two runs used different models this
+        # reports both rather than whichever was typed most recently.
+        out["config"].update(models_from(gen["rows"]))
         out["ragas"] = ragas_crosscheck(gen["rows"], qa)
         # Contexts are large and only needed for the RAGAS pass; drop before saving.
         for r in gen["rows"]:
