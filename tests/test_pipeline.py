@@ -146,3 +146,37 @@ def test_parse_citations_dedupes_and_ignores_prose():
 
 def test_abstain_token_is_detectable():
     assert config.ABSTAIN_STRING in f"prefix {config.ABSTAIN_STRING}"
+
+
+def test_judge_is_never_from_the_generator_family():
+    """The README claims the judge "isn't marking its own work". Enforce it.
+
+    This regressed once: pick_judge only excluded the generator's exact name, so
+    `openai/gpt-oss-120b` was chosen to grade `openai/gpt-oss-20b` -- same vendor,
+    same lineage -- while the claim of independence stayed in the README.
+    """
+    from eval import judge as J
+
+    for generator in ("openai/gpt-oss-20b", "openai/gpt-oss-120b",
+                      "llama-3.3-70b-versatile", "qwen/qwen3.6-27b"):
+        picked = J.pick_judge(generator)
+        assert J.family(picked) != J.family(generator), (
+            f"{picked} judges {generator} but shares its family"
+        )
+
+
+def test_defaults_reproduce_the_published_evaluation():
+    """`make eval` with no flags must reproduce the models the README reports.
+
+    The default generator used to be a model that was never evaluated, so the
+    documented command produced different numbers than the documentation it was
+    meant to reproduce.
+    """
+    from eval import judge as J
+
+    results = config.RESULTS_DIR / "eval_latest.json"
+    if not results.exists():
+        pytest.skip("no eval run on disk")
+    recorded = json.loads(results.read_text())["config"]
+    assert config.LLM_MODEL == recorded["gen_model"]
+    assert J.pick_judge(config.LLM_MODEL) == recorded["judge_model"]

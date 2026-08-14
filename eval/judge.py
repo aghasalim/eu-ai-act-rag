@@ -51,11 +51,22 @@ def list_models(provider: str | None = None) -> list[str]:
         return []
 
 
+def family(model: str) -> str:
+    """Vendor/lineage key: `openai/gpt-oss-20b` -> `openai`, `llama-3.3-70b` -> `llama`."""
+    return (model.split("/")[0] if "/" in model else model.split("-")[0]).lower()
+
+
 def pick_judge(generator_model: str, provider: str | None = None) -> str:
-    """Choose the best available judge that is not the generator itself."""
+    """Choose the best available judge from a different family than the generator.
+
+    The exclusion is by *family*, not by exact name. Checking only the name let
+    `openai/gpt-oss-120b` be picked to grade `openai/gpt-oss-20b` -- same vendor,
+    same training lineage -- while the README claimed the judge was independent.
+    The comment above this list always said "different family"; the code did not.
+    """
     available = set(list_models(provider))
     for m in JUDGE_PREFERENCE:
-        if m != generator_model and (not available or m in available):
+        if family(m) != family(generator_model) and (not available or m in available):
             return m
     return config.JUDGE_MODEL
 
