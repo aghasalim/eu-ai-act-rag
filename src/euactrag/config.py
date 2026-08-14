@@ -47,7 +47,15 @@ RECITAL_WEIGHT = float(os.getenv("RECITAL_WEIGHT", "0.5"))
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")  # groq|openai|gemini|ollama|extractive
 LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.0"))
-LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "800"))
+# 800 was too small and it cost me four answers. On a reasoning model this cap is
+# a *shared* budget: the <think> block is billed against it before any content is
+# emitted, so a question that reasons for 800 tokens returns an empty string with
+# no error and a ~60s latency. It bit exactly the hardest questions -- all four
+# empties were multi-hop -- which is the worst possible bias, because it silently
+# scores the model's weakest category as wrong for a harness reason.
+# Not fixable with reasoning_effort="none": gpt-oss-20b rejects that with a 400
+# (the judge's qwen model accepts it, which is why judge.py can use it).
+LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "2500"))
 
 # Judge model for faithfulness scoring. Kept separate from the answering model so
 # the system is never grading its own homework with the identical config.
