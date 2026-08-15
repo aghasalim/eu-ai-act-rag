@@ -1,0 +1,5 @@
+# The official AI Act XHTML is third-party source text, committed so the corpus
+# is reproducible offline (Cellar is rate-limited and eur-lex bot-challenges
+# scripted clients). It is input data, not project code -- keep it out of
+# GitHub's language stats.
+data/raw/*.xhtml linguist-vendored
