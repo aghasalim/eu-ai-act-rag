@@ -363,3 +363,6 @@ JSONL in the repo.
 The corpus is Regulation (EU) 2024/1689 from the Official Journal of the European Union,
 via the EU Publications Office (CELEX 32024R1689). Reuse is covered by Decision
 2011/833/EU. Nothing here is affiliated with or endorsed by the EU.
+
+The code is MIT ([LICENSE](LICENSE)). The corpus is not mine to licence, so its
+attribution lives in [NOTICE](NOTICE) rather than in the licence file.

@@ -1,0 +1,14 @@
+Third-party content bundled in this repository
+==============================================
+
+This file carries attribution for material that is not covered by the MIT
+licence in LICENSE. It is kept separate so that automated licence detection
+reads LICENSE as plain MIT; the terms below are unchanged.
+
+data/raw/ai_act.xhtml
+---------------------
+The corpus in data/raw/ is Regulation (EU) 2024/1689, reproduced from the
+Official Journal of the European Union via the EU Publications Office
+(CELEX 32024R1689). Reuse of Commission documents is governed by Decision
+2011/833/EU. This project is not affiliated with or endorsed by the European
+Union, and nothing here is legal advice.
