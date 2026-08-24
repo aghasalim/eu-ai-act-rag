@@ -25,7 +25,57 @@ than hide it.
 
 ---
 
-## Results
+
+---
+
+## Abstract
+
+Retrieval-augmented question answering over regulatory text is easy to demo and
+hard to evaluate: an answer that reads well can cite the wrong article, and a
+system that never refuses will confidently answer questions the corpus cannot
+support. This work builds grounded QA over Regulation (EU) 2024/1689 with an
+evaluation designed before the system, on 45 hand-written questions spanning
+single-hop, multi-hop and deliberately out-of-scope cases.
+
+Hybrid retrieval by reciprocal rank fusion reaches 90.9% hit rate and 69.7% full
+recall at k=6, against 81.8%/51.5% for dense and 84.9%/63.6% for BM25 — and full
+recall is the column that matters, because a question needing two articles is not
+answered by finding one. Down-weighting recitals, the non-binding "whereas"
+paragraphs that match a plain-English question better than the terse article
+containing the rule, lifts MRR from 0.581 to 0.790. That gain is a step rather
+than a peak: every weight below 1.0 scores identically, so it is structural rather
+than a hyper-parameter fitted to 45 questions.
+
+On generation the system cites only passages it retrieved (citation validity
+1.00) and refuses all 12 unanswerable questions, so the hallucination rate on
+out-of-scope input is zero. It pays for that with a 21% false-abstention rate on
+answerable questions, which is the honest cost of a conservative refusal policy
+and is reported rather than tuned away.
+
+**Contributions.** (i) An evaluation set with unanswerable questions built in, so
+refusal is measured rather than assumed. (ii) A recital-weighting ablation
+distinguishing a structural gain from a fitted one. (iii) A failure taxonomy
+attributing every non-ok outcome to retrieval, abstention or generation. (iv) A
+report pipeline that regenerates both RESULTS.md and the README table from one
+artefact, so no number in this repository is typed by hand.
+
+---
+
+## 1. Results
+
+### 1.1 Retrieval
+
+![retrieval strategies across k](eval/figures/retrieval-across-k.png)
+
+Hybrid is not uniformly better: BM25 leads dense on full recall at every k, and
+the fusion is what buys the gap over both. Full recall is the column that decides
+whether a multi-hop answer can be complete.
+
+![single-hop against multi-hop](eval/figures/single-vs-multi-hop.png)
+
+Multi-hop questions lose most of their ground on full recall specifically, which
+is the failure a partial answer conceals: the model has one of the two articles it
+needs and writes a fluent answer from it.
 
 45 hand-written questions over 464 chunks. Retrieval scoring needs no LLM at all, so
 anyone can reproduce these numbers for free. Full breakdown in
@@ -136,7 +186,28 @@ would take that trade.
 
 ---
 
-## Running it
+### 1.2 The recital ablation
+
+![down-weighting recitals is a step, not a peak](eval/figures/recital-ablation.png)
+
+Recitals restate the operative rules in flowing prose, so they match a
+natural-language question better than the article that actually contains the rule,
+and they were crowding binding provisions out of the top-k. Every weight below 1.0
+scores identically. A tuned hyper-parameter would show a peak here; a structural
+effect shows a step, and this is a step.
+
+### 1.3 Generation
+
+![answer quality and the refusal trade](eval/figures/answer-quality.png)
+
+![where the 45 questions end up](eval/figures/failure-modes.png)
+
+Six of the twelve non-ok outcomes are retrieval failures — three complete misses
+and three partial — and another four are refusals of answerable questions. Only
+two are generation faults given correct evidence. That split is the argument for
+spending effort on retrieval rather than on prompting.
+
+## 2. Running it
 
 ```bash
 make setup && make corpus && make index
@@ -166,7 +237,7 @@ docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest
 
 ---
 
-## How it's built
+## 3. Method
 
 ### Getting the text, and chunking it
 
@@ -226,7 +297,7 @@ making something up.
 
 ---
 
-## The test set
+## 4. The test set
 
 45 questions in [`eval/qa_set.jsonl`](eval/qa_set.jsonl). I wrote all of them by hand
 against text I'd read in the parsed corpus, and each one records which articles count as
@@ -273,7 +344,7 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
 
 ---
 
-## What's wrong with it
+## 5. Limitations
 
 - **41.7% full recall on multi-hop questions.** Biggest weakness by far. Splitting the
   question into sub-queries and retrieving for each is the obvious next thing to try,
@@ -293,7 +364,7 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
 
 ---
 
-## Layout
+## 6. Repository layout
 
 ```
 src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline
@@ -303,7 +374,7 @@ tests/           corpus integrity, metric maths, citation parsing
 deploy/          Hugging Face Space template
 ```
 
-## Docker
+## 7. Docker
 
 ```bash
 make docker
@@ -360,7 +431,7 @@ JSONL in the repo.
 
 ---
 
-## Credit
+## 8. Credit
 
 The corpus is Regulation (EU) 2024/1689 from the Official Journal of the European Union,
 via the EU Publications Office (CELEX 32024R1689). Reuse is covered by Decision
