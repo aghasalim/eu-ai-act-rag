@@ -21,9 +21,9 @@ Scored at *provision* level: retrieving any chunk of the correct article counts 
 
 | strategy | hit rate | recall | full recall | precision | MRR | nDCG | s/query |
 |---|---|---|---|---|---|---|---|
-| **dense** | 81.8% | 67.2% | 51.5% | 19.6% | 0.521 | 0.537 | 0.245 |
-| **bm25** | 84.9% | 73.2% | 63.6% | 18.4% | 0.561 | 0.571 | 0.001 |
-| **hybrid** | 90.9% | 80.3% | 69.7% | 24.3% | 0.795 | 0.756 | 0.010 |
+| **dense** | 81.8% | 67.2% | 51.5% | 19.6% | 0.521 | 0.537 | 0.369 |
+| **bm25** | 84.9% | 73.2% | 63.6% | 18.4% | 0.561 | 0.571 | 0.002 |
+| **hybrid** | 90.9% | 80.3% | 69.7% | 24.3% | 0.790 | 0.754 | 0.019 |
 
 ### Single-hop vs multi-hop
 
@@ -34,7 +34,7 @@ Scored at *provision* level: retrieving any chunk of the correct article counts 
 | bm25 | single_hop | 81.0% | 81.0% | 81.0% | 0.537 |
 | bm25 | multi_hop | 91.7% | 59.7% | 33.3% | 0.603 |
 | hybrid | single_hop | 85.7% | 85.7% | 85.7% | 0.798 |
-| hybrid | multi_hop | 100.0% | 70.8% | 41.7% | 0.792 |
+| hybrid | multi_hop | 100.0% | 70.8% | 41.7% | 0.778 |
 
 ### Sensitivity to k (3, 5, 6, 10)
 
@@ -50,11 +50,11 @@ Recitals restate the operative rules in flowing prose, so they match a natural-l
 
 | w | hit rate | recall | full recall | MRR | nDCG |
 |---|---|---|---|---|---|
-| 1.0 | 87.9% | 76.3% | 66.7% | 0.586 | 0.602 |
-| 0.75 | 90.9% | 79.3% | 69.7% | 0.795 | 0.750 |
-| 0.5 ←default | 90.9% | 80.3% | 69.7% | 0.795 | 0.756 |
-| 0.25 | 90.9% | 80.3% | 69.7% | 0.795 | 0.756 |
-| 0.0 | 90.9% | 80.3% | 69.7% | 0.795 | 0.756 |
+| 1.0 | 87.9% | 76.3% | 66.7% | 0.581 | 0.600 |
+| 0.75 | 90.9% | 79.3% | 69.7% | 0.790 | 0.748 |
+| 0.5 ←default | 90.9% | 80.3% | 69.7% | 0.790 | 0.754 |
+| 0.25 | 90.9% | 80.3% | 69.7% | 0.790 | 0.754 |
+| 0.0 | 90.9% | 80.3% | 69.7% | 0.790 | 0.754 |
 
 The gain is a **step, not a peak**: every `w < 1.0` scores the same, so the default is not an argmax fitted to this question set -- it is doing something structural, pushing non-binding text below binding text. `w=0.5` is kept rather than `w=0.0` because it scores identically while leaving recitals retrievable for interpretive questions.
 

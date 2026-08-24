@@ -27,6 +27,51 @@ def fmt(v, pct=False):
     return f"{v * 100:.1f}%" if pct else f"{v:.3f}"
 
 
+README_START = "<!-- RETRIEVAL_TABLE:START -->"
+README_END = "<!-- RETRIEVAL_TABLE:END -->"
+
+#: Labels the README uses for the strategies, which are friendlier than the keys.
+README_LABELS = {"dense": "dense (bge-small)", "bm25": "BM25", "hybrid": "**hybrid (RRF)**"}
+
+
+def readme_table(d: dict, k: str) -> list[str]:
+    """The README's retrieval table, from the same json RESULTS.md is built from.
+
+    This existed as hand-typed markdown until the numbers drifted: the README
+    claimed 0.402 s/query for dense while RESULTS.md said 0.245, and a later eval
+    run moved hybrid MRR without the table following. Generating both from one
+    artefact is the only version of this that stays true.
+    """
+    rows = [
+        "| strategy | hit rate | recall | full recall | MRR | nDCG | s/query |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for mode, md in d["retrieval"].items():
+        s = md["at_k"][k]["overall"]
+        label = README_LABELS.get(mode, mode)
+        bold = "**{}**".format if label.startswith("**") else str
+        rows.append(
+            f"| {label} | {bold(fmt(s['hit_rate'], 1))} | {bold(fmt(s['recall'], 1))} | "
+            f"{bold(fmt(s['full_recall'], 1))} | {bold(fmt(s['mrr']))} | "
+            f"{bold(fmt(s['ndcg']))} | {md['latency_s_per_query']:.3f} |"
+        )
+    return rows
+
+
+def update_readme(d: dict, k: str) -> None:
+    """Rewrite the README table in place between its markers."""
+    path = ROOT / "README.md"
+    text = path.read_text()
+    if README_START not in text or README_END not in text:
+        print("!! README markers missing -- table not updated")
+        return
+    head, rest = text.split(README_START, 1)
+    _, tail = rest.split(README_END, 1)
+    body = "\n".join(readme_table(d, k))
+    path.write_text(f"{head}{README_START}\n{body}\n{README_END}{tail}")
+    print("-> README.md (retrieval table)")
+
+
 def main(tag: str = "latest") -> None:
     path = config.RESULTS_DIR / f"eval_{tag}.json"
     d = json.loads(path.read_text())
@@ -107,7 +152,8 @@ def main(tag: str = "latest") -> None:
     if "summary" not in d:
         A("## 2. Generation\n\n_Not run: no LLM key was configured._\n")
         (ROOT / "RESULTS.md").write_text("\n".join(out))
-        print(f"-> RESULTS.md (retrieval only)")
+        update_readme(d, k)
+        print("-> RESULTS.md (retrieval only)")
         return
 
     s = d["summary"]
@@ -188,6 +234,7 @@ def main(tag: str = "latest") -> None:
         A("")
 
     (ROOT / "RESULTS.md").write_text("\n".join(out))
+    update_readme(d, k)
     print("-> RESULTS.md")
 
 

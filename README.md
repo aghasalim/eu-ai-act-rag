@@ -33,11 +33,13 @@ anyone can reproduce these numbers for free. Full breakdown in
 
 ### Retrieval, k=6
 
+<!-- RETRIEVAL_TABLE:START -->
 | strategy | hit rate | recall | full recall | MRR | nDCG | s/query |
 |---|---|---|---|---|---|---|
-| dense (bge-small) | 81.8% | 67.2% | 51.5% | 0.521 | 0.537 | 0.402 |
+| dense (bge-small) | 81.8% | 67.2% | 51.5% | 0.521 | 0.537 | 0.369 |
 | BM25 | 84.9% | 73.2% | 63.6% | 0.561 | 0.571 | 0.002 |
-| **hybrid (RRF)** | **90.9%** | **80.3%** | **69.7%** | **0.795** | **0.756** | 0.011 |
+| **hybrid (RRF)** | **90.9%** | **80.3%** | **69.7%** | **0.790** | **0.754** | 0.019 |
+<!-- RETRIEVAL_TABLE:END -->
 
 "Hit rate" means at least one required article showed up. "Full recall" means *all* of
 them did. That second column is the one I care about, because a question needing two
@@ -68,7 +70,7 @@ but quietly drop the exception or the deadline.
 paragraphs at the top. They explain the rules in normal flowing sentences, which means
 they look *more* like an answer to a plain-English question than the actual article
 does. They were pushing real articles out of the top results. Giving them less weight
-in the ranking moved MRR from 0.586 to 0.795.
+in the ranking moved MRR from 0.581 to 0.790.
 
 I checked whether I was just fitting a number to my own test set, and I don't think so:
 every weight below 1.0 gives an identical score, so it's a step rather than a peak
