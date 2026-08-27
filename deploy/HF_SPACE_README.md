@@ -32,14 +32,14 @@ license: mit
 short_description: Grounded QA over the EU AI Act, with a measured eval harness
 ---
 
-# EU AI Act — Retrieval-Augmented QA
+# EU AI Act, Retrieval-Augmented QA
 
 Ask questions about Regulation (EU) 2024/1689. Every answer shows the passages it
 was built from, cites them inline, and refuses questions the Regulation does not
 cover.
 
-The evaluation harness — retrieval quality, faithfulness, hallucination rate and
-a categorised failure analysis over 45 hand-written questions — is the actual
+The evaluation harness, retrieval quality, faithfulness, hallucination rate and
+a categorised failure analysis over 45 hand-written questions, is the actual
 point of the project. Numbers and methodology:
 **https://github.com/aghasalim/eu-ai-act-rag**
 

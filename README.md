@@ -1,4 +1,4 @@
-# EU AI Act RAG — with an evaluation I actually ran
+# EU AI Act RAG, with an evaluation I actually ran
 
 **[▶ Live demo](https://eu-ai-act-rag-eval.streamlit.app/)** · every
 answer shows the passages it came from.
@@ -12,7 +12,7 @@ answer shows the passages it came from.
 A question-answering system over **Regulation (EU) 2024/1689 (the EU AI Act)**, built
 by a third-year Applied Computer Science (AI) student.
 
-I started this because I kept seeing RAG projects — including my own earlier attempts —
+I started this because I kept seeing RAG projects, including my own earlier attempts
 that stop at "look, it answers questions." Nobody checks whether the answer is actually
 in the documents it retrieved. So I made the measurement the main part of the project
 and the chatbot the side effect. I wrote 45 test questions by hand, scored the system
@@ -20,7 +20,7 @@ against them, and wrote down where it fails.
 
 The short version: the retrieval is decent (90.9% of questions get at least one correct
 provision), and genuinely bad at one specific thing (questions that need two articles at
-once — only 41.7% of those get everything they need). I'd rather show you that number
+once, only 41.7% of those get everything they need). I'd rather show you that number
 than hide it.
 
 ---
@@ -38,7 +38,7 @@ evaluation designed before the system, on 45 hand-written questions spanning
 single-hop, multi-hop and deliberately out-of-scope cases.
 
 Hybrid retrieval by reciprocal rank fusion reaches 90.9% hit rate and 69.7% full
-recall at k=6, against 81.8%/51.5% for dense and 84.9%/63.6% for BM25 — and full
+recall at k=6, against 81.8%/51.5% for dense and 84.9%/63.6% for BM25, and full
 recall is the column that matters, because a question needing two articles is not
 answered by finding one. Down-weighting recitals, the non-binding "whereas"
 paragraphs that match a plain-English question better than the terse article
@@ -116,7 +116,7 @@ everything it needs for under half of them. If I had only reported average recal
 would have been invisible. This is the case that produces answers which sound complete
 but quietly drop the exception or the deadline.
 
-**The recitals were sabotaging retrieval.** The Act has 180 recitals — the "whereas"
+**The recitals were sabotaging retrieval.** The Act has 180 recitals, the "whereas"
 paragraphs at the top. They explain the rules in normal flowing sentences, which means
 they look *more* like an answer to a plain-English question than the actual article
 does. They were pushing real articles out of the top results. Giving them less weight
@@ -125,14 +125,14 @@ in the ranking moved MRR from 0.581 to 0.790.
 I checked whether I was just fitting a number to my own test set, and I don't think so:
 every weight below 1.0 gives an identical score, so it's a step rather than a peak
 ([the sweep is in RESULTS.md](RESULTS.md#ablation-down-weighting-recitals)). It's doing
-something structural — pushing non-binding text below binding text. I kept the weight at
+something structural, pushing non-binding text below binding text. I kept the weight at
 0.5 instead of 0 because it scores the same and still lets recitals be retrieved when
 they're genuinely useful. Caveat I should state: none of my 45 questions have a recital
 as the correct answer, so this measurement flatters the change.
 
 ### Answer quality, faithfulness and hallucination
 
-Answered by `openai/gpt-oss-20b`, graded by `qwen/qwen3.6-27b` — a different model
+Answered by`openai/gpt-oss-20b`, graded by`qwen/qwen3.6-27b`, a different model
 family, so it isn't marking its own work. **All 45 questions.**
 
 | metric | value |
@@ -151,12 +151,12 @@ Broken out:
 |---|---|---|---|
 | single-hop | 21 | 76.2% | 97.2% |
 | **multi-hop** | 12 | **50.0%** | 74.3% |
-| unanswerable | 12 | 100% | — |
+| unanswerable | 12 | 100% |, |
 
 **A measurement bug was costing me 12 points of accuracy, and it hit the hardest
-questions hardest.** `LLM_MAX_TOKENS` was 800. On a reasoning model that cap is a
-*shared* budget — the `<think>` block is billed against it before any content is
-emitted — so a question that reasons for 800 tokens returns an **empty string**, with
+questions hardest.**`LLM_MAX_TOKENS` was 800. On a reasoning model that cap is a
+*shared* budget, the`<think>` block is billed against it before any content is
+emitted, so a question that reasons for 800 tokens returns an **empty string**, with
 no error and a ~60s latency. Four answers came back empty. All four were multi-hop,
 because those reason longest. Raising the cap to 2500:
 
@@ -166,7 +166,7 @@ because those reason longest. Raising the cap to 2500:
 | **multi-hop accuracy** | **25.0%** | **50.0%** |
 | answers returned empty | 4 | 0 |
 
-Multi-hop accuracy **doubled**. I had written up 25% as a retrieval story — the system
+Multi-hop accuracy **doubled**. I had written up 25% as a retrieval story, the system
 finds one of the two articles and answers half the question. That story was partly
 true and partly my own truncation, and I could not tell the difference until the empty
 answers were gone. It is a good argument for looking at raw model output rather than
@@ -179,7 +179,7 @@ multi-hop retrieval full-recall (41.7%). Faithfulness on multi-hop *fell* (82.7%
 makes more claims, and more claims means more chances for one to be unsupported.
 
 The refusal behaviour is the strongest result here: **12 out of 12 out-of-scope
-questions refused, none hallucinated** — including ones designed to bait it, like
+questions refused, none hallucinated**, including ones designed to bait it, like
 asking for a FLOP count when the corpus contains a similar-looking FLOP threshold. It
 errs toward refusing, which is why false abstention is 21%. For a legal assistant I
 would take that trade.
@@ -202,8 +202,8 @@ effect shows a step, and this is a step.
 
 ![where the 45 questions end up](eval/figures/failure-modes.png)
 
-Six of the twelve non-ok outcomes are retrieval failures — three complete misses
-and three partial — and another four are refusals of answerable questions. Only
+Six of the twelve non-ok outcomes are retrieval failures, three complete misses
+and three partial, and another four are refusals of answerable questions. Only
 two are generation faults given correct evidence. That split is the argument for
 spending effort on retrieval rather than on prompting.
 
@@ -243,7 +243,7 @@ docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest
 
 I pull the official XHTML from the EU Publications Office Cellar API (CELEX
 `32024R1689`). I originally tried scraping eur-lex.europa.eu and got a bot-challenge
-page back every time — Cellar serves the same authoritative text and, more usefully,
+page back every time, Cellar serves the same authoritative text and, more usefully,
 keeps its ELI markup, so every article and annex has a stable id I can key on.
 
 **I chunk on the document's own structure instead of a fixed token window.** The reason
@@ -258,8 +258,8 @@ That created three problems I had to deal with:
 | problem | what I did |
 |---|---|
 | Articles range from 2 lines (Art. 4) to about 9k tokens (Art. 3 has 68 definitions) | Split at numbered-item boundaries first, sentence boundaries second, never mid-sentence |
-| A split chunk on its own is meaningless ("…shall not apply" — what shall not apply?) | Every chunk starts with a `Chapter > Section > Article N — Title` breadcrumb that gets embedded with it |
-| The lettered lists `(a) (b) (c)` are nested two-column HTML tables, and `get_text()` turns them into mush | Wrote a recursive renderer that rebuilds the outline structure |
+| A split chunk on its own is meaningless ("…shall not apply", what shall not apply?) | Every chunk starts with a`Chapter > Section > Article N — Title` breadcrumb that gets embedded with it |
+| The lettered lists`(a) (b) (c)` are nested two-column HTML tables, and`get_text()` turns them into mush | Wrote a recursive renderer that rebuilds the outline structure |
 
 End result: 113 articles + 180 recitals + 13 annexes → **464 chunks**, 95th percentile
 440 tokens, longest 468. All under the encoder's 512-token limit, which matters more
@@ -268,8 +268,8 @@ with no error message. There's a test that fails if this ever regresses.
 
 Two bugs I only caught by reading the parsed output:
 
-- The `10^25` FLOP threshold in Article 51(2) is a superscript in the source, and naive
-  extraction turns it into `"10 25"`. That's the number that decides whether a model
+- The`10^25` FLOP threshold in Article 51(2) is a superscript in the source, and naive
+  extraction turns it into`"10 25"`. That's the number that decides whether a model
   counts as systemic risk, so getting it wrong is not cosmetic.
 - Long recitals came out as single 1000-token chunks, meaning half of each one never
   made it into the embedding.
@@ -280,14 +280,14 @@ Two bugs I only caught by reading the parsed output:
 
 I used RRF rather than blending the two scores because cosine similarity and BM25 scores
 aren't on the same scale, so blending needs a scaling constant that you'd have to retune
-for every corpus — and tuning it on my own test set is exactly the trap I was trying to
+for every corpus, and tuning it on my own test set is exactly the trap I was trying to
 avoid. RRF only looks at the rank positions, so there's nothing to fit.
 
 ### Generation
 
 Groq, OpenAI, Gemini and Ollama all speak the same OpenAI-style chat API, so the whole
-LLM layer is one `httpx` call and there's no vendor SDK in `requirements.txt`. Switching
-provider is two lines in `.env`.
+LLM layer is one`httpx` call and there's no vendor SDK in`requirements.txt`. Switching
+provider is two lines in`.env`.
 
 The prompt gives the model a literal "say NOT_IN_CORPUS" escape hatch. Without one, an
 instruction-tuned model will answer an out-of-scope question anyway rather than admit it
@@ -303,9 +303,9 @@ making something up.
 against text I'd read in the parsed corpus, and each one records which articles count as
 the correct answer plus a note on what failure it's meant to catch.
 
-- **21 single-hop** — the answer is stated in one place.
-- **12 multi-hop** — you need two or more articles.
-- **12 unanswerable** — GDPR, the Digital Services Act, facts the Regulation simply
+- **21 single-hop**: the answer is stated in one place.
+- **12 multi-hop**: you need two or more articles.
+- **12 unanswerable**: GDPR, the Digital Services Act, facts the Regulation simply
   never states. These aren't testing knowledge, they're testing whether the system will
   admit it doesn't know.
 
@@ -314,7 +314,7 @@ I deliberately went after places where being *nearly* right is still wrong:
 - Article 73 has three different serious-incident deadlines depending on severity: 15
   days normally, 10 days if someone died, 2 days for a widespread infringement.
 - Article 99 sets fines at "whichever is **higher**" of a cash amount or a percentage of
-  turnover — then Article 99(6) flips it to "whichever is **lower**" for SMEs.
+  turnover, then Article 99(6) flips it to "whichever is **lower**" for SMEs.
 - Article 2(8) exempts research and development, and then pulls real-world testing back
   out of that exemption.
 
@@ -328,7 +328,7 @@ I deliberately went after places where being *nearly* right is still wrong:
 | answer correctness | yes | right sources, wrong conclusion |
 | abstention / hallucination rate | yes | answering when it should have refused |
 
-Citation validity is my favourite one because it needs no judge model at all — you just
+Citation validity is my favourite one because it needs no judge model at all, you just
 check whether each cited article was in the retrieved set. A citation pointing at
 something the model never saw is a made-up citation, and that's the failure mode that
 looks most like evidence.
@@ -356,7 +356,7 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
   down-weighting look better than it probably is.
 - **English only.** The Act is equally valid in 24 languages and I've tested one.
 - **The generation half of the evaluation hasn't been run yet** (needs an API key).
-- `data/processed/chunks.jsonl` is generated, not source. It's committed so you can look
+-`data/processed/chunks.jsonl` is generated, not source. It's committed so you can look
   at the chunking without installing anything; CI rebuilds it from the raw document and
   re-tests it.
 - This is a student project, not legal advice. Please don't make compliance decisions
@@ -380,32 +380,32 @@ deploy/          Hugging Face Space template
 make docker
 ```
 
-CI builds `linux/amd64` and publishes to
+CI builds`linux/amd64` and publishes to
 `ghcr.io/aghasalim/eu-ai-act-rag:latest`, then starts the image and checks retrieval
 still works before letting the tag stand. The index is built into the image, so a cold
 container answers immediately instead of downloading a model first.
 
-It's a 2.8 GB image, which I'm not happy about. Most of that is `torch` (635 MB) plus
-things I don't use directly but that come along with `chromadb` (onnxruntime, kubernetes)
-and `streamlit` (pyarrow). Exporting the encoder to ONNX Runtime — which chromadb
-installs anyway — would drop torch entirely. I haven't done it yet.
+It's a 2.8 GB image, which I'm not happy about. Most of that is`torch` (635 MB) plus
+things I don't use directly but that come along with`chromadb` (onnxruntime, kubernetes)
+and`streamlit` (pyarrow). Exporting the encoder to ONNX Runtime, which chromadb
+installs anyway, would drop torch entirely. I haven't done it yet.
 
 ### Hosting it
 
 Heads-up if you're following an older RAG tutorial: **Hugging Face Spaces is no longer
-free for this.** Their API now rejects Docker and Gradio Spaces on free `cpu-basic` with
-a 402 unless you have PRO, and the Streamlit SDK has been removed entirely — the only
-free tier left is `static`, which can't run Python. I found this out by trying it.
+free for this.** Their API now rejects Docker and Gradio Spaces on free`cpu-basic` with
+a 402 unless you have PRO, and the Streamlit SDK has been removed entirely, the only
+free tier left is`static`, which can't run Python. I found this out by trying it.
 
 So the options are:
 
 | host | cost | notes |
 |---|---|---|
-| Streamlit Community Cloud | free | Built for exactly this. Points at this repo and `app/streamlit_app.py`. |
+| Streamlit Community Cloud | free | Built for exactly this. Points at this repo and`app/streamlit_app.py`. |
 | Hugging Face Space (docker) | PRO, $9/mo | [`deploy/HF_SPACE_README.md`](deploy/HF_SPACE_README.md) has the config; works as soon as the account has PRO. |
-| Anything that runs a container | varies | `docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest` |
+| Anything that runs a container | varies |`docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest` |
 
-Whichever you pick, set `GROQ_API_KEY` as a **secret**, never as a plain environment
+Whichever you pick, set`GROQ_API_KEY` as a **secret**, never as a plain environment
 variable. Without it the app still runs and still shows retrieved passages, it just
 won't generate prose answers.
 
@@ -416,15 +416,15 @@ The settings are:
 
 | field | value |
 |---|---|
-| Repository | `aghasalim/eu-ai-act-rag` |
-| Branch | `main` |
-| Main file path | `app/streamlit_app.py` |
-| Python version | `3.12` (also pinned in `.python-version`) |
+| Repository |`aghasalim/eu-ai-act-rag` |
+| Branch |`main` |
+| Main file path |`app/streamlit_app.py` |
+| Python version |`3.12` (also pinned in`.python-version`) |
 
-Then under **Advanced settings → Secrets**, paste `GROQ_API_KEY = "your_key"`.
+Then under **Advanced settings → Secrets**, paste`GROQ_API_KEY = "your_key"`.
 
 The app builds its vector index on first boot if it doesn't find one, so the first
-load takes a couple of minutes and every load after that is instant. `data/index/` is
+load takes a couple of minutes and every load after that is instant.`data/index/` is
 deliberately not committed: a Chroma store is a binary tied to one chromadb version and
 rots silently when that version moves, whereas the chunks it's built from are plain
 JSONL in the repo.
