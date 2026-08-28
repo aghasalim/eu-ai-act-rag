@@ -85,7 +85,7 @@ as the correct answer, so this measurement flatters the change.
 
 **A measurement bug was costing me 12 points of accuracy, and it hit the hardest
 questions hardest.**`LLM_MAX_TOKENS` was 800. On a reasoning model that cap is a
-*shared* budget, the`<think>` block is billed against it before any content is
+*shared* budget, the `<think>` block is billed against it before any content is
 emitted, so a question that reasons for 800 tokens returns an **empty string**, with
 no error and a ~60s latency. Four answers came back empty. All four were multi-hop,
 because those reason longest. Raising the cap to 2500:
@@ -137,8 +137,8 @@ That created three problems I had to deal with:
 | problem | what I did |
 |---|---|
 | Articles range from 2 lines (Art. 4) to about 9k tokens (Art. 3 has 68 definitions) | Split at numbered-item boundaries first, sentence boundaries second, never mid-sentence |
-| A split chunk on its own is meaningless ("…shall not apply", what shall not apply?) | Every chunk starts with a`Chapter > Section > Article N — Title` breadcrumb that gets embedded with it |
-| The lettered lists`(a) (b) (c)` are nested two-column HTML tables, and`get_text()` turns them into mush | Wrote a recursive renderer that rebuilds the outline structure |
+| A split chunk on its own is meaningless ("…shall not apply", what shall not apply?) | Every chunk starts with a `Chapter > Section > Article N — Title` breadcrumb that gets embedded with it |
+| The lettered lists `(a) (b) (c)` are nested two-column HTML tables, and `get_text()` turns them into mush | Wrote a recursive renderer that rebuilds the outline structure |
 
 End result: 113 articles + 180 recitals + 13 annexes → **464 chunks**, 95th percentile
 440 tokens, longest 468. All under the encoder's 512-token limit, which matters more
@@ -147,8 +147,8 @@ with no error message. There's a test that fails if this ever regresses.
 
 Two bugs I only caught by reading the parsed output:
 
-- The`10^25` FLOP threshold in Article 51(2) is a superscript in the source, and naive
-  extraction turns it into`"10 25"`. That's the number that decides whether a model
+- The `10^25` FLOP threshold in Article 51(2) is a superscript in the source, and naive
+  extraction turns it into `"10 25"`. That's the number that decides whether a model
   counts as systemic risk, so getting it wrong is not cosmetic.
 - Long recitals came out as single 1000-token chunks, meaning half of each one never
   made it into the embedding.
@@ -165,8 +165,8 @@ avoid. RRF only looks at the rank positions, so there's nothing to fit.
 ### Generation
 
 Groq, OpenAI, Gemini and Ollama all speak the same OpenAI-style chat API, so the whole
-LLM layer is one`httpx` call and there's no vendor SDK in`requirements.txt`. Switching
-provider is two lines in`.env`.
+LLM layer is one `httpx` call and there's no vendor SDK in `requirements.txt`. Switching
+provider is two lines in `.env`.
 
 The prompt gives the model a literal "say NOT_IN_CORPUS" escape hatch. Without one, an
 instruction-tuned model will answer an out-of-scope question anyway rather than admit it
@@ -249,32 +249,32 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
 make docker
 ```
 
-CI builds`linux/amd64` and publishes to
+CI builds `linux/amd64` and publishes to
 `ghcr.io/aghasalim/eu-ai-act-rag:latest`, then starts the image and checks retrieval
 still works before letting the tag stand. The index is built into the image, so a cold
 container answers immediately instead of downloading a model first.
 
-It's a 2.8 GB image, which I'm not happy about. Most of that is`torch` (635 MB) plus
-things I don't use directly but that come along with`chromadb` (onnxruntime, kubernetes)
-and`streamlit` (pyarrow). Exporting the encoder to ONNX Runtime, which chromadb
+It's a 2.8 GB image, which I'm not happy about. Most of that is `torch` (635 MB) plus
+things I don't use directly but that come along with `chromadb` (onnxruntime, kubernetes)
+and `streamlit` (pyarrow). Exporting the encoder to ONNX Runtime, which chromadb
 installs anyway, would drop torch entirely. I haven't done it yet.
 
 ### Hosting it
 
 Heads-up if you're following an older RAG tutorial: **Hugging Face Spaces is no longer
-free for this.** Their API now rejects Docker and Gradio Spaces on free`cpu-basic` with
+free for this.** Their API now rejects Docker and Gradio Spaces on free `cpu-basic` with
 a 402 unless you have PRO, and the Streamlit SDK has been removed entirely, the only
-free tier left is`static`, which can't run Python. I found this out by trying it.
+free tier left is `static`, which can't run Python. I found this out by trying it.
 
 So the options are:
 
 | host | cost | notes |
 |---|---|---|
-| Streamlit Community Cloud | free | Built for exactly this. Points at this repo and`app/streamlit_app.py`. |
+| Streamlit Community Cloud | free | Built for exactly this. Points at this repo and `app/streamlit_app.py`. |
 | Hugging Face Space (docker) | PRO, $9/mo | [`deploy/HF_SPACE_README.md`](../deploy/HF_SPACE_README.md) has the config; works as soon as the account has PRO. |
 | Anything that runs a container | varies |`docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest` |
 
-Whichever you pick, set`GROQ_API_KEY` as a **secret**, never as a plain environment
+Whichever you pick, set `GROQ_API_KEY` as a **secret**, never as a plain environment
 variable. Without it the app still runs and still shows retrieved passages, it just
 won't generate prose answers.
 
@@ -288,12 +288,12 @@ The settings are:
 | Repository |`aghasalim/eu-ai-act-rag` |
 | Branch |`main` |
 | Main file path |`app/streamlit_app.py` |
-| Python version |`3.12` (also pinned in`.python-version`) |
+| Python version |`3.12` (also pinned in `.python-version`) |
 
-Then under **Advanced settings → Secrets**, paste`GROQ_API_KEY = "your_key"`.
+Then under **Advanced settings → Secrets**, paste `GROQ_API_KEY = "your_key"`.
 
 The app builds its vector index on first boot if it doesn't find one, so the first
-load takes a couple of minutes and every load after that is instant.`data/index/` is
+load takes a couple of minutes and every load after that is instant. `data/index/` is
 deliberately not committed: a Chroma store is a binary tied to one chromadb version and
 rots silently when that version moves, whereas the chunks it's built from are plain
 JSONL in the repo.

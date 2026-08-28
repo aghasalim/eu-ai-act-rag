@@ -67,7 +67,7 @@ fitted to 45 questions.
 
 ## Answers
 
-Answered by`openai/gpt-oss-20b`, graded by`qwen/qwen3.6-27b`, a different model
+Answered by `openai/gpt-oss-20b`, graded by `qwen/qwen3.6-27b`, a different model
 family, so it isn't marking its own work. **All 45 questions.**
 
 | metric | value |
@@ -84,7 +84,7 @@ family, so it isn't marking its own work. **All 45 questions.**
 
 12 out of 12 out-of-scope questions refused, none hallucinated, including ones designed
 to bait it. It errs toward refusing, which is why false abstention is 21%. Per-type
-breakdown, and the`LLM_MAX_TOKENS` bug that was costing 12 points of accuracy, in
+breakdown, and the `LLM_MAX_TOKENS` bug that was costing 12 points of accuracy, in
 [notes/METHODS.md](notes/METHODS.md#answer-quality-broken-out).
 
 ![where the 45 questions end up](eval/figures/failure-modes.png)
