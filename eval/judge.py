@@ -60,8 +60,8 @@ def pick_judge(generator_model: str, provider: str | None = None) -> str:
     """Choose the best available judge from a different family than the generator.
 
     The exclusion is by *family*, not by exact name. Checking only the name let
-    `openai/gpt-oss-120b` be picked to grade `openai/gpt-oss-20b` -- same vendor,
-    same training lineage -- while the README claimed the judge was independent.
+    `openai/gpt-oss-120b` be picked to grade `openai/gpt-oss-20b`, same vendor,
+    same training lineage, while the README claimed the judge was independent.
     The comment above this list always said "different family"; the code did not.
     """
     available = set(list_models(provider))
@@ -72,7 +72,7 @@ def pick_judge(generator_model: str, provider: str | None = None) -> str:
 
 
 def _json(text: str) -> dict | list | None:
-    """Tolerant JSON extraction -- judges sometimes wrap output in prose or fences."""
+    """Tolerant JSON extraction, judges sometimes wrap output in prose or fences."""
     text = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip()
     try:
         return json.loads(text)
@@ -102,7 +102,7 @@ from Regulation (EU) 2024/1689.
 A claim is SUPPORTED only if it follows from the excerpts alone. If it requires \
 outside knowledge, contradicts the excerpts, or adds specifics (numbers, dates, \
 conditions) not present in them, it is NOT supported. Being true in the real world \
-is irrelevant -- only the excerpts count.
+is irrelevant, only the excerpts count.
 
 EXCERPTS:
 {context}

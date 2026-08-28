@@ -8,7 +8,7 @@ from pathlib import Path
 # Must happen before anything imports chromadb. Streamlit Community Cloud runs a
 # Debian image whose system sqlite3 predates 3.35, which chromadb refuses to
 # start on. pysqlite3-binary ships a modern build; we swap it in under the
-# stdlib name. Linux-only -- macOS and Windows sqlite3 are new enough.
+# stdlib name. Linux-only: macOS and Windows sqlite3 are new enough.
 try:  # noqa: SIM105
     __import__("pysqlite3")
     sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
@@ -47,7 +47,7 @@ st.set_page_config(page_title="EU AI Act RAG", page_icon="⚖️", layout="wide"
 def warm():
     """Load the index, building it first if this host has none.
 
-    `data/index/` is deliberately not in git -- a committed Chroma store is a
+    `data/index/` is deliberately not in git, a committed Chroma store is a
     binary tied to one chromadb version, and it silently rots on upgrade. The
     chunks are committed instead, so any host can rebuild the index from them.
     On a platform like Streamlit Community Cloud that clones the repo and runs
@@ -72,11 +72,11 @@ EXAMPLES = [
     "What are the six lawful bases for processing data under the GDPR?",
 ]
 
-st.title("⚖️ EU AI Act — Retrieval-Augmented QA")
+st.title("EU AI Act, Retrieval-Augmented QA")
 st.caption(
     "Answers are grounded in Regulation (EU) 2024/1689 only. Every claim is cited, "
     "and the passages the answer was built from are shown on the right. "
-    "The last example question is deliberately out of scope — the system should "
+    "The last example question is deliberately out of scope, the system should "
     "refuse it."
 )
 
@@ -91,15 +91,15 @@ with st.sidebar:
         st.success(f"{config.LLM_PROVIDER} · {config.LLM_MODEL}")
     else:
         st.warning(
-            "No API key set — running in retrieval-only mode. Retrieval below is "
+            "No API key set, running in retrieval-only mode. Retrieval below is "
             "fully live; only the written answer is disabled. To enable it set "
-            "`GROQ_API_KEY` — in **app secrets** when hosted, or in `.env` locally."
+            "`GROQ_API_KEY`, in **app secrets** when hosted, or in `.env` locally."
         )
     st.divider()
     st.markdown(
         "**Measured, not asserted.** The scores below come from "
         "[`eval/results/eval_latest.json`](https://github.com/aghasalim/eu-ai-act-rag/tree/main/eval/results), "
-        "the same file `make eval` writes — nothing here is typed in by hand."
+        "the same file `make eval` writes, nothing here is typed in by hand."
     )
 
 @st.cache_data
@@ -123,7 +123,7 @@ if _ev:
     cfg, summ = _ev["config"], _ev["summary"]
     hyb = _ev["retrieval"]["hybrid"]["at_k"].get(str(cfg["top_k"]), {}).get("overall", {})
     with st.expander(
-        f"How well does this actually work? — measured on {cfg['n_questions']} "
+        f"How well does this actually work?, measured on {cfg['n_questions']} "
         f"hand-written questions", expanded=False,
     ):
         c1, c2, c3, c4 = st.columns(4)
@@ -143,14 +143,14 @@ if _ev:
             f"splits hard by question type: **{by['single_hop']['accuracy_strict']:.1%}** on "
             f"single-hop questions against **{by['multi_hop']['accuracy_strict']:.1%}** on "
             f"multi-hop ones that need two articles at once. It refuses "
-            f"{summ['false_abstention_rate']:.1%} of questions it could have answered — "
+            f"{summ['false_abstention_rate']:.1%} of questions it could have answered, "
             "erring toward refusal, which for a legal assistant is the right direction "
             "to err in.\n\n"
-            f"Answered by `{cfg['gen_model']}`, graded by `{cfg['judge_model']}` — a "
+            f"Answered by `{cfg['gen_model']}`, graded by `{cfg['judge_model']}`, a "
             "different model family, so it is not marking its own work."
         )
 
-    # The running configuration can differ from the evaluated one -- via the
+    # The running configuration can differ from the evaluated one: via the
     # sidebar, or because this host answers with a different model than the eval
     # used. Either way the numbers above stop describing what the visitor is
     # getting, and a score that silently borrows authority from a different setup
@@ -191,7 +191,7 @@ if question:
         if res.abstained:
             st.warning(
                 "**Not answerable from the corpus.** The system declined rather "
-                "than guessing — this is the intended behaviour for out-of-scope "
+                "than guessing, this is the intended behaviour for out-of-scope "
                 "questions."
             )
         st.markdown(res.answer)

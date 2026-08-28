@@ -3,7 +3,7 @@
 
 # Prefer CPU-only torch on Linux. PEP 440 sorts the local version "2.x+cpu"
 # above plain "2.x", so on Linux pip picks the CPU wheel from this index instead
-# of dragging ~2.5 GB of CUDA libraries down from PyPI -- which is what blows the
+# of dragging ~2.5 GB of CUDA libraries down from PyPI: which is what blows the
 # disk budget on free hosts. macOS/Windows have no "+cpu" wheels here, so pip
 # falls through to PyPI and nothing changes locally.
 --extra-index-url https://download.pytorch.org/whl/cpu

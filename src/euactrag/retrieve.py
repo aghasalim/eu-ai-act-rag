@@ -4,7 +4,7 @@ Hybrid uses Reciprocal Rank Fusion rather than a weighted score blend. Cosine
 similarities and BM25 scores live on incompatible scales, so blending them needs
 a normalisation constant that has to be re-tuned per corpus. RRF only consumes
 *ranks*, so it has one parameter (k=60, the value from Cormack et al. 2009) and
-no per-corpus tuning -- which matters when the point of the project is to report
+no per-corpus tuning, which matters when the point of the project is to report
 honest numbers rather than numbers fitted to the eval set.
 """
 from __future__ import annotations
@@ -73,7 +73,7 @@ def hybrid(query: str, k: int = 10, pool: int = 30,
     """Fuse dense and lexical rankings by RRF: score = sum w / (K + rank).
 
     `w` is 1.0 for binding provisions (articles, annexes) and
-    `config.RECITAL_WEIGHT` for recitals -- see the note there for why.
+    `config.RECITAL_WEIGHT` for recitals, see the note there for why.
     """
     w = config.RECITAL_WEIGHT if recital_weight is None else recital_weight
     runs = [dense(query, pool), bm25(query, pool)]

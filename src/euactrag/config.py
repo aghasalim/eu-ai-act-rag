@@ -35,7 +35,7 @@ RETRIEVAL_MODE = os.getenv("RETRIEVAL_MODE", "hybrid")  # dense | bm25 | hybrid
 
 # Recitals restate the operative rules in flowing prose, which makes them score
 # *higher* against a natural-language question than the terse article that
-# actually contains the rule -- they were crowding binding provisions out of the
+# actually contains the rule: they were crowding binding provisions out of the
 # top-k. The Regulation itself treats recitals as non-binding interpretive aids,
 # so down-weighting them in the ranking is a domain prior, not a tuned constant:
 # 0.5 = "half the evidential weight of a binding provision". Set to 1.0 to
@@ -48,15 +48,15 @@ LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")  # groq|openai|gemini|ollama|ex
 # The evaluated model, so that `make eval` with no flags reproduces the numbers
 # in the README. The previous default (llama-3.3-70b-versatile) was never the one
 # measured, which meant the documented command produced different figures than
-# the documentation it was supposed to reproduce -- and the hosted demo answered
+# the documentation it was supposed to reproduce: and the hosted demo answered
 # with one model while advertising another's scores.
 LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-oss-20b")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.0"))
 # 800 was too small and it cost me four answers. On a reasoning model this cap is
 # a *shared* budget: the <think> block is billed against it before any content is
 # emitted, so a question that reasons for 800 tokens returns an empty string with
-# no error and a ~60s latency. It bit exactly the hardest questions -- all four
-# empties were multi-hop -- which is the worst possible bias, because it silently
+# no error and a ~60s latency. It bit exactly the hardest questions: all four
+# empties were multi-hop: which is the worst possible bias, because it silently
 # scores the model's weakest category as wrong for a harness reason.
 # Not fixable with reasoning_effort="none": gpt-oss-20b rejects that with a 400
 # (the judge's qwen model accepts it, which is why judge.py can use it).

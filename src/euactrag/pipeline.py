@@ -82,7 +82,7 @@ def format_context(hits: list[dict]) -> str:
 # Both bracket families are accepted because the model chooses, not us:
 # gpt-oss-120b emits full-width 【...】 while llama emits [...]. Matching only
 # ASCII brackets silently parsed zero citations from one of them, which does not
-# fail loudly -- it just reports citation validity as "no citations made".
+# fail loudly: it just reports citation validity as "no citations made".
 _CITE = re.compile(
     r"[\[【]\s*(Article|Annex|Recital)[^\]】]*?(\d+|[IVXLC]+)[^\]】]*?[\]】]", re.I
 )

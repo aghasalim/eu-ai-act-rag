@@ -19,14 +19,14 @@ HEADERS = {"Accept": "application/xhtml+xml", "Accept-Language": "eng"}
 def fetch(force: bool = False) -> int:
     if config.RAW_XHTML.exists() and not force:
         n = config.RAW_XHTML.stat().st_size
-        print(f"already present: {config.RAW_XHTML} ({n:,} bytes) -- use --force to refetch")
+        print(f"already present: {config.RAW_XHTML} ({n:,} bytes), use --force to refetch")
         return n
     config.RAW_XHTML.parent.mkdir(parents=True, exist_ok=True)
     r = httpx.get(config.SOURCE_URL, headers=HEADERS, timeout=120, follow_redirects=True)
     r.raise_for_status()
     if b"eli-subdivision" not in r.content:
         raise RuntimeError(
-            "downloaded document has no ELI markup -- the source format changed; "
+            "downloaded document has no ELI markup, the source format changed; "
             "the chunker keys on `eli-subdivision` ids."
         )
     config.RAW_XHTML.write_bytes(r.content)

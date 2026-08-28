@@ -6,7 +6,7 @@ The AI Act is authored as self-contained normative units. Legal questions are
 answered with a *citation* ("Article 6(2)", "Annex III, point 5(b)"), so the
 retrieval unit should be the unit a lawyer would cite. A 512-token sliding
 window would routinely cut an article's scope clause away from its exceptions
-paragraph -- and in this corpus the exception *is* the answer. So we chunk on the
+paragraph, and in this corpus the exception *is* the answer. So we chunk on the
 document's own ELI markup (`art_N`, `rct_N`, `anx_X`).
 
 The three problems that naive article-chunking creates, and how we handle them:
@@ -15,8 +15,8 @@ The three problems that naive article-chunking creates, and how we handle them:
    Oversized articles are split at *numbered-paragraph* boundaries, never
    mid-sentence, and never mid-paragraph.
 2. A split chunk retrieved on its own loses its identity ("...shall not apply"
-   -- what shall not apply?). Every chunk therefore carries a breadcrumb header
-   (Chapter > Section > Article N -- Title) that is embedded along with the body.
+, what shall not apply?). Every chunk therefore carries a breadcrumb header
+   (Chapter > Section > Article N, Title) that is embedded along with the body.
 3. Enumerations are encoded as nested two-column HTML tables. `get_text()`
    flattens them into unreadable soup, so we render them recursively back into
    "1. ... (a) ..." outline text.
@@ -47,7 +47,7 @@ def _clean(s: str) -> str:
 def _fix_superscripts(soup: BeautifulSoup) -> None:
     """The 10^25 FLOP threshold in Article 51(2) is marked up as <sup>25</sup>.
     Flattening it yields "10 25", which is wrong and unsearchable. Only convert
-    a digit superscript that directly follows a digit -- the other 58 plain
+    a digit superscript that directly follows a digit, the other 58 plain
     superscripts in the document are footnote reference markers, not exponents.
     """
     for sp in soup.find_all("span", class_="oj-super"):
@@ -62,7 +62,7 @@ def _fix_superscripts(soup: BeautifulSoup) -> None:
 
 # Heading nodes are captured into structured fields, so the body renderer drops
 # them rather than repeating them inline. `oj-note*` are footnote markers and OJ
-# bibliographic footnotes -- noise for retrieval.
+# bibliographic footnotes: noise for retrieval.
 _SKIP_CLASSES = ("oj-note", "oj-ti-art", "oj-sti-art", "oj-doc-ti")
 
 
@@ -136,7 +136,7 @@ def approx_tokens(text: str) -> int:
 class Chunk:
     chunk_id: str
     kind: str  # article | recital | annex
-    unit_id: str  # art_6 / rct_27 / anx_III -- the retrieval-scoring unit
+    unit_id: str  # art_6 / rct_27 / anx_III, the retrieval-scoring unit
     citation: str
     title: str = ""
     chapter: str = ""
@@ -205,7 +205,7 @@ def _split_paragraphs(body: str, max_tokens: int) -> list[str]:
     Order of preference: enumerated-item boundary > sentence boundary. We never
     split mid-sentence, so a definition or a paragraph always stays whole.
     Anything left over budget after both passes is a single sentence, which we
-    keep intact and let the encoder truncate -- that is rare and visible in the
+    keep intact and let the encoder truncate, that is rare and visible in the
     ingest stats rather than silent.
     """
     units: list[str] = []
@@ -252,7 +252,7 @@ def parse(xhtml_path=None) -> list[Chunk]:
     chunks: list[Chunk] = []
 
     # Chapter/section headings are plain <p> in document order, not wrapped in a
-    # container we can nest on -- so we sweep the document once and remember the
+    # container we can nest on: so we sweep the document once and remember the
     # most recent heading seen before each article.
     chapter = chapter_title = section = section_title = ""
     pending: str | None = None  # "chapter" or "section" awaiting its title line

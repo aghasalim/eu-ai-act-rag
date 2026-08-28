@@ -2,7 +2,7 @@
 
 Groq, OpenAI, Gemini and Ollama all expose an OpenAI-compatible
 `/chat/completions` endpoint, so a single HTTP call covers all four. That is why
-there are no vendor SDKs in requirements.txt -- swapping providers is a change of
+there are no vendor SDKs in requirements.txt, swapping providers is a change of
 two environment variables, not a code change.
 
 `extractive` is the no-key fallback: the pipeline degrades to returning ranked
@@ -25,8 +25,8 @@ _DURATION = re.compile(r"^(?:(\d+)h)?(?:(\d+)m)?(?:([\d.]+)s)?$")
 
 # --- client-side tokens-per-minute pacing --------------------------------
 # Free tiers meter tokens per minute (Groq: 12k for llama-3.3-70b, 8k for the
-# gpt-oss-120b judge). The provider refills continuously -- reset-tokens reads
-# ~205ms -- so `x-ratelimit-remaining-tokens` is almost always near full and
+# gpt-oss-120b judge). The provider refills continuously: reset-tokens reads
+# ~205ms: so `x-ratelimit-remaining-tokens` is almost always near full and
 # reacting to it never fires, yet a burst still trips a 429. A full evaluation
 # is ~145 calls carrying ~3k tokens of retrieved context each, so it must pace
 # itself. We learn each model's ceiling from the first response header and spend
@@ -163,7 +163,7 @@ def chat(
 
         if r.status_code == 429:
             # A per-day limit is not a per-minute limit. Groq only reveals it in
-            # the error body -- the x-ratelimit-* headers describe RPM/TPM only,
+            # the error body: the x-ratelimit-* headers describe RPM/TPM only,
             # so nothing else here can see it coming. Retrying is futile.
             body = r.text
             if "per day" in body or "TPD" in body:

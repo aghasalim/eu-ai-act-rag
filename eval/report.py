@@ -23,7 +23,7 @@ FAILURE_GLOSS = {
 
 def fmt(v, pct=False):
     if v is None:
-        return "—"
+        return "n/a"
     return f"{v * 100:.1f}%" if pct else f"{v:.3f}"
 
 
@@ -63,7 +63,7 @@ def update_readme(d: dict, k: str) -> None:
     path = ROOT / "README.md"
     text = path.read_text()
     if README_START not in text or README_END not in text:
-        print("!! README markers missing -- table not updated")
+        print("!! README markers missing, table not updated")
         return
     head, rest = text.split(README_START, 1)
     _, tail = rest.split(README_END, 1)
@@ -92,7 +92,7 @@ def main(tag: str = "latest") -> None:
     A("## 1. Retrieval quality\n")
     A("Scored at *provision* level: retrieving any chunk of the correct article "
       "counts as a hit, since the user is directed to the right provision. "
-      "`full_recall` requires **every** gold provision — the metric that matters "
+      "`full_recall` requires **every** gold provision, the metric that matters "
       "for multi-hop questions.\n")
     k = str(cfg["top_k"])
     A(f"### All strategies @ k={k}\n")
@@ -135,12 +135,12 @@ def main(tag: str = "latest") -> None:
         A(f"| w | hit rate | recall | full recall | MRR | nDCG |")
         A("|---|---|---|---|---|---|")
         for w, s in d["ablation_recital_weight"].items():
-            star = " ←default" if float(w) == d["config"].get("recital_weight") else ""
+            star = " (default)" if float(w) == d["config"].get("recital_weight") else ""
             A(f"| {w}{star} | {fmt(s['hit_rate'], 1)} | {fmt(s['recall'], 1)} | "
               f"{fmt(s['full_recall'], 1)} | {fmt(s['mrr'])} | {fmt(s['ndcg'])} |")
         A("")
         A("The gain is a **step, not a peak**: every `w < 1.0` scores the same, so "
-          "the default is not an argmax fitted to this question set -- it is doing "
+          "the default is not an argmax fitted to this question set, it is doing "
           "something structural, pushing non-binding text below binding text. "
           "`w=0.5` is kept rather than `w=0.0` because it scores identically while "
           "leaving recitals retrievable for interpretive questions.\n")
@@ -182,7 +182,7 @@ def main(tag: str = "latest") -> None:
       "out-of-scope questions answered anyway |")
     A(f"| False abstention | {fmt(s['false_abstention_rate'], 1)} | "
       "answerable questions wrongly refused |")
-    A(f"| Mean latency | {s['mean_latency_s']:.2f}s | _not a real latency figure_ — "
+    A(f"| Mean latency | {s['mean_latency_s']:.2f}s | _not a real latency figure_, "
       "the client sleeps to stay under the free tier's token-per-minute cap, so "
       "this is dominated by throttling, not by the model |")
     A("")

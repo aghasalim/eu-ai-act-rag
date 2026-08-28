@@ -341,7 +341,7 @@ def main() -> None:
             gen = score_generation(qa, a.k, a.gen_mode, a.model, judge_model, ckpt)
         except llm.DailyQuotaExhausted as e:
             print(f"\n[stopped] {e}")
-            print(f"[progress kept] {ckpt} — rerun the same command to resume.")
+            print(f"[progress kept] {ckpt}, rerun the same command to resume.")
             raise SystemExit(2)
         out["summary"] = summarise(gen["rows"])
         # Overrides the CLI-derived values set above. A resume mixes rows this

@@ -1,7 +1,7 @@
 """Smallest checks that fail loudly if the logic breaks.
 
 Deliberately not a per-function suite: these cover the parts where a silent bug
-would corrupt the evaluation numbers -- chunk integrity, the metric maths, and
+would corrupt the evaluation numbers, chunk integrity, the metric maths, and
 citation parsing.
 """
 from __future__ import annotations
@@ -152,8 +152,8 @@ def test_judge_is_never_from_the_generator_family():
     """The README claims the judge "isn't marking its own work". Enforce it.
 
     This regressed once: pick_judge only excluded the generator's exact name, so
-    `openai/gpt-oss-120b` was chosen to grade `openai/gpt-oss-20b` -- same vendor,
-    same lineage -- while the claim of independence stayed in the README.
+    `openai/gpt-oss-120b` was chosen to grade `openai/gpt-oss-20b`, same vendor,
+    same lineage, while the claim of independence stayed in the README.
     """
     from eval import judge as J
 

@@ -1,4 +1,4 @@
-"""Retrieval and attribution metrics. No LLM involved -- these are exact.
+"""Retrieval and attribution metrics. No LLM involved, these are exact.
 
 Everything is scored at *unit* level (art_6, anx_III, rct_27) rather than chunk
 level. A long article is split across several chunks, and retrieving any chunk of
@@ -74,7 +74,7 @@ def retrieval_scores(hits: list[dict], gold: list[str], k: int) -> dict:
 def citation_validity(cited: list[str], hits: list[dict]) -> float | None:
     """Fraction of the answer's inline citations that point at a provision that
     was actually retrieved. A citation to something outside the context window is
-    a fabricated attribution -- the most dangerous failure in a legal assistant,
+    a fabricated attribution, the most dangerous failure in a legal assistant,
     because it looks like evidence. Costs nothing to compute and needs no judge.
 
     Returns None when the answer cited nothing (undefined, not zero).
