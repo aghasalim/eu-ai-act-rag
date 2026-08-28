@@ -323,7 +323,7 @@ needs and writes a fluent answer from it.
 
 45 hand-written questions over 464 chunks. Retrieval scoring needs no LLM at all, so
 anyone can reproduce these numbers for free. Full breakdown in
-**[RESULTS.md](RESULTS.md)**.
+**[RESULTS.md](../RESULTS.md)**.
 
 "Hit rate" means at least one required article showed up. "Full recall" means *all* of
 them did. That second column is the one I care about, because a question needing two
@@ -358,6 +358,6 @@ cp .env.example .env && echo "GROQ_API_KEY=your_key_here" >> .env
 make eval && make report && make app
 ```
 
-45 questions in [`eval/qa_set.jsonl`](eval/qa_set.jsonl). I wrote all of them by hand
+45 questions in [`eval/qa_set.jsonl`](../eval/qa_set.jsonl). I wrote all of them by hand
 against text I'd read in the parsed corpus, and each one records which articles count as
 the correct answer plus a note on what failure it's meant to catch.
