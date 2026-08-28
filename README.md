@@ -52,6 +52,12 @@ for 100% of them and everything they need for 41.7%. Keyword search beating embe
 was the other surprise, both broken down in
 [notes/METHODS.md](notes/METHODS.md#three-things-i-did-not-expect).
 
+![per-question coverage as k grows](eval/figures/coverage-across-k.gif)
+
+*Each tile is one of the 33 answerable questions, coloured by how much of what it needs
+hybrid retrieval has found; only k moves across the frames (3, 5, 6, 10), while the
+questions, the ordering and the retriever stay fixed.*
+
 ![down-weighting recitals is a step, not a peak](eval/figures/recital-ablation.png)
 
 Recitals, the non-binding "whereas" paragraphs, restate the rules in flowing prose and
