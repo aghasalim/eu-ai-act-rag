@@ -134,16 +134,24 @@ def main(tag: str = "latest") -> None:
           "binding provision.\n")
         A(f"| w | hit rate | recall | full recall | MRR | nDCG |")
         A("|---|---|---|---|---|---|")
-        for w, s in d["ablation_recital_weight"].items():
+        abl = d["ablation_recital_weight"]
+        for w, s in abl.items():
             star = " (default)" if float(w) == d["config"].get("recital_weight") else ""
             A(f"| {w}{star} | {fmt(s['hit_rate'], 1)} | {fmt(s['recall'], 1)} | "
               f"{fmt(s['full_recall'], 1)} | {fmt(s['mrr'])} | {fmt(s['ndcg'])} |")
         A("")
-        A("The gain is a **step, not a peak**: every `w < 1.0` scores the same, so "
-          "the default is not an argmax fitted to this question set, it is doing "
-          "something structural, pushing non-binding text below binding text. "
-          "`w=0.5` is kept rather than `w=0.0` because it scores identically while "
-          "leaving recitals retrievable for interpretive questions.\n")
+        # Read the span off the sweep rather than typing it: the weights below the
+        # top one are close, but they are not equal, and the sentence has to say so.
+        ws = sorted(abl, key=float, reverse=True)
+        lo = min(abl[w]["ndcg"] for w in ws[1:])
+        hi = max(abl[w]["ndcg"] for w in ws[1:])
+        A(f"The gain is a **step, not a peak**: nearly all of it comes from dropping "
+          f"below `w={ws[0]}`, and the weights under that barely differ, nDCG only "
+          f"{fmt(lo)} to {fmt(hi)}. So the default is not an argmax fitted to this "
+          "question set, it is doing something structural, pushing non-binding text "
+          "below binding text. `w=0.5` is kept rather than `w=0.0` because it ties "
+          "on every column above while leaving recitals retrievable for interpretive "
+          "questions.\n")
         A("> **Honest caveat.** Every gold label in this eval set is an article or "
           "annex, so an eval containing recital-answerable questions would show a "
           "smaller benefit. The measured gain is an upper bound.\n")

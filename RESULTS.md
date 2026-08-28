@@ -56,7 +56,7 @@ Recitals restate the operative rules in flowing prose, so they match a natural-l
 | 0.25 | 90.9% | 80.3% | 69.7% | 0.790 | 0.754 |
 | 0.0 | 90.9% | 80.3% | 69.7% | 0.790 | 0.754 |
 
-The gain is a **step, not a peak**: every `w < 1.0` scores the same, so the default is not an argmax fitted to this question set -- it is doing something structural, pushing non-binding text below binding text. `w=0.5` is kept rather than `w=0.0` because it scores identically while leaving recitals retrievable for interpretive questions.
+The gain is a **step, not a peak**: nearly all of it comes from dropping below `w=1.0`, and the weights under that barely differ, nDCG only 0.748 to 0.754. So the default is not an argmax fitted to this question set, it is doing something structural, pushing non-binding text below binding text. `w=0.5` is kept rather than `w=0.0` because it ties on every column above while leaving recitals retrievable for interpretive questions.
 
 > **Honest caveat.** Every gold label in this eval set is an article or annex, so an eval containing recital-answerable questions would show a smaller benefit. The measured gain is an upper bound.
 

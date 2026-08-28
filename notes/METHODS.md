@@ -20,8 +20,9 @@ recall is the column that matters, because a question needing two articles is no
 answered by finding one. Down-weighting recitals, the non-binding "whereas"
 paragraphs that match a plain-English question better than the terse article
 containing the rule, lifts MRR from 0.581 to 0.790. That gain is a step rather
-than a peak: every weight below 1.0 scores identically, so it is structural rather
-than a hyper-parameter fitted to 45 questions.
+than a peak: nearly all of it is the drop below 1.0, and the weights under it move
+nDCG by 0.006 against a step of 0.154, so it is structural rather than a
+hyper-parameter fitted to 45 questions.
 
 On generation the system cites only passages it retrieved (citation validity
 1.00) and refuses all 12 unanswerable questions, so the hallucination rate on
@@ -66,12 +67,13 @@ does. They were pushing real articles out of the top results. Giving them less w
 in the ranking moved MRR from 0.581 to 0.790.
 
 I checked whether I was just fitting a number to my own test set, and I don't think so:
-every weight below 1.0 gives an identical score, so it's a step rather than a peak
-([the sweep is in RESULTS.md](../RESULTS.md#ablation-down-weighting-recitals)). It's doing
+nearly all the gain is the drop below 1.0, and the weights under it barely differ, MRR and
+full recall identical and nDCG creeping from 0.748 to 0.754, so it's a step rather than a
+peak ([the sweep is in RESULTS.md](../RESULTS.md#ablation-down-weighting-recitals)). It's doing
 something structural, pushing non-binding text below binding text. I kept the weight at
-0.5 instead of 0 because it scores the same and still lets recitals be retrieved when
-they're genuinely useful. Caveat I should state: none of my 45 questions have a recital
-as the correct answer, so this measurement flatters the change.
+0.5 instead of 0 because it ties on every metric in that sweep and still lets recitals
+be retrieved when they're genuinely useful. Caveat I should state: none of my 45
+questions have a recital as the correct answer, so this measurement flatters the change.
 
 ---
 
@@ -333,9 +335,10 @@ articles can't be answered properly if you only found one.
 
 Recitals restate the operative rules in flowing prose, so they match a
 natural-language question better than the article that actually contains the rule,
-and they were crowding binding provisions out of the top-k. Every weight below 1.0
-scores identically. A tuned hyper-parameter would show a peak here; a structural
-effect shows a step, and this is a step.
+and they were crowding binding provisions out of the top-k. Below 1.0 the weights
+barely differ: MRR and full recall are identical across them and nDCG only creeps from
+0.748 to 0.754, against a jump of 0.154 at 1.0. A tuned hyper-parameter would show a
+peak here; a structural effect shows a step, and this is a step.
 
 Six of the twelve non-ok outcomes are retrieval failures, three complete misses
 and three partial, and another four are refusals of answerable questions. Only

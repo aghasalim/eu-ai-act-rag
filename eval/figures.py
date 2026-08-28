@@ -153,20 +153,21 @@ def single_vs_multi_hop(out: Path, data: dict) -> Path:
 def recital_ablation(out: Path, data: dict) -> Path:
     """Down-weighting recitals is a step, not a tuned peak.
 
-    Every weight below 1.0 scores identically, which is the evidence that this is
-    structural, pushing non-binding text below binding text, rather than a
-    hyper-parameter fitted to 45 questions.
+    Almost all the gain comes from crossing below the top weight. The weights
+    under it are not quite identical, nDCG still creeps up, so the title reports
+    the step and that leftover spread instead of claiming they all score the same.
     """
     ablation = data["ablation_recital_weight"]
     weights = sorted(ablation, key=float, reverse=True)
     positions = np.arange(len(weights))
 
-    fig, ax = plt.subplots(figsize=(9.0, 4.8))
-    for metric, colour, label in [
+    series = [
         ("mrr", PALETTE[0], "MRR"),
         ("ndcg", PALETTE[4], "nDCG"),
         ("full_recall", PALETTE[3], "full recall"),
-    ]:
+    ]
+    fig, ax = plt.subplots(figsize=(9.0, 4.8))
+    for metric, colour, label in series:
         ax.plot(positions, [ablation[w][metric] for w in weights], "o-",
                 color=colour, label=label)
 
@@ -183,8 +184,15 @@ def recital_ablation(out: Path, data: dict) -> Path:
     ax.set_xlabel("recital weight (multiplier on a recital's fused rank score)")
     ax.set_ylabel("score (0 to 1)")
     ax.set_ylim(0.55, 0.83)
+    # Both numbers come from the sweep itself: the drop from the top weight to the
+    # best weight under it, and the widest any plotted curve moves below the top
+    # weight. Typing them in is how a title starts overstating its own data.
+    top, below = weights[0], weights[1:]
+    step = max(ablation[w]["ndcg"] for w in below) - ablation[top]["ndcg"]
+    spread = max(max(ablation[w][m] for w in below) - min(ablation[w][m] for w in below)
+                 for m, _, _ in series)
     titled(ax,
-           "Every weight below 1.0 scores the same, so this is a step and not a peak",
+           f"One step below w={top} adds {step:.3f} nDCG, then the curves span {spread:.3f}",
            f"hybrid retrieval at k={data['config']['top_k']}, sweeping only the recital weight")
     # Every curve is flat and high on the right, so the free corner is bottom right.
     ax.legend(loc="lower right")

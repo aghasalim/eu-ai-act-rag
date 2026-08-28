@@ -62,8 +62,9 @@ it needs hybrid retrieval has found. Only k changes across the frames, 3 then
 
 Recitals, the non-binding "whereas" paragraphs, restate the rules in flowing prose and
 were crowding binding articles out of the top-k. Down-weighting them moved MRR from
-0.581 to 0.790. Every weight below 1.0 scores identically, so it is a step, not a peak
-fitted to 45 questions.
+0.581 to 0.790. Below 1.0 the weights barely differ: MRR and full recall are identical
+across them and nDCG only creeps from 0.748 to 0.754. So it is a step, not a peak fitted
+to 45 questions.
 
 ## Answers
 
