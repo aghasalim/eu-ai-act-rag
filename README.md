@@ -54,9 +54,9 @@ was the other surprise, both broken down in
 
 ![per-question coverage as k grows](eval/figures/coverage-across-k.gif)
 
-*Each tile is one of the 33 answerable questions, coloured by how much of what it needs
-hybrid retrieval has found; only k moves across the frames (3, 5, 6, 10), while the
-questions, the ordering and the retriever stay fixed.*
+*Each tile is one of the 33 answerable questions, coloured by how much of what
+it needs hybrid retrieval has found. Only k changes across the frames, 3 then
+5 then 6 then 10, and the tiles that never fill in are the multi-hop ones.*
 
 ![down-weighting recitals is a step, not a peak](eval/figures/recital-ablation.png)
 
