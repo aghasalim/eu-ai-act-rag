@@ -79,7 +79,7 @@ The gain is a **step, not a peak**: every`w < 1.0` scores the same, so the defau
 |---|---|---|---|
 | single_hop | 21 | 76.2% | 97.2% |
 | multi_hop | 12 | 50.0% | 74.3% |
-| unanswerable | 12 | 100.0% |, |
+| unanswerable | 12 | 100.0% | - |
 
 _RAGAS cross-check unavailable: ragas not installed (ModuleNotFoundError)_
 
