@@ -86,7 +86,7 @@ questions have a recital as the correct answer, so this measurement flatters the
 | unanswerable | 12 | 100% |, |
 
 **A measurement bug was costing me 12 points of accuracy, and it hit the hardest
-questions hardest.**`LLM_MAX_TOKENS` was 800. On a reasoning model that cap is a
+questions hardest.** `LLM_MAX_TOKENS` was 800. On a reasoning model that cap is a
 *shared* budget, the `<think>` block is billed against it before any content is
 emitted, so a question that reasons for 800 tokens returns an **empty string**, with
 no error and a ~60s latency. Four answers came back empty. All four were multi-hop,
@@ -237,7 +237,7 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
   down-weighting look better than it probably is.
 - **English only.** The Act is equally valid in 24 languages and I've tested one.
 - **The generation half of the evaluation hasn't been run yet** (needs an API key).
--`data/processed/chunks.jsonl` is generated, not source. It's committed so you can look
+- `data/processed/chunks.jsonl` is generated, not source. It's committed so you can look
   at the chunking without installing anything; CI rebuilds it from the raw document and
   re-tests it.
 - This is a student project, not legal advice. Please don't make compliance decisions
@@ -274,7 +274,7 @@ So the options are:
 |---|---|---|
 | Streamlit Community Cloud | free | Built for exactly this. Points at this repo and `app/streamlit_app.py`. |
 | Hugging Face Space (docker) | PRO, $9/mo | [`deploy/HF_SPACE_README.md`](../deploy/HF_SPACE_README.md) has the config; works as soon as the account has PRO. |
-| Anything that runs a container | varies |`docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest` |
+| Anything that runs a container | varies | `docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest` |
 
 Whichever you pick, set `GROQ_API_KEY` as a **secret**, never as a plain environment
 variable. Without it the app still runs and still shows retrieved passages, it just
@@ -287,10 +287,10 @@ The settings are:
 
 | field | value |
 |---|---|
-| Repository |`aghasalim/eu-ai-act-rag` |
-| Branch |`main` |
-| Main file path |`app/streamlit_app.py` |
-| Python version |`3.12` (also pinned in `.python-version`) |
+| Repository | `aghasalim/eu-ai-act-rag` |
+| Branch | `main` |
+| Main file path | `app/streamlit_app.py` |
+| Python version | `3.12` (also pinned in `.python-version`) |
 
 Then under **Advanced settings → Secrets**, paste `GROQ_API_KEY = "your_key"`.
 
