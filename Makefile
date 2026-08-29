@@ -1,7 +1,7 @@
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup corpus index eval eval-retrieval app test docker clean all
+.PHONY: setup corpus index eval eval-retrieval app test report report-check docker clean all
 
 setup:
 	python3 -m venv .venv && $(PIP) install -q -U pip && $(PIP) install -q -r requirements.txt
@@ -21,6 +21,9 @@ eval-retrieval:  ## retrieval metrics only, no API key needed
 
 report:          ## regenerate RESULTS.md from the latest eval json
 	$(PY) eval/report.py
+
+report-check:    ## fail if RESULTS.md no longer matches what report.py generates
+	$(PY) eval/report.py --check
 
 app:
 	.venv/bin/streamlit run app/streamlit_app.py

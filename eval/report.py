@@ -21,7 +21,39 @@ FAILURE_GLOSS = {
 }
 
 
+def _emit(out: list[str], check: bool) -> None:
+    """Write RESULTS.md, or in check mode fail if it has drifted.
+
+    RESULTS.md is generated, so hand editing it is silently undone by the next
+    run. That has happened twice: a punctuation pass ate the space after the
+    pipe in 42 table cells, and an arrow was typed into the recital table by
+    hand. `report.py --check` is what catches it, and CI runs it.
+    """
+    text = "\n".join(out)
+    path = ROOT / "RESULTS.md"
+    if not check:
+        path.write_text(text)
+        return
+    current = path.read_text() if path.exists() else ""
+    if current == text:
+        print("RESULTS.md is up to date")
+        return
+    cur, want = current.split("\n"), text.split("\n")
+    for i in range(max(len(cur), len(want))):
+        a = cur[i] if i < len(cur) else "<end of file>"
+        b = want[i] if i < len(want) else "<end of file>"
+        if a != b:
+            raise SystemExit(
+                f"RESULTS.md has drifted from eval/report.py at line {i + 1}.\n"
+                f"  committed: {a}\n  generated: {b}\n"
+                "Run `python eval/report.py` and commit the result. Do not edit "
+                "RESULTS.md by hand, it is generated."
+            )
+
+
 def fmt(v, pct=False):
+    # "n/a" for a value that does not exist, never a bare hyphen: a hyphen in a
+    # table cell reads as a minus sign next to columns that hold numbers.
     if v is None:
         return "n/a"
     return f"{v * 100:.1f}%" if pct else f"{v:.3f}"
@@ -58,8 +90,12 @@ def readme_table(d: dict, k: str) -> list[str]:
     return rows
 
 
-def update_readme(d: dict, k: str) -> None:
-    """Rewrite the README table in place between its markers."""
+def update_readme(d: dict, k: str, check: bool = False) -> None:
+    """Rewrite the README table in place between its markers.
+
+    In check mode this writes nothing and fails on drift, so the check cannot
+    quietly repair the thing it is meant to be reporting.
+    """
     path = ROOT / "README.md"
     text = path.read_text()
     if README_START not in text or README_END not in text:
@@ -68,11 +104,20 @@ def update_readme(d: dict, k: str) -> None:
     head, rest = text.split(README_START, 1)
     _, tail = rest.split(README_END, 1)
     body = "\n".join(readme_table(d, k))
-    path.write_text(f"{head}{README_START}\n{body}\n{README_END}{tail}")
+    want = f"{head}{README_START}\n{body}\n{README_END}{tail}"
+    if check:
+        if want != text:
+            raise SystemExit(
+                "The README retrieval table has drifted from eval/report.py. "
+                "Run `python eval/report.py` and commit the result."
+            )
+        print("README retrieval table is up to date")
+        return
+    path.write_text(want)
     print("-> README.md (retrieval table)")
 
 
-def main(tag: str = "latest") -> None:
+def main(tag: str = "latest", check: bool = False) -> None:
     path = config.RESULTS_DIR / f"eval_{tag}.json"
     d = json.loads(path.read_text())
     cfg, out = d["config"], []
@@ -136,6 +181,7 @@ def main(tag: str = "latest") -> None:
         A("|---|---|---|---|---|---|")
         abl = d["ablation_recital_weight"]
         for w, s in abl.items():
+            # Plain ASCII, so it survives a copy into a terminal or a diff.
             star = " (default)" if float(w) == d["config"].get("recital_weight") else ""
             A(f"| {w}{star} | {fmt(s['hit_rate'], 1)} | {fmt(s['recall'], 1)} | "
               f"{fmt(s['full_recall'], 1)} | {fmt(s['mrr'])} | {fmt(s['ndcg'])} |")
@@ -159,9 +205,10 @@ def main(tag: str = "latest") -> None:
     # --- generation ------------------------------------------------------
     if "summary" not in d:
         A("## 2. Generation\n\n_Not run: no LLM key was configured._\n")
-        (ROOT / "RESULTS.md").write_text("\n".join(out))
-        update_readme(d, k)
-        print("-> RESULTS.md (retrieval only)")
+        _emit(out, check)
+        update_readme(d, k, check)
+        if not check:
+            print("-> RESULTS.md (retrieval only)")
         return
 
     s = d["summary"]
@@ -241,10 +288,12 @@ def main(tag: str = "latest") -> None:
             A(f"| `{qid}` | {ci} | {reason.replace('|', '/')} |")
         A("")
 
-    (ROOT / "RESULTS.md").write_text("\n".join(out))
-    update_readme(d, k)
-    print("-> RESULTS.md")
+    _emit(out, check)
+    update_readme(d, k, check)
+    if not check:
+        print("-> RESULTS.md")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "latest")
+    args = [a for a in sys.argv[1:] if a != "--check"]
+    main(args[0] if args else "latest", check="--check" in sys.argv[1:])

@@ -28,3 +28,8 @@ jobs:
 
       - name: Test
         run: python -m pytest tests/ -q
+
+      # RESULTS.md is generated. This fails if someone edits it by hand, which
+      # is how it drifted before.
+      - name: RESULTS.md still matches the generator
+        run: python eval/report.py --check
