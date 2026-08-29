@@ -1,0 +1,56 @@
+name: eval
+
+# Not on push. The full evaluation calls two models 45 times each, so it costs
+# money and takes minutes, and its numbers are sampled rather than fixed. It
+# runs on demand, and weekly so that a provider changing a model underneath us
+# shows up as a drift report rather than a surprise months later.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build the corpus and the index
+        run: |
+          python -m src.euactrag.ingest
+          python -m src.euactrag.index
+
+      # Deterministic half. No key, same answer every time, so drift here is real.
+      - name: Retrieval evaluation
+        run: python eval/run_eval.py --no-generation --tag fresh
+
+      # Sampled half. Only runs where a key exists, which is why the retrieval
+      # step above is separate: a fork without the secret still gets that much.
+      - name: Full evaluation
+        if: ${{ secrets.GROQ_API_KEY != '' }}
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python eval/run_eval.py --tag fresh
+
+      - name: Compare against the committed evaluation
+        run: python eval/compare.py eval_latest.json eval_fresh.json
+
+      - name: Keep the fresh run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-fresh
+          path: eval/results/eval_fresh.json
+          if-no-files-found: ignore

@@ -15,6 +15,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from eval import judge  # noqa: E402
 from eval import metrics as M  # noqa: E402
 from src.euactrag import config, pipeline  # noqa: E402
 
@@ -180,3 +181,32 @@ def test_defaults_reproduce_the_published_evaluation():
     recorded = json.loads(results.read_text())["config"]
     assert config.LLM_MODEL == recorded["gen_model"]
     assert J.pick_judge(config.LLM_MODEL) == recorded["judge_model"]
+
+
+# --- judge output parsing -------------------------------------------------
+# The judge is a model, so its wrapper text is not under our control. Every
+# shape below has come back from a real judge at some point. If _json stops
+# handling one, faithfulness silently becomes None for those rows and the mean
+# is computed over a smaller set without saying so, which is the quiet failure
+# worth a test.
+
+def test_judge_json_reads_a_plain_array():
+    assert judge._json('["one", "two"]') == ["one", "two"]
+
+
+def test_judge_json_strips_a_fenced_block():
+    assert judge._json('```json\n{"score": 1}\n```') == {"score": 1}
+    assert judge._json('```\n[1, 2]\n```') == [1, 2]
+
+
+def test_judge_json_digs_the_object_out_of_prose():
+    text = 'Sure, here is my assessment:\n{"score": 0, "why": "unsupported"}\nHope that helps.'
+    assert judge._json(text) == {"score": 0, "why": "unsupported"}
+
+
+def test_judge_json_returns_none_rather_than_guessing():
+    # None is the signal the caller checks. Returning {} or [] here would look
+    # like a real judgement of "no claims" and quietly drag the mean around.
+    assert judge._json("I could not evaluate this.") is None
+    assert judge._json('{"score": ') is None
+    assert judge._json("") is None
