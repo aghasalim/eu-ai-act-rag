@@ -38,11 +38,18 @@ jobs:
 
       # Sampled half. Only runs where a key exists, which is why the retrieval
       # step above is separate: a fork without the secret still gets that much.
+      # `secrets` is not readable from an `if:`, which made this whole file
+      # invalid and every run of it fail before a step started. The test has to
+      # happen in the shell, on the environment variable.
       - name: Full evaluation
-        if: ${{ secrets.GROQ_API_KEY != '' }}
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python eval/run_eval.py --tag fresh
+        run: |
+          if [ -z "$GROQ_API_KEY" ]; then
+            echo "no GROQ_API_KEY on this repository, keeping the retrieval half only"
+            exit 0
+          fi
+          python eval/run_eval.py --tag fresh
 
       - name: Compare against the committed evaluation
         run: python eval/compare.py eval_latest.json eval_fresh.json
