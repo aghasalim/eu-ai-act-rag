@@ -7,3 +7,4 @@ data/index/
 .ipynb_checkpoints/
 *.egg-info/
 .pytest_cache/
+verify/bootstrap/target/

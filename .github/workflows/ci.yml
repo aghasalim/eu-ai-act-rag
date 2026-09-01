@@ -33,3 +33,39 @@ jobs:
       # is how it drifted before.
       - name: RESULTS.md still matches the generator
         run: python eval/report.py --check
+
+  # Every number in README.md and RESULTS.md is produced by eval/run_eval.py and
+  # printed by eval/report.py. The job above checks that the documents match the
+  # generator, which cannot see a mistake inside the generator. This one
+  # recomputes the numbers from the per-question records in seven other
+  # languages and fails if any two disagree.
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Everything else the driver needs is on the runner image already.
+      - name: R, for the interval and paired-test checks
+        run: command -v Rscript || sudo apt-get install -y --no-install-recommends r-base-core
+
+      - name: Recompute every published number
+        run: ./verify/verify.sh
+
+      # A check that cannot fail is worse than no check, because it reads as
+      # coverage. Move one per-question outcome and require the driver to
+      # notice, then put it back and require it to pass again.
+      - name: The checks reject a corrupted results file
+        run: |
+          python3 - <<'PY'
+          import json
+          p = "eval/results/eval_latest.json"
+          d = json.load(open(p))
+          d["retrieval"]["hybrid"]["at_k"]["6"]["per_question"]["s03"]["recall"] = 0.25
+          json.dump(d, open(p, "w"))
+          PY
+          if ./verify/verify.sh; then
+            echo "the checks passed on a corrupted results file"
+            exit 1
+          fi
+          git checkout -- eval/results/eval_latest.json
+          ./verify/verify.sh

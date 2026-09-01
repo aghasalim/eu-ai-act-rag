@@ -1,0 +1,11 @@
+[package]
+name = "retrieval-bootstrap"
+version = "0.1.0"
+edition = "2021"
+
+# No dependencies on purpose. CI fetches nothing from the network, and the
+# generator and the json scanner below are both small enough to read.
+[dependencies]
+
+[profile.release]
+opt-level = 3
