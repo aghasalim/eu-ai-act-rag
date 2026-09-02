@@ -155,7 +155,7 @@ app/             Streamlit UI, shows the answer next to its sources
 tests/           corpus integrity, metric maths, citation parsing
 deploy/          Hugging Face Space template
 notes/           METHODS.md, the long-form write-up
-verify/          the same numbers recomputed in seven other languages
+verify/          the same numbers, recomputed independently
 ```
 
 ## Credit
