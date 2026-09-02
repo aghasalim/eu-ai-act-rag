@@ -17,7 +17,9 @@ effect: 45 hand-written questions, the system scored against them, the failures 
 down. The retrieval is decent (90.9% of questions get at least one
 correct provision) and genuinely bad at one specific thing (questions that need two
 articles at once, only 41.7% of those get everything they need). I'd rather show you
-that number than hide it.
+that number than hide it. Every figure here is recomputed from the per-question
+records by independent implementations in `verify/`, and CI fails if any of them
+disagree.
 
 Long write-up: **[notes/METHODS.md](notes/METHODS.md)**. Per-question numbers:
 **[RESULTS.md](RESULTS.md)**.
@@ -143,57 +145,6 @@ docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest
 - A student project, not legal advice. Please don't make compliance decisions with it.
 
 Full list in [notes/METHODS.md](notes/METHODS.md#5-limitations).
-
-## Every number here is recomputed in another language
-
-Every figure in README.md and RESULTS.md comes out of `eval/run_eval.py` and is
-printed by `eval/report.py`. `report.py --check` already fails if either document
-has been edited by hand, but that compares the generator's output to the
-generator's own earlier output, so it cannot see a mistake inside the generator.
-One implementation produced every number in this repository and nothing checked
-that it was right.
-
-`verify/verify.sh` recomputes them from the per-question records in seven other
-languages. A wrong discount in the nDCG, an MRR that scored the last hit instead
-of the first, or a mean taken over the wrong denominator would have to be
-repeated identically in all of them to survive. CI runs the driver, then corrupts
-a results file and requires the run to fail, then restores it and requires it to
-pass again, because a check that cannot fail reads as coverage while providing
-none.
-
-| language | what it recomputes, and from what | measured agreement |
-|---|---|---|
-| SQL, `verify/aggregates.sql` | the 648 overall and by-type retrieval aggregates in the three eval json files, averaged again from the per-question entries sitting beside them | worst gap 4.989e-05, inside the 5e-5 that four-decimal rounding allows |
-| C, `verify/kernel.c` | 644 per-question values across the three rows files: hit rate, recall, full recall, precision, MRR, nDCG and citation validity, from the gold and retrieved provision lists alone | exact, worst gap 0.0e+00 |
-| Go, `verify/gocheck/` | structure of all eight committed artefacts, and the seven answer-quality rates of the summary block re-averaged from the 45 raw rows | worst gap 3.3e-05, mean latency 7.1e-15 s |
-| Ruby, `verify/failures.rb` | the failure cause of all 45 questions, re-derived from the definitions rather than from `classify_failure`, and the grouped totals the README states only in prose | all 45 causes agree |
-| JavaScript, `verify/published.js` | 157 printed figures, read back out of the committed markdown of README.md and RESULTS.md and compared to the json without going through `report.py` | every cell within half of its own last printed digit |
-| R, `verify/inference.R` | the headline proportions from the per-question outcomes, plus exact and Wilson 95% intervals and an exact paired test of hybrid against BM25, none of which exists in any file | worst gap 3.6e-05 |
-| Rust, `verify/bootstrap/` | a 1,000,000 draw paired bootstrap of hybrid full recall and of the hybrid minus BM25 difference, which the eval could not afford with an index open | point estimate 0.6970, 95% [0.5455, 0.8485] |
-
-Nothing in the published tables turned out to be wrong. Two things did come out
-of doing it:
-
-- **The gap over BM25 is not separable at this n.** Hybrid reaches 69.7% full
-  recall against BM25's 63.6%, and the paired view is that hybrid alone gets 2
-  questions out of 33 and BM25 alone gets none. The exact paired test gives
-  p = 0.500 and the bootstrap interval on the difference is [0.0000, 0.1515],
-  which includes no difference. The point estimates stand as measurements; the
-  ordering between them is not something 45 questions can establish, and I had
-  been writing about it as though it were.
-- **The two retrieval passes order one question differently.** Retrieval is run
-  twice, once for the sweep the tables are printed from and once inside the
-  generation pass whose result each row stores. On all 33 answerable questions
-  the two found the same provisions, 132 set-level values identical. On `m11`
-  they ranked them differently: MRR 0.500 in the row against 0.333 in the sweep.
-  Generation rows are checkpointed and reused across runs while the sweep is
-  redone every time, so this is a stale row rather than a wrong number, and no
-  published figure moves either way. The Go check requires the sets to match and
-  reports the ordering rather than failing on it.
-
-Run it with `./verify/verify.sh`. Each implementation is skipped with a message
-if its toolchain is missing, so a laptop with only some of them still runs the
-rest.
 
 ## Repository layout
 
