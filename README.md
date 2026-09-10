@@ -9,8 +9,8 @@ answer shows the passages it came from.
 [![python](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-A question-answering system over **Regulation (EU) 2024/1689 (the EU AI Act)**, built
-by a third-year Applied Computer Science (AI) student. Most RAG projects, mine included,
+A question-answering system over **Regulation (EU) 2024/1689 (the EU AI Act)**.
+Most RAG projects, mine included,
 stop at "look, it answers questions" without checking whether the answer is in the
 documents retrieved. Here the measurement is the main part and the chatbot is the side
 effect: 45 hand-written questions, the system scored against them, the failures written
