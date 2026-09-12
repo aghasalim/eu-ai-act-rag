@@ -51,8 +51,8 @@ jobs:
       - name: Recompute every published number
         run: ./verify/verify.sh
 
-      # A check that cannot fail is worse than no check, because it reads as
-      # coverage. Move one per-question outcome and require the driver to
+      # A check that cannot fail is not a check.
+      #  Move one per-question outcome and require the driver to
       # notice, then put it back and require it to pass again.
       - name: The checks reject a corrupted results file
         run: |
