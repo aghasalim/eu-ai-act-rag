@@ -2382,8 +2382,8 @@
             "recall": 0.7222,
             "full_recall": 0.6364,
             "precision": 0.4242,
-            "mrr": 0.7677,
-            "ndcg": 0.7137
+            "mrr": 0.7727,
+            "ndcg": 0.7162
           },
           "by_type": {
             "single_hop": {
@@ -2399,8 +2399,8 @@
               "recall": 0.5694,
               "full_recall": 0.3333,
               "precision": 0.5,
-              "mrr": 0.7361,
-              "ndcg": 0.5768
+              "mrr": 0.75,
+              "ndcg": 0.5835
             }
           },
           "per_question": {
@@ -2649,8 +2649,8 @@
               "recall": 0.5,
               "full_recall": 0.0,
               "precision": 0.3333333333333333,
-              "mrr": 0.3333333333333333,
-              "ndcg": 0.3065735963827292
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
             },
             "m12": {
               "hit_rate": 1.0,
@@ -2676,8 +2676,8 @@
             "recall": 0.7576,
             "full_recall": 0.6364,
             "precision": 0.2838,
-            "mrr": 0.7828,
-            "ndcg": 0.7333
+            "mrr": 0.7879,
+            "ndcg": 0.7358
           },
           "by_type": {
             "single_hop": {
@@ -2693,8 +2693,8 @@
               "recall": 0.6667,
               "full_recall": 0.3333,
               "precision": 0.3958,
-              "mrr": 0.7778,
-              "ndcg": 0.6308
+              "mrr": 0.7917,
+              "ndcg": 0.6375
             }
           },
           "per_question": {
@@ -2943,8 +2943,8 @@
               "recall": 0.5,
               "full_recall": 0.0,
               "precision": 0.2,
-              "mrr": 0.3333333333333333,
-              "ndcg": 0.3065735963827292
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
             },
             "m12": {
               "hit_rate": 1.0,
@@ -2970,8 +2970,8 @@
             "recall": 0.803,
             "full_recall": 0.697,
             "precision": 0.2429,
-            "mrr": 0.7904,
-            "ndcg": 0.7536
+            "mrr": 0.7955,
+            "ndcg": 0.756
           },
           "by_type": {
             "single_hop": {
@@ -2987,8 +2987,8 @@
               "recall": 0.7083,
               "full_recall": 0.4167,
               "precision": 0.3375,
-              "mrr": 0.7778,
-              "ndcg": 0.6506
+              "mrr": 0.7917,
+              "ndcg": 0.6573
             }
           },
           "per_question": {
@@ -3237,8 +3237,8 @@
               "recall": 0.5,
               "full_recall": 0.0,
               "precision": 0.2,
-              "mrr": 0.3333333333333333,
-              "ndcg": 0.3065735963827292
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
             },
             "m12": {
               "hit_rate": 1.0,
@@ -3263,16 +3263,16 @@
             "hit_rate": 0.9697,
             "recall": 0.9242,
             "full_recall": 0.8788,
-            "precision": 0.1732,
-            "mrr": 0.8015,
-            "ndcg": 0.804
+            "precision": 0.1727,
+            "mrr": 0.8066,
+            "ndcg": 0.8064
           },
           "by_type": {
             "single_hop": {
               "hit_rate": 0.9524,
               "recall": 0.9524,
               "full_recall": 0.9524,
-              "precision": 0.133,
+              "precision": 0.1322,
               "mrr": 0.8151,
               "ndcg": 0.8478
             },
@@ -3281,8 +3281,8 @@
               "recall": 0.875,
               "full_recall": 0.75,
               "precision": 0.2435,
-              "mrr": 0.7778,
-              "ndcg": 0.7272
+              "mrr": 0.7917,
+              "ndcg": 0.7339
             }
           },
           "per_question": {
@@ -3346,7 +3346,7 @@
               "hit_rate": 1.0,
               "recall": 1.0,
               "full_recall": 1.0,
-              "precision": 0.14285714285714285,
+              "precision": 0.125,
               "mrr": 1.0,
               "ndcg": 1.0
             },
@@ -3531,8 +3531,8 @@
               "recall": 1.0,
               "full_recall": 1.0,
               "precision": 0.2222222222222222,
-              "mrr": 0.3333333333333333,
-              "ndcg": 0.5249810332008933
+              "mrr": 0.5,
+              "ndcg": 0.6052602440527057
             },
             "m12": {
               "hit_rate": 1.0,
@@ -3561,40 +3561,40 @@
       "recall": 0.7626,
       "full_recall": 0.6667,
       "precision": 0.2045,
-      "mrr": 0.5808,
-      "ndcg": 0.5998
+      "mrr": 0.601,
+      "ndcg": 0.6134
     },
     "0.75": {
       "hit_rate": 0.9091,
       "recall": 0.7929,
       "full_recall": 0.697,
       "precision": 0.2379,
-      "mrr": 0.7904,
-      "ndcg": 0.7481
+      "mrr": 0.7955,
+      "ndcg": 0.7505
     },
     "0.5": {
       "hit_rate": 0.9091,
       "recall": 0.803,
       "full_recall": 0.697,
       "precision": 0.2429,
-      "mrr": 0.7904,
-      "ndcg": 0.7536
+      "mrr": 0.7955,
+      "ndcg": 0.756
     },
     "0.25": {
       "hit_rate": 0.9091,
       "recall": 0.803,
       "full_recall": 0.697,
       "precision": 0.254,
-      "mrr": 0.7904,
-      "ndcg": 0.7536
+      "mrr": 0.7955,
+      "ndcg": 0.756
     },
     "0.0": {
       "hit_rate": 0.9091,
       "recall": 0.803,
       "full_recall": 0.697,
       "precision": 0.254,
-      "mrr": 0.7904,
-      "ndcg": 0.7536
+      "mrr": 0.7955,
+      "ndcg": 0.756
     }
   },
   "summary": {
@@ -3642,7 +3642,7 @@
         "id": "s01",
         "type": "single_hop",
         "question": "What is the maximum administrative fine for non-compliance with the prohibited AI practices in Article 5?",
-        "answer": "The maximum administrative fine for non‑compliance with the prohibited AI practices set out in Article 5 is **EUR 1 500 000**【Article 100 - Administrative fines on Union institutions, bodies, offices and agencies】.",
+        "answer": "The maximum administrative fine for non\u2011compliance with the prohibited AI practices set out in Article\u202f5 is **EUR\u202f1\u202f500\u202f000**\u3010Article\u202f100 - Administrative fines on Union institutions, bodies, offices and agencies\u3011.",
         "abstained": false,
         "gold_units": [
           "art_99"
@@ -3714,7 +3714,7 @@
         "id": "s03",
         "type": "single_hop",
         "question": "What amount of training compute creates a presumption that a general-purpose AI model has high impact capabilities?",
-        "answer": "A general‑purpose AI model is presumed to have high‑impact capabilities when the cumulative amount of computation used for its training, measured in floating‑point operations, exceeds 10^25 [Article 51 – Classification of general‑purpose AI models as general‑purpose AI models with systemic risk].",
+        "answer": "A general\u2011purpose AI model is presumed to have high\u2011impact capabilities when the cumulative amount of computation used for its training, measured in floating\u2011point operations, exceeds\u202f10^25\u202f[Article\u202f51 \u2013 Classification of general\u2011purpose AI models as general\u2011purpose AI models with systemic risk].",
         "abstained": false,
         "gold_units": [
           "art_51"
@@ -3753,7 +3753,7 @@
         "id": "s04",
         "type": "single_hop",
         "question": "How does the Regulation define an 'AI system'?",
-        "answer": "The Regulation defines an “AI system” in Article 3 (1) as follows: a machine‑based system that is designed to operate with varying levels of autonomy and that may exhibit adaptiveness after deployment, and for explicit or implicit objectives, infers from the input it receives how to generate outputs such as predictions, content, recommendations, or decisions that can influence physical or virtual environments [Article 3 - Definitions].",
+        "answer": "The Regulation defines an \u201cAI system\u201d in Article\u202f3\u202f(1) as follows: a machine\u2011based system that is designed to operate with varying levels of autonomy and that may exhibit adaptiveness after deployment, and for explicit or implicit objectives, infers from the input it receives how to generate outputs such as predictions, content, recommendations, or decisions that can influence physical or virtual environments [Article\u202f3 - Definitions].",
         "abstained": false,
         "gold_units": [
           "art_3"
@@ -3791,7 +3791,7 @@
         "id": "s05",
         "type": "single_hop",
         "question": "Does the Regulation apply to AI systems used exclusively for military, defence or national security purposes?",
-        "answer": "No.  \nThe Regulation explicitly excludes AI systems that are used exclusively for military, defence or national security purposes.  \n- Article 2 §3 states: “This Regulation does not apply to AI systems where and in so far they are placed on the market, put into service, or used with or without modification exclusively for military, defence or national security purposes, regardless of the type of entity carrying out those activities.”  \n- It also adds: “This Regulation does not apply to AI systems which are not placed on the market or put into service in the Union, where the output is used in the Union exclusively for military, defence or national security purposes, regardless of the type of entity carrying out those activities.”【Article 2 - Scope】",
+        "answer": "No.  \nThe Regulation explicitly excludes AI systems that are used exclusively for military, defence or national security purposes.  \n- Article\u202f2\u202f\u00a73 states: \u201cThis Regulation does not apply to AI systems where and in so far they are placed on the market, put into service, or used with or without modification exclusively for military, defence or national security purposes, regardless of the type of entity carrying out those activities.\u201d  \n- It also adds: \u201cThis Regulation does not apply to AI systems which are not placed on the market or put into service in the Union, where the output is used in the Union exclusively for military, defence or national security purposes, regardless of the type of entity carrying out those activities.\u201d\u3010Article 2 - Scope\u3011",
         "abstained": false,
         "gold_units": [
           "art_2"
@@ -3834,7 +3834,7 @@
         "id": "s06",
         "type": "single_hop",
         "question": "In the general case, within how many days must a provider report a serious incident to the market surveillance authorities?",
-        "answer": "In the general case, a provider must report a serious incident to the market surveillance authorities **within 15 days** of becoming aware of the incident (or, if a causal link has been established, immediately thereafter)【Article 73 - Reporting of serious incidents, paragraph 2】.",
+        "answer": "In the general case, a provider must report a serious incident to the market surveillance authorities **within 15 days** of becoming aware of the incident (or, if a causal link has been established, immediately thereafter)\u3010Article 73 - Reporting of serious incidents, paragraph\u202f2\u3011.",
         "abstained": false,
         "gold_units": [
           "art_73"
@@ -3871,7 +3871,7 @@
         "id": "s07",
         "type": "single_hop",
         "question": "What is the reporting deadline for a serious incident that resulted in the death of a person?",
-        "answer": "The provider (or deployer) must report a serious incident that results in a death **immediately after it has established, or as soon as it suspects, a causal relationship between the high‑risk AI system and the incident, but no later than 10 days after it becomes aware of the incident**【Article 73 - Reporting of serious incidents, paragraph 4】.",
+        "answer": "The provider (or deployer) must report a serious incident that results in a death **immediately after it has established, or as soon as it suspects, a causal relationship between the high\u2011risk AI system and the incident, but no later than 10\u202fdays after it becomes aware of the incident**\u3010Article 73 - Reporting of serious incidents, paragraph\u202f4\u3011.",
         "abstained": false,
         "gold_units": [
           "art_73"
@@ -3908,7 +3908,7 @@
         "id": "s08",
         "type": "single_hop",
         "question": "What is the reporting deadline in the event of a widespread infringement?",
-        "answer": "The report must be made **immediately, and not later than two days after the provider or, where applicable, the deployer becomes aware of the widespread infringement**【Article 73 - Reporting of serious incidents】.",
+        "answer": "The report must be made **immediately, and not later than two days after the provider or, where applicable, the deployer becomes aware of the widespread infringement**\u3010Article 73 - Reporting of serious incidents\u3011.",
         "abstained": false,
         "gold_units": [
           "art_73"
@@ -3951,7 +3951,7 @@
         "id": "s09",
         "type": "single_hop",
         "question": "Is using AI to infer the emotions of employees in the workplace prohibited?",
-        "answer": "Yes.  \nThe Regulation expressly prohibits the use of AI systems to infer employees’ emotions in the workplace, except when the system is intended for medical or safety purposes.  \n[Article 5 – Prohibited AI practices] (f) states: “the placing on the market, the putting into service for this specific purpose, or the use of AI systems to infer emotions of a natural person in the areas of workplace and education institutions, except where the use of the AI system is intended to be put in place or into the market for medical or safety reasons.”",
+        "answer": "Yes.  \nThe Regulation expressly prohibits the use of AI systems to infer employees\u2019 emotions in the workplace, except when the system is intended for medical or safety purposes.  \n[Article\u202f5 \u2013 Prohibited AI practices] (f) states: \u201cthe placing on the market, the putting into service for this specific purpose, or the use of AI systems to infer emotions of a natural person in the areas of workplace and education institutions, except where the use of the AI system is intended to be put in place or into the market for medical or safety reasons.\u201d",
         "abstained": false,
         "gold_units": [
           "art_5"
@@ -3988,7 +3988,7 @@
         "id": "s10",
         "type": "single_hop",
         "question": "What must providers of AI systems that generate synthetic audio, image, video or text ensure about the outputs?",
-        "answer": "Providers of AI systems that generate synthetic audio, image, video or text must:\n\n1. **Mark the outputs in a machine‑readable format** and make them detectable as artificially generated or manipulated.  \n   [Article 50 – paragraph 2]\n\n2. **Ensure that the technical solutions used for marking are**  \n   * effective,  \n   * interoperable,  \n   * robust, and  \n   * reliable, as far as this is technically feasible,  \n   taking into account the specificities and limitations of the various types of content, the costs of implementation and the generally acknowledged state of the art (as reflected in relevant technical standards).  \n   [Article 50 – paragraph 2]\n\nThese obligations do not apply to systems that only assist standard editing, do not substantially alter the input data or its semantics, or are authorised by law to detect, prevent, investigate or prosecute criminal offences.  \n[Article 50 – paragraph 2]",
+        "answer": "Providers of AI systems that generate synthetic audio, image, video or text must:\n\n1. **Mark the outputs in a machine\u2011readable format** and make them detectable as artificially generated or manipulated.  \n   [Article\u202f50 \u2013 paragraph\u202f2]\n\n2. **Ensure that the technical solutions used for marking are**  \n   * effective,  \n   * interoperable,  \n   * robust, and  \n   * reliable, as far as this is technically feasible,  \n   taking into account the specificities and limitations of the various types of content, the costs of implementation and the generally acknowledged state of the art (as reflected in relevant technical standards).  \n   [Article\u202f50 \u2013 paragraph\u202f2]\n\nThese obligations do not apply to systems that only assist standard editing, do not substantially alter the input data or its semantics, or are authorised by law to detect, prevent, investigate or prosecute criminal offences.  \n[Article\u202f50 \u2013 paragraph\u202f2]",
         "abstained": false,
         "gold_units": [
           "art_50"
@@ -4026,7 +4026,7 @@
         "id": "s11",
         "type": "single_hop",
         "question": "Does the Regulation apply to AI systems developed and put into service for the sole purpose of scientific research and development?",
-        "answer": "No.  \nThe Regulation explicitly excludes AI systems that are specifically developed and put into service solely for scientific research and development.  \n- Article 2, paragraph 6 states: “This Regulation does not apply to AI systems or AI models, including their output, specifically developed and put into service for the sole purpose of scientific research and development.”【Article 2 - Scope】  \n- Recital (25) reinforces this exclusion: “It is therefore necessary to exclude from its scope AI systems and models specifically developed and put into service for the sole purpose of scientific research and development.”【Recital (25)】",
+        "answer": "No.  \nThe Regulation explicitly excludes AI systems that are specifically developed and put into service solely for scientific research and development.  \n- Article\u202f2, paragraph\u202f6 states: \u201cThis Regulation does not apply to AI systems or AI models, including their output, specifically developed and put into service for the sole purpose of scientific research and development.\u201d\u3010Article 2 - Scope\u3011  \n- Recital\u202f(25) reinforces this exclusion: \u201cIt is therefore necessary to exclude from its scope AI systems and models specifically developed and put into service for the sole purpose of scientific research and development.\u201d\u3010Recital (25)\u3011",
         "abstained": false,
         "gold_units": [
           "art_2"
@@ -4097,7 +4097,7 @@
         "id": "s13",
         "type": "single_hop",
         "question": "What must providers of general-purpose AI models do in relation to copyright?",
-        "answer": "Providers of general‑purpose AI models must:\n\n* **Put in place a policy that complies with Union law on copyright and related rights** and, in particular, must **identify and comply with a reservation of rights** as expressed in Article 4(3) of Directive (EU) 2019/790, using state‑of‑the‑art technologies where appropriate.  \n  [Article 53 – Obligations for providers of general‑purpose AI models] (c)",
+        "answer": "Providers of general\u2011purpose AI models must:\n\n* **Put in place a policy that complies with Union law on copyright and related rights** and, in particular, must **identify and comply with a reservation of rights** as expressed in Article\u202f4(3) of Directive (EU)\u202f2019/790, using state\u2011of\u2011the\u2011art technologies where appropriate.  \n  [Article\u202f53 \u2013 Obligations for providers of general\u2011purpose AI models] (c)",
         "abstained": false,
         "gold_units": [
           "art_53"
@@ -4134,7 +4134,7 @@
         "id": "s14",
         "type": "single_hop",
         "question": "Are AI systems that create or expand facial recognition databases through untargeted scraping of facial images from the internet or CCTV footage prohibited?",
-        "answer": "Yes.  \nArticle 5 (e) lists the creation or expansion of facial‑recognition databases through untargeted scraping of facial images from the internet or CCTV footage as a prohibited AI practice.  \n[Article 5 - Prohibited AI practices] (e)",
+        "answer": "Yes.  \nArticle\u202f5 (e) lists the creation or expansion of facial\u2011recognition databases through untargeted scraping of facial images from the internet or CCTV footage as a prohibited AI practice.  \n[Article\u202f5 - Prohibited AI practices] (e)",
         "abstained": false,
         "gold_units": [
           "art_5"
@@ -4172,7 +4172,7 @@
         "id": "s15",
         "type": "single_hop",
         "question": "From what date do Chapters I and II of the Regulation apply?",
-        "answer": "Chapters I and II of the Regulation shall apply from **2 February 2025**【Article 113 - Entry into force and application】.",
+        "answer": "Chapters\u202fI and\u202fII of the Regulation shall apply from **2\u202fFebruary\u202f2025**\u3010Article 113 - Entry into force and application\u3011.",
         "abstained": false,
         "gold_units": [
           "art_113"
@@ -4210,7 +4210,7 @@
         "id": "s16",
         "type": "single_hop",
         "question": "What is the maximum fine for supplying incorrect, incomplete or misleading information to notified bodies or national competent authorities?",
-        "answer": "The maximum administrative fine for supplying incorrect, incomplete or misleading information to notified bodies or national competent authorities is **up to EUR 7 500 000 or, if the offender is an undertaking, up to 1 % of its total worldwide annual turnover for the preceding financial year, whichever is higher**【Article 99 - Penalties, paragraph 5】.",
+        "answer": "The maximum administrative fine for supplying incorrect, incomplete or misleading information to notified bodies or national competent authorities is **up to\u202fEUR\u202f7\u202f500\u202f000 or, if the offender is an undertaking, up to\u202f1\u202f% of its total worldwide annual turnover for the preceding financial year, whichever is higher**\u3010Article 99 - Penalties, paragraph\u202f5\u3011.",
         "abstained": false,
         "gold_units": [
           "art_99"
@@ -4247,7 +4247,7 @@
         "id": "s17",
         "type": "single_hop",
         "question": "For an SME, is the administrative fine capped at the percentage or at the fixed amount?",
-        "answer": "For an SME, the fine is capped at the **lower** of the percentage‑based or fixed‑amount limits set in the Regulation.  \nThis is set out in Article 99, paragraph 6, which states that “each fine referred to in this Article shall be up to the percentages or amount referred to in paragraphs 3, 4 and 5, whichever thereof is lower”【Article 99 - Penalties】. Paragraphs 3, 4 and 5 provide the specific percentage and fixed‑amount thresholds for different types of infringements【Article 99 - Penalties】.",
+        "answer": "For an SME, the fine is capped at the **lower** of the percentage\u2011based or fixed\u2011amount limits set in the Regulation.  \nThis is set out in Article\u202f99, paragraph\u202f6, which states that \u201ceach fine referred to in this Article shall be up to the percentages or amount referred to in paragraphs\u202f3,\u202f4 and\u202f5, whichever thereof is lower\u201d\u3010Article 99 - Penalties\u3011. Paragraphs\u202f3,\u202f4 and\u202f5 provide the specific percentage and fixed\u2011amount thresholds for different types of infringements\u3010Article 99 - Penalties\u3011.",
         "abstained": false,
         "gold_units": [
           "art_99"
@@ -4285,7 +4285,7 @@
         "id": "s18",
         "type": "single_hop",
         "question": "By when must providers of general-purpose AI models placed on the market before 2 August 2025 comply with the Regulation?",
-        "answer": "Providers of general‑purpose AI models that were placed on the market before 2 August 2025 must take the necessary steps to comply with the obligations laid down in this Regulation by 2 August 2027. [Article 111 – paragraph 3]",
+        "answer": "Providers of general\u2011purpose AI models that were placed on the market before 2\u202fAugust\u202f2025 must take the necessary steps to comply with the obligations laid down in this Regulation by 2\u202fAugust\u202f2027. [Article\u202f111 \u2013 paragraph\u202f3]",
         "abstained": false,
         "gold_units": [
           "art_111"
@@ -4323,7 +4323,7 @@
         "id": "s19",
         "type": "single_hop",
         "question": "Is a biometric verification system whose sole purpose is to confirm a person is who they claim to be classified as high-risk under Annex III?",
-        "answer": "No.  \nAccording to Annex III, paragraph 1(a) the list of high‑risk biometric systems explicitly excludes “AI systems intended to be used for biometric verification the sole purpose of which is to confirm that a specific natural person is the person he or she claims to be”【ANNEX III - High‑risk AI systems referred to in Article 6(2)】. Therefore such a biometric verification system is not classified as high‑risk under Annex III.",
+        "answer": "No.  \nAccording to Annex\u202fIII, paragraph\u202f1(a) the list of high\u2011risk biometric systems explicitly excludes \u201cAI systems intended to be used for biometric verification the sole purpose of which is to confirm that a specific natural person is the person he or she claims to be\u201d\u3010ANNEX III - High\u2011risk AI systems referred to in Article 6(2)\u3011. Therefore such a biometric verification system is not classified as high\u2011risk under Annex\u202fIII.",
         "abstained": false,
         "gold_units": [
           "anx_III"
@@ -4394,7 +4394,7 @@
         "id": "m01",
         "type": "multi_hop",
         "question": "A hospital deploys an emotion recognition system on patients for medical reasons. Is that prohibited, and does it have to tell the patients anything?",
-        "answer": "The deployment is **not prohibited**.  \nArticle 5 (f) exempts the use of emotion‑recognition systems for medical or safety reasons from the prohibition that applies to workplace and education settings: “…except where the use of the AI system is intended to be put in place or into the market for medical or safety reasons” [Article 5].\n\nBecause the system is an emotion‑recognition system, the deployer must **inform the patients** of its operation.  \nArticle 50, paragraph 3 states: “Deployers of an emotion‑recognition system … shall inform the natural persons exposed thereto of the operation of the system” [Article 50]. The exemption in that paragraph applies only to systems used for criminal‑offence detection, which does not apply here.",
+        "answer": "The deployment is **not prohibited**.  \nArticle\u202f5 (f) exempts the use of emotion\u2011recognition systems for medical or safety reasons from the prohibition that applies to workplace and education settings: \u201c\u2026except where the use of the AI system is intended to be put in place or into the market for medical or safety reasons\u201d [Article\u202f5].\n\nBecause the system is an emotion\u2011recognition system, the deployer must **inform the patients** of its operation.  \nArticle\u202f50, paragraph\u202f3 states: \u201cDeployers of an emotion\u2011recognition system \u2026 shall inform the natural persons exposed thereto of the operation of the system\u201d [Article\u202f50]. The exemption in that paragraph applies only to systems used for criminal\u2011offence detection, which does not apply here.",
         "abstained": false,
         "gold_units": [
           "art_5",
@@ -4451,7 +4451,7 @@
         "id": "m02",
         "type": "multi_hop",
         "question": "An AI system listed in Annex III performs profiling of natural persons. Can its provider rely on the derogation in Article 6(3) to treat it as not high-risk?",
-        "answer": "No.  \nThe derogation in Article 6(3) applies only when an Annex III system “does not pose a significant risk of harm to the health, safety or fundamental rights of natural persons, including by not materially influencing the outcome of decision making” [Article 6 - Classification rules for high‑risk AI systems] (3).  \nHowever, Article 6(1)(d) contains a “notwithstanding” clause that overrides this derogation: “an AI system referred to in Annex III shall always be considered to be high‑risk where the AI system performs profiling of natural persons” [Article 6 - Classification rules for high‑risk AI systems] (d).  \n\nBecause the system performs profiling, it is automatically high‑risk, and the provider cannot rely on the derogation to treat it as non‑high‑risk.",
+        "answer": "No.  \nThe derogation in Article\u202f6(3) applies only when an Annex\u202fIII system \u201cdoes not pose a significant risk of harm to the health, safety or fundamental rights of natural persons, including by not materially influencing the outcome of decision making\u201d [Article\u202f6 - Classification rules for high\u2011risk AI systems] (3).  \nHowever, Article\u202f6(1)(d) contains a \u201cnotwithstanding\u201d clause that overrides this derogation: \u201can AI system referred to in Annex\u202fIII shall always be considered to be high\u2011risk where the AI system performs profiling of natural persons\u201d [Article\u202f6 - Classification rules for high\u2011risk AI systems] (d).  \n\nBecause the system performs profiling, it is automatically high\u2011risk, and the provider cannot rely on the derogation to treat it as non\u2011high\u2011risk.",
         "abstained": false,
         "gold_units": [
           "art_6",
@@ -4514,7 +4514,7 @@
         "id": "m03",
         "type": "multi_hop",
         "question": "A general-purpose AI model was trained with 10^26 floating point operations and is released under a free and open-source licence. Does the open-source exemption in Article 53(2) relieve its provider of the technical documentation obligations?",
-        "answer": "Yes – the exemption in Article 53(2) removes the obligations in paragraph 1, points (a) and (b) for a free‑and‑open‑source model whose parameters are publicly available, **unless** the model presents systemic risks. The fact that the model was trained with 10^26 floating‑point operations does not affect this exemption, as the excerpt does not link training‑size to systemic risk. Thus, if the model meets the free‑and‑open‑source conditions and is not deemed to pose systemic risks, its provider is relieved of the technical‑documentation obligations set out in Article 53(1) (a) and (b)【Article 53 - Obligations for providers of general‑purpose AI models, paragraph 2】【Article 53 - Obligations for providers of general‑purpose AI models, paragraph 1】.",
+        "answer": "Yes \u2013 the exemption in Article\u202f53(2) removes the obligations in paragraph\u202f1, points\u202f(a) and\u202f(b) for a free\u2011and\u2011open\u2011source model whose parameters are publicly available, **unless** the model presents systemic risks. The fact that the model was trained with 10^26 floating\u2011point operations does not affect this exemption, as the excerpt does not link training\u2011size to systemic risk. Thus, if the model meets the free\u2011and\u2011open\u2011source conditions and is not deemed to pose systemic risks, its provider is relieved of the technical\u2011documentation obligations set out in Article\u202f53(1)\u202f(a) and (b)\u3010Article\u202f53 - Obligations for providers of general\u2011purpose AI models, paragraph\u202f2\u3011\u3010Article\u202f53 - Obligations for providers of general\u2011purpose AI models, paragraph\u202f1\u3011.",
         "abstained": false,
         "gold_units": [
           "art_53",
@@ -4558,7 +4558,7 @@
         "id": "m04",
         "type": "multi_hop",
         "question": "For a high-risk AI system that is a safety component of a product covered by the Union harmonisation legislation in Section B of Annex I, which provisions of the Regulation actually apply?",
-        "answer": "For a high‑risk AI system that is a safety component of a product covered by the Union harmonisation legislation listed in **Section B of Annex I**, the Regulation limits the applicable provisions to those set out in Article 2(2):\n\n* **Article 6(1)** – the classification rule that identifies the system as high‑risk.  \n* **Articles 102 to 109** – the specific obligations that apply to high‑risk AI systems.  \n* **Article 112** – the conformity‑assessment and market‑place obligations for high‑risk AI systems.  \n* **Article 57** – only insofar as the requirements for high‑risk AI systems under this Regulation have been integrated into the relevant Union harmonisation legislation.  \n\nThese are the only provisions of the Regulation that apply to such a system. [Article 2 - Scope] paragraph 2.",
+        "answer": "For a high\u2011risk AI system that is a safety component of a product covered by the Union harmonisation legislation listed in **Section\u202fB of Annex\u202fI**, the Regulation limits the applicable provisions to those set out in Article\u202f2(2):\n\n* **Article\u202f6(1)** \u2013 the classification rule that identifies the system as high\u2011risk.  \n* **Articles\u202f102\u202fto\u202f109** \u2013 the specific obligations that apply to high\u2011risk AI systems.  \n* **Article\u202f112** \u2013 the conformity\u2011assessment and market\u2011place obligations for high\u2011risk AI systems.  \n* **Article\u202f57** \u2013 only insofar as the requirements for high\u2011risk AI systems under this Regulation have been integrated into the relevant Union harmonisation legislation.  \n\nThese are the only provisions of the Regulation that apply to such a system. [Article\u202f2 - Scope] paragraph\u202f2.",
         "abstained": false,
         "gold_units": [
           "art_2",
@@ -4678,7 +4678,7 @@
         "id": "m07",
         "type": "multi_hop",
         "question": "When do the general-purpose AI obligations in Chapter V start to apply, and by when must models already on the market comply?",
-        "answer": "The obligations for providers of general‑purpose AI models are set out in Article 53 (Chapter V).  \n* **When they start to apply** – the Regulation applies to providers of general‑purpose AI models from the date the Regulation enters into force (the text of Article 53 itself does not specify a later start date).  \n* **Deadline for models already on the market** – Article 111(3) states that “providers of general‑purpose AI models that have been placed on the market before 2 August 2025 shall take the necessary steps in order to comply with the obligations laid down in this Regulation by 2 August 2027”【Article 111 - AI systems already placed on the market or put into service and general‑purpose AI models already placed on the marked】.",
+        "answer": "The obligations for providers of general\u2011purpose AI models are set out in Article\u202f53 (Chapter\u202fV).  \n* **When they start to apply** \u2013 the Regulation applies to providers of general\u2011purpose AI models from the date the Regulation enters into force (the text of Article\u202f53 itself does not specify a later start date).  \n* **Deadline for models already on the market** \u2013 Article\u202f111(3) states that \u201cproviders of general\u2011purpose AI models that have been placed on the market before\u202f2\u202fAugust\u202f2025 shall take the necessary steps in order to comply with the obligations laid down in this Regulation by\u202f2\u202fAugust\u202f2027\u201d\u3010Article\u202f111 - AI systems already placed on the market or put into service and general\u2011purpose AI models already placed on the marked\u3011.",
         "abstained": false,
         "gold_units": [
           "art_113",
@@ -4727,7 +4727,7 @@
         "id": "m08",
         "type": "multi_hop",
         "question": "Is emotion recognition in educational institutions prohibited, and if a permitted emotion recognition system is used elsewhere, is it high-risk?",
-        "answer": "Emotion recognition in educational institutions is prohibited unless it is used for medical or safety purposes.  \n[Article 5 – Prohibited AI practices] (f) states: “the placing on the market, the putting into service for this specific purpose, or the use of AI systems to infer emotions of a natural person in the areas of workplace and education institutions, except where the use of the AI system is intended to be put in place or into the market for medical or safety reasons”【Article 5 - Prohibited AI practices】.\n\nA permitted emotion‑recognition system used in any other context is classified as high‑risk.  \n[ANNEX III – High‑risk AI systems] lists “(c) AI systems intended to be used for emotion recognition” as high‑risk【ANNEX III - High-risk AI systems referred to in Article 6(2)] and Recital (54) confirms that “emotion recognition systems that are not prohibited under this Regulation … should be classified as high‑risk”【Recital (54)].",
+        "answer": "Emotion recognition in educational institutions is prohibited unless it is used for medical or safety purposes.  \n[Article\u202f5 \u2013 Prohibited AI practices] (f) states: \u201cthe placing on the market, the putting into service for this specific purpose, or the use of AI systems to infer emotions of a natural person in the areas of workplace and education institutions, except where the use of the AI system is intended to be put in place or into the market for medical or safety reasons\u201d\u3010Article\u202f5 - Prohibited AI practices\u3011.\n\nA permitted emotion\u2011recognition system used in any other context is classified as high\u2011risk.  \n[ANNEX\u202fIII \u2013 High\u2011risk AI systems] lists \u201c(c) AI systems intended to be used for emotion recognition\u201d as high\u2011risk\u3010ANNEX III - High-risk AI systems referred to in Article\u202f6(2)] and Recital\u202f(54) confirms that \u201cemotion recognition systems that are not prohibited under this Regulation \u2026 should be classified as high\u2011risk\u201d\u3010Recital (54)].",
         "abstained": false,
         "gold_units": [
           "art_5",
@@ -4769,7 +4769,7 @@
         "id": "s21",
         "type": "single_hop",
         "question": "A provider concludes that its Annex III AI system is not high-risk. What must it do before placing the system on the market, and is it still required to register?",
-        "answer": "A provider that determines an Annex III AI system is **not** high‑risk must:\n\n1. **Document the assessment** before the system is placed on the market or put into service [Article 6(4)].\n2. **Register** itself and the system in the EU database referred to in Article 71 [Article 49(2)].\n\nThus, even though the system is deemed non‑high‑risk, the provider is still required to register it.",
+        "answer": "A provider that determines an Annex\u202fIII AI system is **not** high\u2011risk must:\n\n1. **Document the assessment** before the system is placed on the market or put into service\u202f[Article\u202f6(4)].\n2. **Register** itself and the system in the EU database referred to in Article\u202f71\u202f[Article\u202f49(2)].\n\nThus, even though the system is deemed non\u2011high\u2011risk, the provider is still required to register it.",
         "abstained": false,
         "gold_units": [
           "art_6"
@@ -4808,7 +4808,7 @@
         "id": "m10",
         "type": "multi_hop",
         "question": "A general-purpose AI model with systemic risk is involved in a serious incident. What must its provider do, and under which article?",
-        "answer": "The provider of a general‑purpose AI model with systemic risk must **keep track of, document, and report, without undue delay, to the AI Office and, as appropriate, to national competent authorities, relevant information about serious incidents and possible corrective measures to address them**. This obligation is set out in **Article 55(c)** of the Regulation.",
+        "answer": "The provider of a general\u2011purpose AI model with systemic risk must **keep track of, document, and report, without undue delay, to the AI Office and, as appropriate, to national competent authorities, relevant information about serious incidents and possible corrective measures to address them**. This obligation is set out in **Article\u202f55(c)** of the Regulation.",
         "abstained": false,
         "gold_units": [
           "art_55",
@@ -4915,7 +4915,7 @@
         "id": "m13",
         "type": "multi_hop",
         "question": "A provider established in the United States places a general-purpose AI model on the Union market. Does the Regulation apply to it, and what documentation must it maintain?",
-        "answer": "Yes.  \nArticle 54 states that “providers established in third countries … shall, by written mandate, appoint an authorised representative which is established in the Union” before placing a general‑purpose AI model on the Union market, so the Regulation applies to a U.S. provider that does so.  \n\nThe provider must keep the following documentation:  \n\n* Technical documentation of the model, including its training and testing process and evaluation results, containing at least the information set out in Annex XI [Article 53(a)].  \n* Information and documentation for providers of AI systems that intend to integrate the model, containing at least the elements set out in Annex XII [Article 53(b)].  \n* A policy to comply with Union copyright law, including a reservation of rights as required by Article 4(3) of Directive (EU) 2019/790 [Article 53(c)].  \n* A publicly available summary of the content used for training, according to a template provided by the AI Office [Article 53(d)].  \n\nThe authorised representative must keep a copy of the technical documentation for 10 years after the model is placed on the market [Article 54(b)(ii)].",
+        "answer": "Yes.  \nArticle\u202f54 states that \u201cproviders established in third countries \u2026 shall, by written mandate, appoint an authorised representative which is established in the Union\u201d before placing a general\u2011purpose AI model on the Union market, so the Regulation applies to a U.S. provider that does so.  \n\nThe provider must keep the following documentation:  \n\n* Technical documentation of the model, including its training and testing process and evaluation results, containing at least the information set out in Annex\u202fXI [Article\u202f53(a)].  \n* Information and documentation for providers of AI systems that intend to integrate the model, containing at least the elements set out in Annex\u202fXII [Article\u202f53(b)].  \n* A policy to comply with Union copyright law, including a reservation of rights as required by Article\u202f4(3) of Directive (EU)\u202f2019/790 [Article\u202f53(c)].  \n* A publicly available summary of the content used for training, according to a template provided by the AI Office [Article\u202f53(d)].  \n\nThe authorised representative must keep a copy of the technical documentation for 10\u202fyears after the model is placed on the market [Article\u202f54(b)(ii)].",
         "abstained": false,
         "gold_units": [
           "art_2",

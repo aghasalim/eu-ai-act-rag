@@ -19,7 +19,7 @@ recall at k=6, against 81.8%/51.5% for dense and 84.9%/63.6% for BM25, and full
 recall is the column that matters, because a question needing two articles is not
 answered by finding one. Down-weighting recitals, the non-binding "whereas"
 paragraphs that match a plain-English question better than the terse article
-containing the rule, lifts MRR from 0.581 to 0.790. That gain is a step rather
+containing the rule, lifts MRR from 0.601 to 0.796. That gain is a step rather
 than a peak: nearly all of it is the drop below 1.0, and the weights under it move
 nDCG by 0.006 against a step of 0.154, so it is structural rather than a
 hyper-parameter fitted to 45 questions.
@@ -64,11 +64,11 @@ but quietly drop the exception or the deadline.
 paragraphs at the top. They explain the rules in normal flowing sentences, which means
 they look *more* like an answer to a plain-English question than the actual article
 does. They were pushing real articles out of the top results. Giving them less weight
-in the ranking moved MRR from 0.581 to 0.790.
+in the ranking moved MRR from 0.601 to 0.796.
 
 I checked whether I was just fitting a number to my own test set, and I don't think so:
 nearly all the gain is the drop below 1.0, and the weights under it barely differ, MRR and
-full recall identical and nDCG creeping from 0.748 to 0.754, so it's a step rather than a
+full recall identical and nDCG creeping from 0.751 to 0.756, so it's a step rather than a
 peak ([the sweep is in RESULTS.md](../RESULTS.md#ablation-down-weighting-recitals)). It's doing
 something structural, pushing non-binding text below binding text. I kept the weight at
 0.5 instead of 0 because it ties on every metric in that sweep and still lets recitals
@@ -237,6 +237,19 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
   down-weighting look better than it probably is.
 - **English only.** The Act is equally valid in 24 languages and I've tested one.
 - **The generation half of the evaluation hasn't been run yet** (needs an API key).
+- **Hybrid retrieval was not deterministic across machines until 2026-09-17.** The
+  weekly eval had failed every Monday since 1 September on eight hybrid rows, all
+  MRR or nDCG and none hit rate or recall: the same chunks retrieved, one of them
+  one rank apart. BM25 and dense were identical on both machines at every k, so
+  the fusion was the only place left. Two chunks at the same rank in exactly one
+  run get the same RRF score, and sorting on score alone fell back to dict
+  insertion order, which is whatever order the dense index returned its own
+  near-ties in on that machine. Sorting on (score, chunk_id) fixed it and a test
+  now feeds both insertion orders and requires one answer. The committed
+  baseline was regenerated on the CI runner with the fixed code: MRR moved from
+  0.790 to 0.796 and nDCG from 0.754 to 0.756 on the headline row, and by 0.020
+  at recital weight 1.0 where there are more ties. The latency figures are still
+  this laptop's, since a runner's clock is not a number about this system.
 - `data/processed/chunks.jsonl` is generated, not source. It's committed so you can look
   at the chunking without installing anything; CI rebuilds it from the raw document and
   re-tests it.
@@ -337,7 +350,7 @@ Recitals restate the operative rules in flowing prose, so they match a
 natural-language question better than the article that actually contains the rule,
 and they were crowding binding provisions out of the top-k. Below 1.0 the weights
 barely differ: MRR and full recall are identical across them and nDCG only creeps from
-0.748 to 0.754, against a jump of 0.154 at 1.0. A tuned hyper-parameter would show a
+0.751 to 0.756, against a jump of 0.143 at 1.0. A tuned hyper-parameter would show a
 peak here; a structural effect shows a step, and this is a step.
 
 Six of the twelve non-ok outcomes are retrieval failures, three complete misses
