@@ -83,7 +83,15 @@ def hybrid(query: str, k: int = 10, pool: int = 30,
             e = fused.setdefault(h["chunk_id"], {**h, "score": 0.0})
             e["score"] += (w if h["kind"] == "recital" else 1.0) / (
                 config.RRF_K + h["rank"])
-    out = [h for h in sorted(fused.values(), key=lambda h: -h["score"])
+    # Ties on the fused score are common: any two chunks that sit at the same
+    # rank in exactly one run score the same. A sort on score alone then falls
+    # back to dict insertion order, which is whatever order the dense index
+    # happened to return its own near-ties in, and that is not the same on every
+    # machine. The weekly eval caught it: one query's hybrid rank differed between
+    # this laptop and the CI runner while both component rankings were identical.
+    # chunk_id is a string and sorts the same everywhere.
+    out = [h for h in sorted(fused.values(),
+                             key=lambda h: (-h["score"], h["chunk_id"]))
            if not (w == 0.0 and h["kind"] == "recital")][:k]
     for rank, h in enumerate(out, 1):
         h["rank"] = rank

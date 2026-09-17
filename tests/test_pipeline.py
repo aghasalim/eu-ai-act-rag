@@ -210,3 +210,19 @@ def test_judge_json_returns_none_rather_than_guessing():
     assert judge._json("I could not evaluate this.") is None
     assert judge._json('{"score": ') is None
     assert judge._json("") is None
+
+
+def test_hybrid_breaks_rrf_ties_the_same_way_everywhere(monkeypatch):
+    # Two chunks at the same rank in exactly one run each get the identical RRF
+    # score, and the fusion used to leave their order to dict insertion, which
+    # is the order the dense index happened to return them in. That differed
+    # between this machine and the CI runner and moved one query's MRR. Feed the
+    # two runs in both insertion orders and require the same fused order.
+    from src.euactrag import retrieve
+    a = {"chunk_id": "art_2", "kind": "article", "rank": 1}
+    b = {"chunk_id": "art_1", "kind": "article", "rank": 1}
+    for first, second in ((a, b), (b, a)):
+        monkeypatch.setattr(retrieve, "dense", lambda q, p, f=first: [dict(f)])
+        monkeypatch.setattr(retrieve, "bm25", lambda q, p, s=second: [dict(s)])
+        out = retrieve.hybrid("q", k=2, recital_weight=1.0)
+        assert [h["chunk_id"] for h in out] == ["art_1", "art_2"]
