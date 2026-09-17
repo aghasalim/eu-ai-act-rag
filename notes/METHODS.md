@@ -19,7 +19,7 @@ recall at k=6, against 81.8%/51.5% for dense and 84.9%/63.6% for BM25, and full
 recall is the column that matters, because a question needing two articles is not
 answered by finding one. Down-weighting recitals, the non-binding "whereas"
 paragraphs that match a plain-English question better than the terse article
-containing the rule, lifts MRR from 0.601 to 0.796. That gain is a step rather
+containing the rule, lifts MRR from 0.601 to 0.795. That gain is a step rather
 than a peak: nearly all of it is the drop below 1.0, and the weights under it move
 nDCG by 0.006 against a step of 0.154, so it is structural rather than a
 hyper-parameter fitted to 45 questions.
@@ -64,7 +64,7 @@ but quietly drop the exception or the deadline.
 paragraphs at the top. They explain the rules in normal flowing sentences, which means
 they look *more* like an answer to a plain-English question than the actual article
 does. They were pushing real articles out of the top results. Giving them less weight
-in the ranking moved MRR from 0.601 to 0.796.
+in the ranking moved MRR from 0.601 to 0.795.
 
 I checked whether I was just fitting a number to my own test set, and I don't think so:
 nearly all the gain is the drop below 1.0, and the weights under it barely differ, MRR and
@@ -247,7 +247,7 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
   near-ties in on that machine. Sorting on (score, chunk_id) fixed it and a test
   now feeds both insertion orders and requires one answer. The committed
   baseline was regenerated on the CI runner with the fixed code: MRR moved from
-  0.790 to 0.796 and nDCG from 0.754 to 0.756 on the headline row, and by 0.020
+  0.790 to 0.795 and nDCG from 0.754 to 0.756 on the headline row, and by 0.020
   at recital weight 1.0 where there are more ties. The latency figures are still
   this laptop's, since a runner's clock is not a number about this system.
 - `data/processed/chunks.jsonl` is generated, not source. It's committed so you can look

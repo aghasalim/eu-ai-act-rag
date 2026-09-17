@@ -23,7 +23,7 @@ Scored at *provision* level: retrieving any chunk of the correct article counts 
 |---|---|---|---|---|---|---|---|
 | **dense** | 81.8% | 67.2% | 51.5% | 19.6% | 0.521 | 0.537 | 0.369 |
 | **bm25** | 84.9% | 73.2% | 63.6% | 18.4% | 0.561 | 0.571 | 0.002 |
-| **hybrid** | 90.9% | 80.3% | 69.7% | 24.3% | 0.796 | 0.756 | 0.019 |
+| **hybrid** | 90.9% | 80.3% | 69.7% | 24.3% | 0.795 | 0.756 | 0.019 |
 
 ### Single-hop vs multi-hop
 
@@ -51,12 +51,12 @@ Recitals restate the operative rules in flowing prose, so they match a natural-l
 | w | hit rate | recall | full recall | MRR | nDCG |
 |---|---|---|---|---|---|
 | 1.0 | 87.9% | 76.3% | 66.7% | 0.601 | 0.613 |
-| 0.75 | 90.9% | 79.3% | 69.7% | 0.796 | 0.751 |
-| 0.5 (default) | 90.9% | 80.3% | 69.7% | 0.796 | 0.756 |
-| 0.25 | 90.9% | 80.3% | 69.7% | 0.796 | 0.756 |
-| 0.0 | 90.9% | 80.3% | 69.7% | 0.796 | 0.756 |
+| 0.75 | 90.9% | 79.3% | 69.7% | 0.795 | 0.750 |
+| 0.5 (default) | 90.9% | 80.3% | 69.7% | 0.795 | 0.756 |
+| 0.25 | 90.9% | 80.3% | 69.7% | 0.795 | 0.756 |
+| 0.0 | 90.9% | 80.3% | 69.7% | 0.795 | 0.756 |
 
-The gain is a **step, not a peak**: nearly all of it comes from dropping below `w=1.0`, and the weights under that barely differ, nDCG only 0.751 to 0.756. So the default is not an argmax fitted to this question set, it is doing something structural, pushing non-binding text below binding text. `w=0.5` is kept rather than `w=0.0` because it ties on every column above while leaving recitals retrievable for interpretive questions.
+The gain is a **step, not a peak**: nearly all of it comes from dropping below `w=1.0`, and the weights under that barely differ, nDCG only 0.750 to 0.756. So the default is not an argmax fitted to this question set, it is doing something structural, pushing non-binding text below binding text. `w=0.5` is kept rather than `w=0.0` because it ties on every column above while leaving recitals retrievable for interpretive questions.
 
 > **Honest caveat.** Every gold label in this eval set is an article or annex, so an eval containing recital-answerable questions would show a smaller benefit. The measured gain is an upper bound.
 

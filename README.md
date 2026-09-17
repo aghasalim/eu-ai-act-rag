@@ -43,7 +43,7 @@ scoring needs no LLM, so these numbers are free to reproduce.
 |---|---|---|---|---|---|---|
 | dense (bge-small) | 81.8% | 67.2% | 51.5% | 0.521 | 0.537 | 0.369 |
 | BM25 | 84.9% | 73.2% | 63.6% | 0.561 | 0.571 | 0.002 |
-| **hybrid (RRF)** | **90.9%** | **80.3%** | **69.7%** | **0.796** | **0.756** | 0.019 |
+| **hybrid (RRF)** | **90.9%** | **80.3%** | **69.7%** | **0.795** | **0.756** | 0.019 |
 <!-- RETRIEVAL_TABLE:END -->
 
 "Hit rate" means at least one required article showed up. "Full recall" means *all* of
@@ -66,7 +66,7 @@ it needs hybrid retrieval has found. Only k changes across the frames, 3 then
 
 Recitals, the non-binding "whereas" paragraphs, restate the rules in flowing prose and
 were crowding binding articles out of the top-k. Down-weighting them moved MRR from
-0.601 to 0.796. Below 1.0 the weights barely differ: MRR and full recall are identical
+0.601 to 0.795. Below 1.0 the weights barely differ: MRR and full recall are identical
 across them and nDCG only creeps from 0.751 to 0.756. So it is a step, not a peak fitted
 to 45 questions.
 
