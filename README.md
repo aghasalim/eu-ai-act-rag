@@ -96,8 +96,7 @@ breakdown, and the `LLM_MAX_TOKENS` bug that was costing 12 points of accuracy, 
 
 Six of the twelve non-ok outcomes are retrieval failures, three complete misses and
 three partial, and four more are refusals of answerable questions. Only two are
-generation faults given correct evidence, which is the argument for spending effort on
-retrieval, not on prompting.
+generation faults given correct evidence, which is the argument for spending effort on retrieval.
 
 ## Method, briefly
 
@@ -164,4 +163,4 @@ via the EU Publications Office (CELEX 32024R1689). Reuse is covered by Decision
 2011/833/EU. Nothing here is affiliated with or endorsed by the EU.
 
 The code is MIT ([LICENSE](LICENSE)). The corpus is not mine to licence, so its
-attribution lives in [NOTICE](NOTICE), not in the licence file.
+attribution lives in [NOTICE](NOTICE).
