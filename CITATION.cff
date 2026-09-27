@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: If you use this work, please cite it as below.
+title: "EU AI Act RAG, with an evaluation I actually ran"
+abstract: "Grounded question answering over the EU AI Act, with retrieval, faithfulness and hallucination measured on 45 hand-written questions."
+type: software
+authors:
+  - family-names: Mustafazada
+    given-names: Aghasalim
+    orcid: "https://orcid.org/0009-0001-8746-4582"
+    affiliation: "Howest University of Applied Sciences"
+repository-code: "https://github.com/aghasalim/eu-ai-act-rag"
+url: "https://aghasalim.github.io/"
+license: MIT
+keywords:
+  - eu ai act
+  - hybrid search
+  - information retrieval
+  - llm evaluation
+  - machine learning
+  - nlp
+  - rag
+  - ragas
