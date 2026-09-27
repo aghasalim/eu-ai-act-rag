@@ -101,8 +101,7 @@ retrieval, not on prompting.
 
 ## Method, briefly
 
-Official XHTML from the EU Publications Office Cellar API (CELEX `32024R1689`), chunked
-on the document's own structure instead of a fixed window, because the answer to a
+Official XHTML from the EU Publications Office Cellar API (CELEX `32024R1689`), chunked on the document's own articles, recitals and annexes, because the answer to a
 legal question is a citation: 113 articles + 180 recitals + 13 annexes → **464 chunks**,
 all under the encoder's 512-token limit. Retrieval is `BAAI/bge-small-en-v1.5` in Chroma
 fused with BM25 by Reciprocal Rank Fusion, which ranks by position and so has no scaling
