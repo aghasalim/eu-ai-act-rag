@@ -97,12 +97,12 @@ breakdown, and the `LLM_MAX_TOKENS` bug that was costing 12 points of accuracy, 
 Six of the twelve non-ok outcomes are retrieval failures, three complete misses and
 three partial, and four more are refusals of answerable questions. Only two are
 generation faults given correct evidence, which is the argument for spending effort on
-retrieval rather than on prompting.
+retrieval, not on prompting.
 
 ## Method, briefly
 
 Official XHTML from the EU Publications Office Cellar API (CELEX `32024R1689`), chunked
-on the document's own structure rather than a fixed window, because the answer to a
+on the document's own structure instead of a fixed window, because the answer to a
 legal question is a citation: 113 articles + 180 recitals + 13 annexes → **464 chunks**,
 all under the encoder's 512-token limit. Retrieval is `BAAI/bge-small-en-v1.5` in Chroma
 fused with BM25 by Reciprocal Rank Fusion, which ranks by position and so has no scaling
@@ -165,4 +165,4 @@ via the EU Publications Office (CELEX 32024R1689). Reuse is covered by Decision
 2011/833/EU. Nothing here is affiliated with or endorsed by the EU.
 
 The code is MIT ([LICENSE](LICENSE)). The corpus is not mine to licence, so its
-attribution lives in [NOTICE](NOTICE) rather than in the licence file.
+attribution lives in [NOTICE](NOTICE), not in the licence file.
