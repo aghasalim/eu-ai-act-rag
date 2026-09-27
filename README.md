@@ -8,6 +8,7 @@ answer shows the passages it came from.
 [![publish-image](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/publish-image.yml/badge.svg)](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/publish-image.yml)
 [![python](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003624.svg)](https://doi.org/10.5281/zenodo.23003624)
 
 A question-answering system over **Regulation (EU) 2024/1689 (the EU AI Act)**.
 Most RAG projects, mine included,
