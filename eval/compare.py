@@ -36,7 +36,7 @@ def load(name: str) -> dict:
     return json.loads(path.read_text())
 
 
-def retrieval_rows(baseline: dict, fresh: dict):
+def retrieval_rows(baseline: dict, fresh: dict) -> list[tuple[str, float, float, float]]:
     """Retrieval is nested mode -> at_k -> k -> overall -> metric, so walk it."""
     out = []
     b, f = baseline.get("retrieval", {}), fresh.get("retrieval", {})
@@ -51,7 +51,7 @@ def retrieval_rows(baseline: dict, fresh: dict):
     return out
 
 
-def summary_rows(baseline: dict, fresh: dict):
+def summary_rows(baseline: dict, fresh: dict) -> list[tuple[str, float, float, float]]:
     out = []
     b, f = baseline.get("summary", {}), fresh.get("summary", {})
     for k in SAMPLED:
