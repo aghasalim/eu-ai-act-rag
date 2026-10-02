@@ -36,7 +36,7 @@ def _collection():
     return get_collection()
 
 
-def _as_hit(chunk_id, text, meta, score, rank):
+def _as_hit(chunk_id: str, text: str, meta: dict, score: float, rank: int) -> dict:
     return {
         "chunk_id": chunk_id, "text": text, "score": float(score),
         "rank": rank, **{k: meta.get(k) for k in
