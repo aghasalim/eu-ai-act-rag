@@ -51,7 +51,7 @@ def _emit(out: list[str], check: bool) -> None:
             )
 
 
-def fmt(v, pct=False):
+def fmt(v: float | None, pct: bool = False) -> str:
     # "n/a" for a value that does not exist, never a bare hyphen: a hyphen in a
     # table cell reads as a minus sign next to columns that hold numbers.
     if v is None:

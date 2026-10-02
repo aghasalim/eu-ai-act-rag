@@ -38,7 +38,7 @@ def load_qa() -> list[dict]:
     return [json.loads(l) for l in open(QA_PATH, encoding="utf-8") if l.strip()]
 
 
-def mean(xs):
+def mean(xs: list[float | None]) -> float | None:
     xs = [x for x in xs if x is not None]
     return round(statistics.mean(xs), 4) if xs else None
 
