@@ -10,7 +10,10 @@ answer shows the passages it came from.
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003624.svg)](https://doi.org/10.5281/zenodo.23003624)
 
-A question-answering system over **Regulation (EU) 2024/1689 (the EU AI Act)**.
+A question-answering system over **Regulation (EU) 2024/1689 (the EU AI Act)**,
+as amended by Regulation (EU) 2026/1744 (the "Digital Omnibus on AI"). The corpus is
+versioned by the date of the text: `2026-07-27` (the consolidated text, the default)
+and `2024-07-12` (the original Official Journal text, kept so the two can be compared).
 Most RAG projects, mine included,
 stop at "look, it answers questions" without checking whether the answer is in the
 documents retrieved. Here the measurement is the main part and the chatbot is the side
@@ -99,11 +102,54 @@ Six of the twelve non-ok outcomes are retrieval failures, three complete misses 
 three partial, and four more are refusals of answerable questions. Only two are
 generation faults given correct evidence, which is the argument for spending effort on retrieval.
 
+## The law changed under it
+
+I built and measured this on the 2024 text. On 27 July 2026 the Omnibus moved the
+high-risk dates (Annex III to 2 December 2027, Annex I to 2 August 2028), added two
+Article 5 prohibitions, replaced Article 4 and added Articles 4a and 60a, among
+others. So I wrote 11 more questions that only the amended text can answer, each
+with the exact wording its answer rests on, and ran retrieval on both texts. The
+changes I checked, and the quote behind every question, are in
+[notes/AMENDMENTS.md](notes/AMENDMENTS.md).
+
+Hybrid retrieval, k=6:
+
+<!-- STALE_TABLE:START -->
+| questions | text searched | answerable | hit rate | full recall | MRR | current wording in top k |
+|---|---|---|---|---|---|---|
+| original | 2024-07-12 | 33 | 90.9% | 69.7% | 0.795 | n/a |
+| original | 2026-07-27 | 33 | 90.9% | 69.7% | 0.785 | n/a |
+| amended | 2024-07-12 | 11 | 63.6% | 45.5% | 0.636 | 0.0% |
+| amended | 2026-07-27 | 11 | 81.8% | 63.6% | 0.773 | 63.6% |
+
+On the amended questions the 2024 text still finds a provision with the right number for 63.6% of them, and the current wording for 0.0%. On the 2026 text that is 81.8% and 63.6%.
+<!-- STALE_TABLE:END -->
+
+This is the failure a stale RAG system hides. Measured the usual way, by whether the
+right article number comes back, the old corpus still looks respectable on questions about
+the new law, because most amendments rewrite an article without renumbering it. But
+not one retrieved chunk holds the current wording, so any answer built on it states
+the old rule with a correct-looking citation. Two articles it cannot return at all,
+4a and 60a, did not exist in 2024.
+
+Two things I am not hiding. The two plain date questions (a01, a02) miss Article 113
+on both texts: the top 6 is all articles about high-risk systems (6, 8, 43 and so on),
+none of them the article that holds the dates. That is the same weakness that cost s02
+on the original run. And the answer
+numbers above were measured on the 2024 text; I have not re-run generation on the
+amended one, so there is no answer-level comparison yet, only retrieval.
+
+Three of the original 45 questions are now out of date (m04 superseded, s15 and m12
+incomplete). They are marked in `qa_set.jsonl` and left as they were, since they are
+right for the text the published numbers were measured on.
+
 ## Method, briefly
 
 Official XHTML from the EU Publications Office Cellar API (CELEX `32024R1689`), chunked on the document's own articles, recitals and annexes, because the answer to a
 legal question is a citation: 113 articles + 180 recitals + 13 annexes → **464 chunks**,
-all under the encoder's 512-token limit. Retrieval is `BAAI/bge-small-en-v1.5` in Chroma
+all under the encoder's 512-token limit. The amended text (CELEX `02024R1689-20260727`)
+comes from the same API in different markup and has no preamble, so the unamended
+recitals are carried over: 119 articles + 180 recitals + 14 annexes → 498 chunks. Retrieval is `BAAI/bge-small-en-v1.5` in Chroma
 fused with BM25 by Reciprocal Rank Fusion, which ranks by position and so has no scaling
 constant to fit. Detail in [notes/METHODS.md](notes/METHODS.md#3-method), test set in
 [notes/METHODS.md](notes/METHODS.md#4-the-test-set).
@@ -116,6 +162,7 @@ make eval-retrieval
 ```
 
 Reproduces every retrieval number above. No API key, no LLM calls, no cost.
+`make eval-versions` adds the runs on the amended text and the amended questions.
 
 For generated answers, add a free [Groq](https://console.groq.com/keys) key:
 
@@ -138,6 +185,10 @@ docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest
 - **41.7% full recall on multi-hop questions.** Biggest weakness by far.
 - **45 questions is a small test set, and I wrote them myself** for a system I also
   built. Small differences between numbers here are noise.
+- **The answer numbers are for the 2024 text.** Retrieval has been measured on both
+  texts; generation only on the original.
+- **The consolidated text has no legal effect.** Only the Official Journal texts are
+  authentic. I checked every change I rely on against the amending act itself.
 - **No questions where a recital is the right answer**, which makes the recital
   down-weighting look better than it probably is.
 - **English only.** The Act is equally valid in 24 languages and I've tested one.
@@ -149,18 +200,19 @@ Full list in [notes/METHODS.md](notes/METHODS.md#5-limitations).
 
 ```
 src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline
-eval/            qa_set.jsonl · metrics.py · judge.py · run_eval.py · report.py
+eval/            qa_set.jsonl · qa_amended.jsonl · metrics.py · judge.py · run_eval.py · report.py
 app/             Streamlit UI, shows the answer next to its sources
 tests/           corpus integrity, metric maths, citation parsing
 deploy/          Hugging Face Space template
-notes/           METHODS.md, the long-form write-up
+notes/           METHODS.md, the long-form write-up · AMENDMENTS.md, the 2026 changes
 verify/          the same numbers, recomputed independently
 ```
 
 ## Credit
 
 The corpus is Regulation (EU) 2024/1689 from the Official Journal of the European Union,
-via the EU Publications Office (CELEX 32024R1689). Reuse is covered by Decision
+via the EU Publications Office (CELEX 32024R1689), and its consolidated text as amended
+by Regulation (EU) 2026/1744 (CELEX 02024R1689-20260727). Reuse is covered by Decision
 2011/833/EU. Nothing here is affiliated with or endorsed by the EU.
 
 The code is MIT ([LICENSE](LICENSE)). The corpus is not mine to licence, so its

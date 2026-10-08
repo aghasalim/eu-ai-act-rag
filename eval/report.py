@@ -90,31 +90,135 @@ def readme_table(d: dict, k: str) -> list[str]:
     return rows
 
 
+STALE_START = "<!-- STALE_TABLE:START -->"
+STALE_END = "<!-- STALE_TABLE:END -->"
+
+#: The four retrieval runs behind the stale-law comparison: which questions,
+#: which text of the Act they searched, and the results file. The first is the
+#: published run. All four come from `make eval-retrieval` / `make eval-versions`.
+STALE_RUNS = [
+    ("original", config.ORIGINAL, "latest"),
+    ("original", config.LATEST, f"original_{config.LATEST}"),
+    ("amended", config.ORIGINAL, f"amended_{config.ORIGINAL}"),
+    ("amended", config.LATEST, f"amended_{config.LATEST}"),
+]
+
+
+def _stale_runs() -> list[tuple[str, str, dict]] | None:
+    paths = [config.RESULTS_DIR / f"eval_{tag}.json" for _, _, tag in STALE_RUNS]
+    if not all(p.exists() for p in paths):
+        return None
+    return [(qs, ver, json.loads(p.read_text()))
+            for (qs, ver, _), p in zip(STALE_RUNS, paths)]
+
+
+def stale_table(k: str) -> list[str]:
+    """Hybrid retrieval on each question set against each text of the Act.
+
+    "current wording in top k" is the evidence check: every quote the answer
+    rests on appears in a retrieved chunk. Only the amended questions have
+    quotes, so it is n/a for the original set.
+    """
+    runs = _stale_runs()
+    if runs is None:
+        return ["_Not run yet: `make eval-versions`._"]
+    rows = [
+        "| questions | text searched | answerable | hit rate | full recall | MRR "
+        "| current wording in top k |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for qs, ver, d in runs:
+        r = d["retrieval"]["hybrid"]["at_k"][k]
+        s = r["overall"]
+        rows.append(
+            f"| {qs} | {ver} | {len(r['per_question'])} | {fmt(s['hit_rate'], 1)} | "
+            f"{fmt(s['full_recall'], 1)} | {fmt(s['mrr'])} | "
+            f"{fmt(s.get('evidence_hit'), 1)} |")
+    old = runs[2][2]["retrieval"]["hybrid"]["at_k"][k]["overall"]
+    new = runs[3][2]["retrieval"]["hybrid"]["at_k"][k]["overall"]
+    rows += [
+        "",
+        f"On the amended questions the 2024 text still finds a provision with the "
+        f"right number for {fmt(old['hit_rate'], 1)} of them, and the current "
+        f"wording for {fmt(old['evidence_hit'], 1)}. On the 2026 text that is "
+        f"{fmt(new['hit_rate'], 1)} and {fmt(new['evidence_hit'], 1)}.",
+    ]
+    return rows
+
+
+def stale_section(k: str) -> list[str]:
+    runs = _stale_runs()
+    if runs is None:
+        return []
+    out = [
+        "## 4. Stale law: the 2024 text against the amended text\n",
+        "Regulation (EU) 2026/1744 amended the Act on 27 July 2026. Hybrid "
+        f"retrieval at k={k} on both question sets and both texts. The amended "
+        "questions (`eval/qa_amended.jsonl`) can only be answered from the 2026 "
+        "text, and each carries the exact wording its answer rests on. A hit "
+        "means a chunk with the right article number came back; on a stale "
+        "corpus that article can hold the old rule, so the last column checks "
+        "for the current wording instead. Files: "
+        + ", ".join(f"`eval_{tag}.json`" for _, _, tag in STALE_RUNS) + ".\n",
+    ]
+    out += stale_table(k)
+    out += ["", "### Every amended question\n",
+            "| id | type | gold | hit, 2024 text | wording, 2024 text "
+            "| hit, 2026 text | wording, 2026 text |",
+            "|---|---|---|---|---|---|---|"]
+    yn = lambda v: "yes" if v else "no"
+    old = runs[2][2]["retrieval"]["hybrid"]["at_k"][k]["per_question"]
+    new = runs[3][2]["retrieval"]["hybrid"]["at_k"][k]["per_question"]
+    qa_path = ROOT / "eval" / "qa_amended.jsonl"
+    qa = [json.loads(l) for l in qa_path.read_text().splitlines() if l.strip()]
+    for q in qa:
+        o, n = old[q["id"]], new[q["id"]]
+        out.append(
+            f"| `{q['id']}` | {q['type']} | {', '.join(q['gold_units'])} | "
+            f"{yn(o['hit_rate'])} | {yn(o['evidence_hit'])} | "
+            f"{yn(n['hit_rate'])} | {yn(n['evidence_hit'])} |")
+    out += ["", "Generated answers were not re-run for these: no API key on the "
+            "machine that produced these files. Every number in this section is "
+            "retrieval, which needs no model.\n"]
+    return out
+
+
+def _replace_between(text: str, start: str, end: str, body: str) -> str | None:
+    if start not in text or end not in text:
+        return None
+    head, rest = text.split(start, 1)
+    _, tail = rest.split(end, 1)
+    return f"{head}{start}\n{body}\n{end}{tail}"
+
+
 def update_readme(d: dict, k: str, check: bool = False) -> None:
-    """Rewrite the README table in place between its markers.
+    """Rewrite the README tables in place between their markers.
 
     In check mode this writes nothing and fails on drift, so the check cannot
     quietly repair the thing it is meant to be reporting.
     """
     path = ROOT / "README.md"
     text = path.read_text()
-    if README_START not in text or README_END not in text:
-        print("!! README markers missing, table not updated")
-        return
-    head, rest = text.split(README_START, 1)
-    _, tail = rest.split(README_END, 1)
-    body = "\n".join(readme_table(d, k))
-    want = f"{head}{README_START}\n{body}\n{README_END}{tail}"
+    want = text
+    for name, start, end, body in (
+        ("retrieval", README_START, README_END, readme_table(d, k)),
+        ("stale-law", STALE_START, STALE_END, stale_table(k)),
+    ):
+        new = _replace_between(want, start, end, "\n".join(body))
+        if new is None:
+            print(f"!! README {name} markers missing, table not updated")
+            continue
+        want = new
     if check:
         if want != text:
             raise SystemExit(
-                "The README retrieval table has drifted from eval/report.py. "
+                "The README tables have drifted from eval/report.py. "
                 "Run `python eval/report.py` and commit the result."
             )
-        print("README retrieval table is up to date")
+        print("README tables are up to date")
         return
     path.write_text(want)
-    print("-> README.md (retrieval table)")
+    print("-> README.md (tables)")
 
 
 def main(tag: str = "latest", check: bool = False) -> None:
@@ -205,6 +309,7 @@ def main(tag: str = "latest", check: bool = False) -> None:
     # --- generation ------------------------------------------------------
     if "summary" not in d:
         A("## 2. Generation\n\n_Not run: no LLM key was configured._\n")
+        out += stale_section(k)
         _emit(out, check)
         update_readme(d, k, check)
         if not check:
@@ -288,6 +393,7 @@ def main(tag: str = "latest", check: bool = False) -> None:
             A(f"| `{qid}` | {ci} | {reason.replace('|', '/')} |")
         A("")
 
+    out += stale_section(k)
     _emit(out, check)
     update_readme(d, k, check)
     if not check:

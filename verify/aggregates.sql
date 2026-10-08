@@ -5,8 +5,9 @@
 -- are printed from. The mean is the step nothing checked: the per-question
 -- values and the aggregate come out of the same loop, so an error in the
 -- averaging would be invisible. This redoes the averaging in SQLite, reading
--- the same JSON with SQLite's own parser, and joins eval/qa_set.jsonl for the
--- question types rather than guessing them from the id prefix.
+-- the same JSON with SQLite's own parser, and joins eval/qa_set.jsonl and
+-- eval/qa_amended.jsonl for the question types rather than guessing them from
+-- the id prefix.
 --
 -- Emits one FAIL line per disagreement and one CHECKED line with the number of
 -- comparisons made. verify/verify.sh requires zero FAIL and a non-zero count.
@@ -26,7 +27,10 @@ CREATE TEMP TABLE files(path TEXT);
 INSERT INTO files VALUES
     ('eval/results/eval_latest.json'),
     ('eval/results/eval_retrieval_only.json'),
-    ('eval/results/eval_cap800_superseded.json');
+    ('eval/results/eval_cap800_superseded.json'),
+    ('eval/results/eval_original_2026-07-27.json'),
+    ('eval/results/eval_amended_2024-07-12.json'),
+    ('eval/results/eval_amended_2026-07-27.json');
 
 CREATE TEMP TABLE doc AS
     SELECT path, CAST(readfile(path) AS TEXT) AS j FROM files;
@@ -35,7 +39,9 @@ CREATE TEMP TABLE doc AS
 -- split it on newlines first. json_extract then reads each line on its own.
 CREATE TEMP TABLE qa AS
 WITH RECURSIVE lines(line, rest) AS (
-    SELECT '', CAST(readfile('eval/qa_set.jsonl') AS TEXT)
+    -- Both question sets; their ids do not overlap (s, m, u against a).
+    SELECT '', CAST(readfile('eval/qa_set.jsonl') AS TEXT) || char(10)
+               || CAST(readfile('eval/qa_amended.jsonl') AS TEXT)
     UNION ALL
     SELECT CASE WHEN instr(rest, char(10)) > 0
                 THEN substr(rest, 1, instr(rest, char(10)) - 1) ELSE rest END,

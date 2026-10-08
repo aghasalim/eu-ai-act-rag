@@ -131,3 +131,34 @@ _RAGAS cross-check unavailable: ragas not installed (ModuleNotFoundError)_
 | `m07` | 2 | The excerpts do not state when the Regulation enters into force or that obligations apply from that date; they only spec |
 | `m07` | 3 | The excerpts do not discuss the general start date of the Regulation's application or assert that Article 53 does not sp |
 | `m13` | 18 | The requirement is set out in Article 54(3)(b), not Article 54(b)(ii). There is no 'Article 54(b)(ii)' in the provided t |
+
+## 4. Stale law: the 2024 text against the amended text
+
+Regulation (EU) 2026/1744 amended the Act on 27 July 2026. Hybrid retrieval at k=6 on both question sets and both texts. The amended questions (`eval/qa_amended.jsonl`) can only be answered from the 2026 text, and each carries the exact wording its answer rests on. A hit means a chunk with the right article number came back; on a stale corpus that article can hold the old rule, so the last column checks for the current wording instead. Files: `eval_latest.json`, `eval_original_2026-07-27.json`, `eval_amended_2024-07-12.json`, `eval_amended_2026-07-27.json`.
+
+| questions | text searched | answerable | hit rate | full recall | MRR | current wording in top k |
+|---|---|---|---|---|---|---|
+| original | 2024-07-12 | 33 | 90.9% | 69.7% | 0.795 | n/a |
+| original | 2026-07-27 | 33 | 90.9% | 69.7% | 0.785 | n/a |
+| amended | 2024-07-12 | 11 | 63.6% | 45.5% | 0.636 | 0.0% |
+| amended | 2026-07-27 | 11 | 81.8% | 63.6% | 0.773 | 63.6% |
+
+On the amended questions the 2024 text still finds a provision with the right number for 63.6% of them, and the current wording for 0.0%. On the 2026 text that is 81.8% and 63.6%.
+
+### Every amended question
+
+| id | type | gold | hit, 2024 text | wording, 2024 text | hit, 2026 text | wording, 2026 text |
+|---|---|---|---|---|---|---|
+| `a01` | single_hop | art_113 | no | no | no | no |
+| `a02` | single_hop | art_113 | no | no | no | no |
+| `a03` | single_hop | art_5 | yes | no | yes | yes |
+| `a04` | multi_hop | art_5, art_113 | yes | no | yes | no |
+| `a05` | single_hop | art_4 | yes | no | yes | yes |
+| `a06` | single_hop | art_4a | no | no | yes | yes |
+| `a07` | single_hop | art_60a | no | no | yes | yes |
+| `a08` | single_hop | art_6 | yes | no | yes | yes |
+| `a09` | single_hop | art_111 | yes | no | yes | yes |
+| `a10` | single_hop | art_99 | yes | no | yes | yes |
+| `a11` | multi_hop | art_113, art_11 | yes | no | yes | no |
+
+Generated answers were not re-run for these: no API key on the machine that produced these files. Every number in this section is retrieval, which needs no model.

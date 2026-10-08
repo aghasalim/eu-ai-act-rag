@@ -139,7 +139,7 @@ That created three problems I had to deal with:
 | problem | what I did |
 |---|---|
 | Articles range from 2 lines (Art. 4) to about 9k tokens (Art. 3 has 68 definitions) | Split at numbered-item boundaries first, sentence boundaries second, never mid-sentence |
-| A split chunk on its own is meaningless ("…shall not apply", what shall not apply?) | Every chunk starts with a `Chapter > Section > Article N — Title` breadcrumb that gets embedded with it |
+| A split chunk on its own is meaningless ("…shall not apply", what shall not apply?) | Every chunk starts with a `Chapter > Section > Article N - Title` breadcrumb that gets embedded with it |
 | The lettered lists `(a) (b) (c)` are nested two-column HTML tables, and `get_text()` turns them into mush | Wrote a recursive renderer that rebuilds the outline structure |
 
 End result: 113 articles + 180 recitals + 13 annexes → **464 chunks**, 95th percentile
@@ -182,7 +182,9 @@ making something up.
 
 45 questions in [`eval/qa_set.jsonl`](../eval/qa_set.jsonl). I wrote all of them by hand
 against text I'd read in the parsed corpus, and each one records which articles count as
-the correct answer plus a note on what failure it's meant to catch.
+the correct answer plus a note on what failure it's meant to catch. They were written
+against the 2024 text; the 11 I added for the 2026 amendment, and the three originals it
+made stale, are described in [AMENDMENTS.md](AMENDMENTS.md).
 
 - **21 single-hop**: the answer is stated in one place.
 - **12 multi-hop**: you need two or more articles.
