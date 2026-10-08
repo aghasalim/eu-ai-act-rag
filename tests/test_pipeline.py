@@ -261,3 +261,39 @@ def test_hybrid_breaks_rrf_ties_the_same_way_everywhere(monkeypatch):
         monkeypatch.setattr(retrieve, "bm25", lambda q, p, v=None, s=second: [dict(s)])
         out = retrieve.hybrid("q", k=2, recital_weight=1.0)
         assert [h["chunk_id"] for h in out] == ["art_1", "art_2"]
+
+
+# --- amended question set -------------------------------------------------
+AMENDED = ROOT / "eval" / "qa_amended.jsonl"
+
+
+def test_amended_questions_are_only_answerable_from_the_amended_text(original):
+    """Each amended question quotes the provision its answer rests on. The quote
+    must sit inside a gold unit of the 2026 text and nowhere in the 2024 text,
+    otherwise the question does not test what it claims to."""
+    latest = _load(config.LATEST)
+    norm = lambda s: " ".join(s.split()).lower()
+    qa = [json.loads(l) for l in open(AMENDED, encoding="utf-8") if l.strip()]
+    assert len({q["id"] for q in qa}) == len(qa) >= 10
+    for q in qa:
+        assert q["type"] in {"single_hop", "multi_hop"} and q["gold_units"]
+        assert (len(q["gold_units"]) > 1) == (q["type"] == "multi_hop"), q["id"]
+        for ev in q["evidence"]:
+            where = {c["unit_id"] for c in latest if norm(ev) in norm(c["text"])}
+            assert where and where <= set(q["gold_units"]), (q["id"], ev)
+            assert not any(norm(ev) in norm(c["text"]) for c in original), (q["id"], ev)
+
+
+def test_stale_marks_on_the_original_set(qa):
+    for q in qa:
+        if "stale" in q:
+            assert q["stale"]["version"] in config.VERSIONS
+            assert q["stale"]["status"] in {"superseded", "incomplete"}
+            assert q["stale"]["note"]
+
+
+def test_evidence_hit_needs_every_quote():
+    hits = [{"text": "It shall apply from 2 December  2027."}, {"text": "other"}]
+    assert M.evidence_hit(hits, ["2 december 2027"], 2) == 1.0
+    assert M.evidence_hit(hits, ["2 December 2027", "2 August 2028"], 2) == 0.0
+    assert M.evidence_hit(hits, ["2 December 2027"], 0) == 0.0

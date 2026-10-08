@@ -31,11 +31,16 @@ from src.euactrag.ingest import load_chunks  # noqa: E402
 from eval import judge as judge_mod  # noqa: E402
 from eval import metrics as M  # noqa: E402
 
-QA_PATH = Path(__file__).parent / "qa_set.jsonl"
+# "original": the 45 questions written against the 2024 text. "amended": questions
+# whose gold answer only the 2026-07-27 consolidated text supports.
+QA_SETS = {
+    "original": Path(__file__).parent / "qa_set.jsonl",
+    "amended": Path(__file__).parent / "qa_amended.jsonl",
+}
 
 
-def load_qa() -> list[dict]:
-    return [json.loads(l) for l in open(QA_PATH, encoding="utf-8") if l.strip()]
+def load_qa(name: str = "original") -> list[dict]:
+    return [json.loads(l) for l in open(QA_SETS[name], encoding="utf-8") if l.strip()]
 
 
 def mean(xs: list[float | None]) -> float | None:
@@ -62,6 +67,15 @@ def score_retrieval(qa: list[dict], modes: list[str], ks: list[int],
                      for q in answerable}
             agg = {name: mean([per_q[q["id"]][name] for q in answerable])
                    for name in M.RETRIEVAL_METRICS}
+            # Only the amended set carries evidence quotes. A unit can be
+            # retrieved and still hold the old wording; this checks the wording.
+            with_ev = [q for q in answerable if q.get("evidence")]
+            for q in with_ev:
+                per_q[q["id"]]["evidence_hit"] = M.evidence_hit(
+                    hits_by_q[q["id"]], q["evidence"], k)
+            if with_ev:
+                agg["evidence_hit"] = mean(
+                    [per_q[q["id"]]["evidence_hit"] for q in with_ev])
             by_type = {}
             for t in ("single_hop", "multi_hop"):
                 sub = [q for q in answerable if q["type"] == t]
@@ -281,9 +295,10 @@ def main() -> None:
                    choices=sorted(config.VERSIONS),
                    help="corpus version to search; the published headline run "
                         "is on 2024-07-12")
+    p.add_argument("--qa", default="original", choices=sorted(QA_SETS))
     a = p.parse_args()
 
-    qa = load_qa()
+    qa = load_qa(a.qa)
     if a.limit:
         qa = qa[: a.limit]
     modes = a.modes.split(",")
@@ -292,13 +307,14 @@ def main() -> None:
     ks = sorted({int(x) for x in a.ks.split(",")} | {a.k})
     n_chunks = len(load_chunks(a.corpus))
 
-    print(f"corpus {a.corpus}: {n_chunks} chunks | qa: {len(qa)} questions")
+    print(f"corpus {a.corpus}: {n_chunks} chunks | qa {a.qa}: {len(qa)} questions")
     print(f"\n== retrieval ({', '.join(modes)}) ==")
     ret = score_retrieval(qa, modes, ks, a.corpus)
     for mode in modes:
         s = ret[mode]["at_k"][str(a.k)]["overall"]
         print(f"  {mode:<7} @{a.k}  hit={s['hit_rate']}  recall={s['recall']}  "
-              f"full={s['full_recall']}  mrr={s['mrr']}  ndcg={s['ndcg']}")
+              f"full={s['full_recall']}  mrr={s['mrr']}  ndcg={s['ndcg']}"
+              + (f"  evidence={s['evidence_hit']}" if "evidence_hit" in s else ""))
 
     print("\n== ablation: recital down-weighting ==")
     abl = ablate_recital_weight(qa, a.k, version=a.corpus)
@@ -312,7 +328,7 @@ def main() -> None:
             "gen_mode": a.gen_mode, "rrf_k": config.RRF_K,
             "recital_weight": config.RECITAL_WEIGHT,
             "n_chunks": n_chunks, "n_questions": len(qa),
-            "corpus_version": a.corpus,
+            "corpus_version": a.corpus, "qa_set": a.qa,
         },
         "retrieval": ret,
         "ablation_recital_weight": abl,

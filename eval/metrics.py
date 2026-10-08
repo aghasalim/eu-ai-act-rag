@@ -67,6 +67,18 @@ RETRIEVAL_METRICS = {
 }
 
 
+def _norm(s: str) -> str:
+    return " ".join(s.replace("’", "'").split()).lower()
+
+
+def evidence_hit(hits: list[dict], evidence: list[str], k: int) -> float:
+    """Is every gold quote inside some top-k chunk? Unit-level hit rate cannot
+    tell a current provision from a superseded one with the same number, which
+    is the whole problem with a stale corpus. Whitespace and case are ignored."""
+    texts = [_norm(h["text"]) for h in hits[:k]]
+    return float(all(any(_norm(ev) in t for t in texts) for ev in evidence))
+
+
 def retrieval_scores(hits: list[dict], gold: list[str], k: int) -> dict:
     return {name: fn(hits, gold, k) for name, fn in RETRIEVAL_METRICS.items()}
 
