@@ -1,0 +1,3600 @@
+{
+  "config": {
+    "embed_model": "BAAI/bge-small-en-v1.5",
+    "top_k": 6,
+    "gen_mode": "hybrid",
+    "rrf_k": 60,
+    "recital_weight": 0.5,
+    "n_chunks": 498,
+    "n_questions": 45,
+    "corpus_version": "2026-07-27",
+    "qa_set": "original"
+  },
+  "retrieval": {
+    "dense": {
+      "latency_s_per_query": 0.2254,
+      "at_k": {
+        "3": {
+          "overall": {
+            "hit_rate": 0.697,
+            "recall": 0.601,
+            "full_recall": 0.5152,
+            "precision": 0.3485,
+            "mrr": 0.5051,
+            "ndcg": 0.4971
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7619,
+              "recall": 0.7619,
+              "full_recall": 0.7619,
+              "precision": 0.3968,
+              "mrr": 0.5476,
+              "ndcg": 0.6026
+            },
+            "multi_hop": {
+              "hit_rate": 0.5833,
+              "recall": 0.3194,
+              "full_recall": 0.0833,
+              "precision": 0.2639,
+              "mrr": 0.4306,
+              "ndcg": 0.3124
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s09": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s11": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s14": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s20": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m03": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m06": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m08": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "m10": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.2960819109658652
+            },
+            "m13": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          }
+        },
+        "5": {
+          "overall": {
+            "hit_rate": 0.7576,
+            "recall": 0.6313,
+            "full_recall": 0.5152,
+            "precision": 0.2338,
+            "mrr": 0.5187,
+            "ndcg": 0.5123
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7619,
+              "recall": 0.7619,
+              "full_recall": 0.7619,
+              "precision": 0.2397,
+              "mrr": 0.5476,
+              "ndcg": 0.6026
+            },
+            "multi_hop": {
+              "hit_rate": 0.75,
+              "recall": 0.4028,
+              "full_recall": 0.0833,
+              "precision": 0.2236,
+              "mrr": 0.4681,
+              "ndcg": 0.3542
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s09": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s11": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s14": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s20": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.6666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.25,
+              "ndcg": 0.2640681225725909
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m06": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m08": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "m10": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.2960819109658652
+            },
+            "m13": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            }
+          }
+        },
+        "6": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.6616,
+            "full_recall": 0.5152,
+            "precision": 0.1924,
+            "mrr": 0.5288,
+            "ndcg": 0.5255
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7619,
+              "recall": 0.7619,
+              "full_recall": 0.7619,
+              "precision": 0.1786,
+              "mrr": 0.5476,
+              "ndcg": 0.6026
+            },
+            "multi_hop": {
+              "hit_rate": 0.9167,
+              "recall": 0.4861,
+              "full_recall": 0.0833,
+              "precision": 0.2167,
+              "mrr": 0.4958,
+              "ndcg": 0.3906
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s09": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s11": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s14": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s20": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.6666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.25,
+              "ndcg": 0.2640681225725909
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m06": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.16666666666666666,
+              "ndcg": 0.21840743681816419
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.16666666666666666,
+              "ndcg": 0.21840743681816419
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.2960819109658652
+            },
+            "m13": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            }
+          }
+        },
+        "10": {
+          "overall": {
+            "hit_rate": 0.8788,
+            "recall": 0.7475,
+            "full_recall": 0.6061,
+            "precision": 0.1227,
+            "mrr": 0.5359,
+            "ndcg": 0.554
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.8571,
+              "recall": 0.8571,
+              "full_recall": 0.8571,
+              "precision": 0.1105,
+              "mrr": 0.5589,
+              "ndcg": 0.632
+            },
+            "multi_hop": {
+              "hit_rate": 0.9167,
+              "recall": 0.5556,
+              "full_recall": 0.1667,
+              "precision": 0.1441,
+              "mrr": 0.4958,
+              "ndcg": 0.4177
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.1111111111111111,
+              "ndcg": 0.3010299956639812
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s11": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.125,
+              "ndcg": 0.31546487678572877
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s20": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.25,
+              "ndcg": 0.2640681225725909
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.7903864795495061
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m06": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1,
+              "mrr": 0.16666666666666666,
+              "ndcg": 0.21840743681816419
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1,
+              "mrr": 0.16666666666666666,
+              "ndcg": 0.21840743681816419
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.125,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.6666666666666666,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.4441228664487979
+            },
+            "m13": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            }
+          }
+        }
+      }
+    },
+    "bm25": {
+      "latency_s_per_query": 0.0018,
+      "at_k": {
+        "3": {
+          "overall": {
+            "hit_rate": 0.6061,
+            "recall": 0.5051,
+            "full_recall": 0.4242,
+            "precision": 0.2475,
+            "mrr": 0.5051,
+            "ndcg": 0.4554
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.5714,
+              "recall": 0.5714,
+              "full_recall": 0.5714,
+              "precision": 0.2302,
+              "mrr": 0.4444,
+              "ndcg": 0.4773
+            },
+            "multi_hop": {
+              "hit_rate": 0.6667,
+              "recall": 0.3889,
+              "full_recall": 0.1667,
+              "precision": 0.2778,
+              "mrr": 0.6111,
+              "ndcg": 0.417
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s03": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s04": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s20": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.6666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m03": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.6666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.9197207891481876
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m06": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.46927872602275644
+            },
+            "m07": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "s21": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m11": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.46927872602275644
+            },
+            "m13": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          }
+        },
+        "5": {
+          "overall": {
+            "hit_rate": 0.8485,
+            "recall": 0.7172,
+            "full_recall": 0.6061,
+            "precision": 0.2111,
+            "mrr": 0.5652,
+            "ndcg": 0.5531
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.8095,
+              "recall": 0.8095,
+              "full_recall": 0.8095,
+              "precision": 0.1889,
+              "mrr": 0.5079,
+              "ndcg": 0.5832
+            },
+            "multi_hop": {
+              "hit_rate": 0.9167,
+              "recall": 0.5556,
+              "full_recall": 0.25,
+              "precision": 0.25,
+              "mrr": 0.6653,
+              "ndcg": 0.5006
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s04": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s20": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.4,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.4,
+              "mrr": 1.0,
+              "ndcg": 0.9197207891481876
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m06": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.46927872602275644
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.25,
+              "ndcg": 0.2640681225725909
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.46927872602275644
+            },
+            "m13": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          }
+        },
+        "6": {
+          "overall": {
+            "hit_rate": 0.8485,
+            "recall": 0.7172,
+            "full_recall": 0.6061,
+            "precision": 0.1798,
+            "mrr": 0.5652,
+            "ndcg": 0.5531
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.8095,
+              "recall": 0.8095,
+              "full_recall": 0.8095,
+              "precision": 0.1579,
+              "mrr": 0.5079,
+              "ndcg": 0.5832
+            },
+            "multi_hop": {
+              "hit_rate": 0.9167,
+              "recall": 0.5556,
+              "full_recall": 0.25,
+              "precision": 0.2181,
+              "mrr": 0.6653,
+              "ndcg": 0.5006
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s04": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s20": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.9197207891481876
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m06": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.46927872602275644
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.25,
+              "ndcg": 0.2640681225725909
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.46927872602275644
+            },
+            "m13": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          }
+        },
+        "10": {
+          "overall": {
+            "hit_rate": 0.9394,
+            "recall": 0.8485,
+            "full_recall": 0.7576,
+            "precision": 0.1384,
+            "mrr": 0.5779,
+            "ndcg": 0.6024
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.9048,
+              "recall": 0.9048,
+              "full_recall": 0.9048,
+              "precision": 0.112,
+              "mrr": 0.5212,
+              "ndcg": 0.6145
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.75,
+              "full_recall": 0.5,
+              "precision": 0.1847,
+              "mrr": 0.6772,
+              "ndcg": 0.5813
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.1111111111111111,
+              "ndcg": 0.3010299956639812
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s12": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.16666666666666666,
+              "ndcg": 0.3562071871080222
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "s20": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2857142857142857,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2222222222222222,
+              "mrr": 1.0,
+              "ndcg": 0.9197207891481876
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.14285714285714285,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.3065735963827292
+            },
+            "m06": {
+              "hit_rate": 1.0,
+              "recall": 0.6666666666666666,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.617319681505689
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.14285714285714285,
+              "mrr": 0.25,
+              "ndcg": 0.2640681225725909
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.8175295903539445
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.25,
+              "ndcg": 0.43067655807339306
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.8315546295836225
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 0.46927872602275644
+            },
+            "m13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.14285714285714285,
+              "ndcg": 0.39780880120575696
+            }
+          }
+        }
+      }
+    },
+    "hybrid": {
+      "latency_s_per_query": 0.0314,
+      "at_k": {
+        "3": {
+          "overall": {
+            "hit_rate": 0.8788,
+            "recall": 0.7323,
+            "full_recall": 0.6061,
+            "precision": 0.4343,
+            "mrr": 0.7778,
+            "ndcg": 0.7062
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.8571,
+              "recall": 0.8571,
+              "full_recall": 0.8571,
+              "precision": 0.4286,
+              "mrr": 0.7778,
+              "ndcg": 0.7982
+            },
+            "multi_hop": {
+              "hit_rate": 0.9167,
+              "recall": 0.5139,
+              "full_recall": 0.1667,
+              "precision": 0.4444,
+              "mrr": 0.7778,
+              "ndcg": 0.5453
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s20": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.6666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.6666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m06": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.23463936301137822
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.3333333333333333,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.46927872602275644
+            },
+            "m13": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          }
+        },
+        "5": {
+          "overall": {
+            "hit_rate": 0.9091,
+            "recall": 0.8131,
+            "full_recall": 0.697,
+            "precision": 0.3086,
+            "mrr": 0.7854,
+            "ndcg": 0.7497
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.8571,
+              "recall": 0.8571,
+              "full_recall": 0.8571,
+              "precision": 0.2603,
+              "mrr": 0.7778,
+              "ndcg": 0.7982
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.7361,
+              "full_recall": 0.4167,
+              "precision": 0.3931,
+              "mrr": 0.7986,
+              "ndcg": 0.6647
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s20": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.4,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.6666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.4,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m06": {
+              "hit_rate": 1.0,
+              "recall": 0.6666666666666666,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.4367467095119258
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.4,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.6666666666666666,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.6713860725233041
+            },
+            "m13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.4,
+              "mrr": 0.25,
+              "ndcg": 0.5012658353418871
+            }
+          }
+        },
+        "6": {
+          "overall": {
+            "hit_rate": 0.9091,
+            "recall": 0.8131,
+            "full_recall": 0.697,
+            "precision": 0.2616,
+            "mrr": 0.7854,
+            "ndcg": 0.7497
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.8571,
+              "recall": 0.8571,
+              "full_recall": 0.8571,
+              "precision": 0.2095,
+              "mrr": 0.7778,
+              "ndcg": 0.7982
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.7361,
+              "full_recall": 0.4167,
+              "precision": 0.3528,
+              "mrr": 0.7986,
+              "ndcg": 0.6647
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s20": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.4,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.6666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.4,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m06": {
+              "hit_rate": 1.0,
+              "recall": 0.6666666666666666,
+              "full_recall": 0.0,
+              "precision": 0.4,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.4367467095119258
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.6666666666666666,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.6713860725233041
+            },
+            "m13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.25,
+              "ndcg": 0.5012658353418871
+            }
+          }
+        },
+        "10": {
+          "overall": {
+            "hit_rate": 0.9697,
+            "recall": 0.9343,
+            "full_recall": 0.8788,
+            "precision": 0.1798,
+            "mrr": 0.7975,
+            "ndcg": 0.8002
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.9524,
+              "recall": 0.9524,
+              "full_recall": 0.9524,
+              "precision": 0.13,
+              "mrr": 0.7968,
+              "ndcg": 0.835
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.9028,
+              "full_recall": 0.75,
+              "precision": 0.2669,
+              "mrr": 0.7986,
+              "ndcg": 0.7393
+            }
+          },
+          "per_question": {
+            "s01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.2,
+              "ndcg": 0.38685280723454163
+            },
+            "s02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s12": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "s13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s14": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575
+            },
+            "s15": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s16": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s17": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s18": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s19": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "s20": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.2,
+              "ndcg": 0.38685280723454163
+            },
+            "m01": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m02": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2857142857142857,
+              "mrr": 1.0,
+              "ndcg": 1.0
+            },
+            "m03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.8315546295836225
+            },
+            "m04": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2857142857142857,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "m05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "m06": {
+              "hit_rate": 1.0,
+              "recall": 0.6666666666666666,
+              "full_recall": 0.0,
+              "precision": 0.2222222222222222,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.4367467095119258
+            },
+            "m07": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.14285714285714285,
+              "mrr": 0.5,
+              "ndcg": 0.38685280723454163
+            },
+            "m08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2857142857142857,
+              "mrr": 1.0,
+              "ndcg": 0.8772153153380493
+            },
+            "s21": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "m10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2222222222222222,
+              "mrr": 1.0,
+              "ndcg": 0.8315546295836225
+            },
+            "m11": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2222222222222222,
+              "mrr": 0.5,
+              "ndcg": 0.5802792108518124
+            },
+            "m12": {
+              "hit_rate": 1.0,
+              "recall": 0.6666666666666666,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6713860725233041
+            },
+            "m13": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2857142857142857,
+              "mrr": 0.25,
+              "ndcg": 0.5012658353418871
+            }
+          }
+        }
+      }
+    }
+  },
+  "ablation_recital_weight": {
+    "1.0": {
+      "hit_rate": 0.8788,
+      "recall": 0.7576,
+      "full_recall": 0.6364,
+      "precision": 0.2,
+      "mrr": 0.602,
+      "ndcg": 0.6055
+    },
+    "0.75": {
+      "hit_rate": 0.9091,
+      "recall": 0.803,
+      "full_recall": 0.697,
+      "precision": 0.252,
+      "mrr": 0.7854,
+      "ndcg": 0.7422
+    },
+    "0.5": {
+      "hit_rate": 0.9091,
+      "recall": 0.8131,
+      "full_recall": 0.697,
+      "precision": 0.2616,
+      "mrr": 0.7854,
+      "ndcg": 0.7497
+    },
+    "0.25": {
+      "hit_rate": 0.9091,
+      "recall": 0.8131,
+      "full_recall": 0.697,
+      "precision": 0.2707,
+      "mrr": 0.7854,
+      "ndcg": 0.7497
+    },
+    "0.0": {
+      "hit_rate": 0.9091,
+      "recall": 0.8131,
+      "full_recall": 0.697,
+      "precision": 0.2707,
+      "mrr": 0.7854,
+      "ndcg": 0.7497
+    }
+  }
+}
