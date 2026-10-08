@@ -13,11 +13,11 @@ corpus:          ## download + chunk the AI Act
 index:           ## embed + build the vector store
 	$(PY) -m src.euactrag.index
 
-eval:            ## full evaluation (needs GROQ_API_KEY)
-	$(PY) eval/run_eval.py
+eval:            ## published evaluation, original text (needs GROQ_API_KEY)
+	$(PY) eval/run_eval.py --corpus 2024-07-12
 
 eval-retrieval:  ## retrieval metrics only, no API key needed
-	$(PY) eval/run_eval.py --no-generation --tag retrieval_only
+	$(PY) eval/run_eval.py --corpus 2024-07-12 --no-generation --tag retrieval_only
 
 report:          ## regenerate RESULTS.md from the latest eval json
 	$(PY) eval/report.py

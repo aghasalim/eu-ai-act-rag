@@ -108,9 +108,10 @@ def answer(
     mode: str | None = None,
     model: str | None = None,
     provider: str | None = None,
+    version: str | None = None,
 ) -> Answer:
     mode = mode or config.RETRIEVAL_MODE
-    hits = retrieve.search(question, k=k, mode=mode)
+    hits = retrieve.search(question, k=k, mode=mode, version=version)
     res = Answer(question=question, answer="", contexts=hits, mode=mode,
                  model=model or config.LLM_MODEL)
 

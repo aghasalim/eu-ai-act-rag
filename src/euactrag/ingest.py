@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 
 from bs4 import BeautifulSoup, NavigableString, Tag
 
@@ -50,20 +50,32 @@ def _fix_superscripts(soup: BeautifulSoup) -> None:
     a digit superscript that directly follows a digit, the other 58 plain
     superscripts in the document are footnote reference markers, not exponents.
     """
-    for sp in soup.find_all("span", class_="oj-super"):
+    # "oj-super" in the Official Journal markup, "superscript" in the consolidated.
+    for sp in soup.find_all("span", class_=("oj-super", "superscript")):
         if "oj-note-tag" in (sp.get("class") or []):
             continue
         txt = sp.get_text().strip()
         prev = sp.previous_sibling
         prev_txt = str(prev) if isinstance(prev, NavigableString) else ""
         if txt.isdigit() and prev_txt.rstrip()[-1:].isdigit():
+            parent = sp.parent
             sp.replace_with(f"^{txt}")
+            # The consolidated text holds this sentence in a <div>, whose text
+            # nodes the renderer emits one per line; merge "10" and "^25" there.
+            # Only there: the OJ rendering already reads "10^25 ." and the
+            # original corpus is kept byte-identical to what was evaluated.
+            if parent.name == "div":
+                parent.smooth()
 
 
 # Heading nodes are captured into structured fields, so the body renderer drops
 # them rather than repeating them inline. `oj-note*` are footnote markers and OJ
-# bibliographic footnotes: noise for retrieval.
-_SKIP_CLASSES = ("oj-note", "oj-ti-art", "oj-sti-art", "oj-doc-ti")
+# bibliographic footnotes: noise for retrieval. The second group is the same set
+# in the consolidated-text markup, plus its "▼M1" amendment markers, which say
+# which act changed a passage and are not part of the law's wording.
+_SKIP_CLASSES = ("oj-note", "oj-ti-art", "oj-sti-art", "oj-doc-ti",
+                 "title-article-norm", "stitle-article-norm", "title-annex-",
+                 "footnote", "modref", "arrow")
 
 
 def _classes(el: Tag) -> str:
@@ -76,12 +88,23 @@ def _is_note(el: Tag) -> bool:
     return any(s in cls for s in _SKIP_CLASSES)
 
 
+def _row(marker: str, body: str, depth: int) -> list[str]:
+    """One enumerated item: marker and first line joined, the rest indented."""
+    pad = "    " * depth
+    if marker and body:
+        first, *rest = body.split("\n")
+        return [f"{pad}{marker} {first}"] + [f"{pad}    {r}" for r in rest if r.strip()]
+    return [f"{pad}{body}"] if body else []
+
+
 def render(el: Tag, depth: int = 0) -> str:
     """Recursively render a node to outline text, preserving enumeration markers.
 
     EUR-Lex encodes "(a) some text" as a 2-column table row: a narrow marker cell
     and a wide content cell. We rejoin them and indent nested levels so that the
-    hierarchy survives into the embedded text.
+    hierarchy survives into the embedded text. The consolidated text says the
+    same thing with a two-div "grid-list" for points and a "no-parag" span for
+    paragraph numbers, which get the same treatment.
     """
     out: list[str] = []
     for child in el.children:
@@ -95,6 +118,22 @@ def render(el: Tag, depth: int = 0) -> str:
         if _is_note(child):
             continue
 
+        cls = _classes(child)
+        if "grid-container" in cls:
+            cols = child.find_all("div", recursive=False)
+            if len(cols) == 2:
+                out.extend(_row(_clean(cols[0].get_text(" ")),
+                                render(cols[1], depth + 1).strip(), depth))
+                continue
+        num = child.find("span", class_="no-parag", recursive=False)
+        if num is not None:
+            marker = _clean(num.extract().get_text(" "))
+            body = render(child, depth).strip()
+            first, *rest = body.split("\n") if body else [""]
+            out.append(f"{'    ' * depth}{marker} {first}".rstrip())
+            out.extend(r for r in rest if r.strip())
+            continue
+
         if child.name == "table":
             for row in child.find_all("tr", recursive=True):
                 # only rows that belong to *this* table, not nested ones
@@ -102,15 +141,8 @@ def render(el: Tag, depth: int = 0) -> str:
                     continue
                 cells = [c for c in row.find_all("td", recursive=False)]
                 if len(cells) == 2:
-                    marker = _clean(cells[0].get_text(" "))
-                    body = render(cells[1], depth + 1).strip()
-                    pad = "    " * depth
-                    if marker and body:
-                        first, *rest = body.split("\n")
-                        out.append(f"{pad}{marker} {first}")
-                        out.extend(f"{pad}    {r}" for r in rest if r.strip())
-                    elif body:
-                        out.append(f"{pad}{body}")
+                    out.extend(_row(_clean(cells[0].get_text(" ")),
+                                    render(cells[1], depth + 1).strip(), depth))
                 else:
                     joined = " ".join(_clean(c.get_text(" ")) for c in cells)
                     if joined.strip():
@@ -149,6 +181,7 @@ class Chunk:
     text: str = ""  # breadcrumb + body; this is what gets embedded
     n_tokens: int = 0
     url: str = ""
+    version: str = ""  # corpus version, the date of the text (config.VERSIONS)
     meta: dict = field(default_factory=dict)
 
 
@@ -245,8 +278,9 @@ def _emit(base: Chunk, body: str, out: list[Chunk]) -> None:
         out.append(c)
 
 
-def parse(xhtml_path=None) -> list[Chunk]:
-    xhtml_path = xhtml_path or config.RAW_XHTML
+def parse(version: str = config.ORIGINAL) -> list[Chunk]:
+    eli = config.VERSIONS[version]["eli"]
+    xhtml_path = config.VERSIONS[version]["raw"]
     soup = BeautifulSoup(open(xhtml_path, encoding="utf-8").read(), "lxml")
     _fix_superscripts(soup)
     chunks: list[Chunk] = []
@@ -261,7 +295,7 @@ def parse(xhtml_path=None) -> list[Chunk]:
         cls = _classes(el)
         eid = (getattr(el, "attrs", None) or {}).get("id", "") or ""
 
-        if "oj-ti-section-1" in cls:
+        if "oj-ti-section-1" in cls or "title-division-1" in cls:
             t = _clean(el.get_text(" "))
             if t.upper().startswith("CHAPTER"):
                 chapter, chapter_title, pending = t, "", "chapter"
@@ -269,7 +303,7 @@ def parse(xhtml_path=None) -> list[Chunk]:
             elif t.upper().startswith("SECTION"):
                 section, section_title, pending = t, "", "section"
             continue
-        if "oj-ti-section-2" in cls and pending:
+        if ("oj-ti-section-2" in cls or "title-division-2" in cls) and pending:
             t = _clean(el.get_text(" "))
             if pending == "chapter":
                 chapter_title = f"{chapter} - {t}"
@@ -284,17 +318,18 @@ def parse(xhtml_path=None) -> list[Chunk]:
         # ---- Articles -------------------------------------------------
         if "eli-subdivision" in cls and eid.startswith("art_"):
             num = eid.split("_", 1)[1]
-            ti = el.find("p", class_="oj-ti-art")
-            sti = el.find("p", class_="oj-sti-art")
+            ti = el.find("p", class_=("oj-ti-art", "title-article-norm"))
+            sti = el.find("p", class_=("oj-sti-art", "stitle-article-norm"))
             label = _clean(ti.get_text(" ")) if ti else f"Article {num}"
-            title = _clean(sti.get_text(" ")).rstrip("`") if sti else ""
+            # Both renderings leave a stray closing quote on a few titles.
+            title = _clean(sti.get_text(" ")).rstrip("`'") if sti else ""
             body = render(el)
             base = Chunk(
                 chunk_id=eid, kind="article", unit_id=eid,
                 citation=f"{label} - {title}" if title else label,
                 title=title, chapter=chapter, chapter_title=chapter_title,
                 section=section, section_title=section_title,
-                url=f"{config.ELI_BASE}#{eid}", meta={"article": num},
+                url=f"{eli}#{eid}", version=version, meta={"article": num},
             )
             _emit(base, body, chunks)
 
@@ -307,14 +342,16 @@ def parse(xhtml_path=None) -> list[Chunk]:
                 chunk_id=eid, kind="recital", unit_id=eid,
                 citation=f"Recital ({num})", chapter="Recitals",
                 chapter_title="Recitals (non-binding interpretive context)",
-                url=f"{config.ELI_BASE}#{eid}", meta={"recital": num},
+                url=f"{eli}#{eid}", version=version, meta={"recital": num},
             )
             _emit(base, body, chunks)
 
         # ---- Annexes --------------------------------------------------
-        elif "eli-container" in cls and eid.startswith("anx_"):
+        # The consolidated text puts annexes in a bare <div id="anx_I">.
+        elif eid.startswith("anx_") and (not cls or "eli-container" in cls):
             roman = eid.split("_", 1)[1]
-            titles = el.find_all("p", class_="oj-doc-ti", limit=2)
+            titles = el.find_all(
+                "p", class_=("oj-doc-ti", "title-annex-1", "title-annex-2"), limit=2)
             label = _clean(titles[0].get_text(" ")) if titles else f"ANNEX {roman}"
             subtitle = _clean(titles[1].get_text(" ")) if len(titles) > 1 else ""
             body = render(el)
@@ -322,41 +359,49 @@ def parse(xhtml_path=None) -> list[Chunk]:
                 chunk_id=eid, kind="annex", unit_id=eid,
                 citation=f"{label} - {subtitle}" if subtitle else label,
                 title=subtitle, chapter="Annexes", chapter_title="Annexes",
-                url=f"{config.ELI_BASE}#{eid}", meta={"annex": roman},
+                url=f"{eli}#{eid}", version=version, meta={"annex": roman},
             )
             _emit(base, body, chunks)
 
+    # A consolidated text is published without the preamble. The recitals of
+    # 2024/1689 are not amended (the Omnibus has recitals of its own, which
+    # explain the amendments but are not part of this Regulation), so the
+    # original ones are carried over and still link to the Official Journal.
+    if version != config.ORIGINAL and not any(c.kind == "recital" for c in chunks):
+        chunks = [replace(c, version=version) for c in parse(config.ORIGINAL)
+                  if c.kind == "recital"] + chunks
     return chunks
 
 
-def write_jsonl(chunks: list[Chunk], path=None) -> None:
-    path = path or config.CHUNKS
+def write_jsonl(chunks: list[Chunk], version: str) -> None:
+    path = config.chunks_path(version)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         for c in chunks:
             f.write(json.dumps(asdict(c), ensure_ascii=False) + "\n")
 
 
-def load_chunks(path=None) -> list[dict]:
-    path = path or config.CHUNKS
+def load_chunks(version: str | None = None) -> list[dict]:
+    path = config.chunks_path(version or config.CORPUS_VERSION)
     with open(path, encoding="utf-8") as f:
         return [json.loads(l) for l in f if l.strip()]
 
 
 def main() -> None:
-    chunks = parse()
-    write_jsonl(chunks)
     from collections import Counter
 
-    kinds = Counter(c.kind for c in chunks)
-    toks = sorted(c.n_tokens for c in chunks)
-    units = len({c.unit_id for c in chunks})
-    print(f"chunks={len(chunks)} units={units} {dict(kinds)}")
-    print(
-        f"tokens: min={toks[0]} p50={toks[len(toks)//2]} "
-        f"p95={toks[int(len(toks)*.95)]} max={toks[-1]}"
-    )
-    print(f"-> {config.CHUNKS}")
+    for version in sorted(config.VERSIONS):
+        chunks = parse(version)
+        write_jsonl(chunks, version)
+        kinds = Counter(c.kind for c in chunks)
+        toks = sorted(c.n_tokens for c in chunks)
+        units = len({c.unit_id for c in chunks})
+        print(f"[{version}] chunks={len(chunks)} units={units} {dict(kinds)}")
+        print(
+            f"  tokens: min={toks[0]} p50={toks[len(toks)//2]} "
+            f"p95={toks[int(len(toks)*.95)]} max={toks[-1]}"
+        )
+        print(f"  -> {config.chunks_path(version)}")
 
 
 if __name__ == "__main__":
