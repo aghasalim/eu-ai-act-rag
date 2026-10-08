@@ -627,8 +627,20 @@ func main() {
 	}
 	for _, name := range []string{
 		"eval_latest.json", "eval_retrieval_only.json", "eval_cap800_superseded.json",
+		"eval_original_2026-07-27.json",
 	} {
 		checkEval(*root, name, answerable, &p)
+	}
+	// The amended questions, run on both texts of the Act. Every one of them is
+	// answerable, so the per-question count is the number of lines.
+	amended, err := readJSONL(filepath.Join(*root, "eval", "qa_amended.jsonl"))
+	if err != nil || len(amended) == 0 {
+		p.add("qa_amended.jsonl: %v (%d questions)", err, len(amended))
+	}
+	for _, name := range []string{
+		"eval_amended_2024-07-12.json", "eval_amended_2026-07-27.json",
+	} {
+		checkEval(*root, name, len(amended), &p)
 	}
 	for _, name := range []string{
 		"rows_latest.jsonl", "rows_cap800_superseded.jsonl", "rows_gptoss120b.jsonl",

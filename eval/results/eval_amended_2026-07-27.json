@@ -1,0 +1,1632 @@
+{
+  "config": {
+    "embed_model": "BAAI/bge-small-en-v1.5",
+    "top_k": 6,
+    "gen_mode": "hybrid",
+    "rrf_k": 60,
+    "recital_weight": 0.5,
+    "n_chunks": 498,
+    "n_questions": 11,
+    "corpus_version": "2026-07-27",
+    "qa_set": "amended"
+  },
+  "retrieval": {
+    "dense": {
+      "latency_s_per_query": 0.6834,
+      "at_k": {
+        "3": {
+          "overall": {
+            "hit_rate": 0.7273,
+            "recall": 0.6818,
+            "full_recall": 0.6364,
+            "precision": 0.303,
+            "mrr": 0.6364,
+            "ndcg": 0.625,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.3148,
+              "mrr": 0.6667,
+              "ndcg": 0.6958
+            },
+            "multi_hop": {
+              "hit_rate": 0.5,
+              "recall": 0.25,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.3066
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "5": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.2288,
+            "mrr": 0.6545,
+            "ndcg": 0.6466,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.2204,
+              "mrr": 0.6667,
+              "ndcg": 0.6958
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2667,
+              "mrr": 0.6,
+              "ndcg": 0.4252
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "6": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.197,
+            "mrr": 0.6545,
+            "ndcg": 0.6466,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.1907,
+              "mrr": 0.6667,
+              "ndcg": 0.6958
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.225,
+              "mrr": 0.6,
+              "ndcg": 0.4252
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "10": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.1161,
+            "mrr": 0.6545,
+            "ndcg": 0.6466,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.1111,
+              "mrr": 0.6667,
+              "ndcg": 0.6958
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1389,
+              "mrr": 0.6,
+              "ndcg": 0.4252
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1111111111111111,
+              "mrr": 0.2,
+              "ndcg": 0.23719771276929622,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        }
+      }
+    },
+    "bm25": {
+      "latency_s_per_query": 0.004,
+      "at_k": {
+        "3": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.3939,
+            "mrr": 0.7727,
+            "ndcg": 0.7143,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.3333,
+              "mrr": 0.7222,
+              "ndcg": 0.7368
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.6667,
+              "mrr": 1.0,
+              "ndcg": 0.6131
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "5": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.2258,
+            "mrr": 0.7727,
+            "ndcg": 0.7143,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.2111,
+              "mrr": 0.7222,
+              "ndcg": 0.7368
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2917,
+              "mrr": 1.0,
+              "ndcg": 0.6131
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "6": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.1742,
+            "mrr": 0.7727,
+            "ndcg": 0.7143,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.163,
+              "mrr": 0.7222,
+              "ndcg": 0.7368
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.225,
+              "mrr": 1.0,
+              "ndcg": 0.6131
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "10": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.1088,
+            "mrr": 0.7727,
+            "ndcg": 0.7143,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.1021,
+              "mrr": 0.7222,
+              "ndcg": 0.7368
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1389,
+              "mrr": 1.0,
+              "ndcg": 0.6131
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        }
+      }
+    },
+    "hybrid": {
+      "latency_s_per_query": 0.0375,
+      "at_k": {
+        "3": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.4848,
+            "mrr": 0.7727,
+            "ndcg": 0.7143,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.4259,
+              "mrr": 0.7222,
+              "ndcg": 0.7368
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.75,
+              "mrr": 1.0,
+              "ndcg": 0.6131
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 1.0,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "5": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.2606,
+            "mrr": 0.7727,
+            "ndcg": 0.7143,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.2352,
+              "mrr": 0.7222,
+              "ndcg": 0.7368
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.375,
+              "mrr": 1.0,
+              "ndcg": 0.6131
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "6": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.2136,
+            "mrr": 0.7727,
+            "ndcg": 0.7143,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.2019,
+              "mrr": 0.7222,
+              "ndcg": 0.7368
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2667,
+              "mrr": 1.0,
+              "ndcg": 0.6131
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.3333333333333333,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.25,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        },
+        "10": {
+          "overall": {
+            "hit_rate": 0.8182,
+            "recall": 0.7273,
+            "full_recall": 0.6364,
+            "precision": 0.1232,
+            "mrr": 0.7727,
+            "ndcg": 0.7143,
+            "evidence_hit": 0.6364
+          },
+          "by_type": {
+            "single_hop": {
+              "hit_rate": 0.7778,
+              "recall": 0.7778,
+              "full_recall": 0.7778,
+              "precision": 0.1182,
+              "mrr": 0.7222,
+              "ndcg": 0.7368
+            },
+            "multi_hop": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.1458,
+              "mrr": 1.0,
+              "ndcg": 0.6131
+            }
+          },
+          "per_question": {
+            "a01": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a02": {
+              "hit_rate": 0.0,
+              "recall": 0.0,
+              "full_recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "evidence_hit": 0.0
+            },
+            "a03": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a04": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.16666666666666666,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            },
+            "a05": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a06": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.14285714285714285,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a07": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.16666666666666666,
+              "mrr": 0.5,
+              "ndcg": 0.6309297535714575,
+              "evidence_hit": 1.0
+            },
+            "a08": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a09": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.1111111111111111,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a10": {
+              "hit_rate": 1.0,
+              "recall": 1.0,
+              "full_recall": 1.0,
+              "precision": 0.2,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "evidence_hit": 1.0
+            },
+            "a11": {
+              "hit_rate": 1.0,
+              "recall": 0.5,
+              "full_recall": 0.0,
+              "precision": 0.125,
+              "mrr": 1.0,
+              "ndcg": 0.6131471927654584,
+              "evidence_hit": 0.0
+            }
+          }
+        }
+      }
+    }
+  },
+  "ablation_recital_weight": {
+    "1.0": {
+      "hit_rate": 0.8182,
+      "recall": 0.7273,
+      "full_recall": 0.6364,
+      "precision": 0.1864,
+      "mrr": 0.7727,
+      "ndcg": 0.7143
+    },
+    "0.75": {
+      "hit_rate": 0.8182,
+      "recall": 0.7273,
+      "full_recall": 0.6364,
+      "precision": 0.1985,
+      "mrr": 0.7727,
+      "ndcg": 0.7143
+    },
+    "0.5": {
+      "hit_rate": 0.8182,
+      "recall": 0.7273,
+      "full_recall": 0.6364,
+      "precision": 0.2136,
+      "mrr": 0.7727,
+      "ndcg": 0.7143
+    },
+    "0.25": {
+      "hit_rate": 0.8182,
+      "recall": 0.7273,
+      "full_recall": 0.6364,
+      "precision": 0.2136,
+      "mrr": 0.7727,
+      "ndcg": 0.7143
+    },
+    "0.0": {
+      "hit_rate": 0.8182,
+      "recall": 0.7273,
+      "full_recall": 0.6364,
+      "precision": 0.2136,
+      "mrr": 0.7727,
+      "ndcg": 0.7143
+    }
+  }
+}
