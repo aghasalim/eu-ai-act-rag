@@ -19,17 +19,27 @@ from eval import judge  # noqa: E402
 from eval import metrics as M  # noqa: E402
 from src.euactrag import config, pipeline  # noqa: E402
 
-CHUNKS = ROOT / "data" / "processed" / "chunks.jsonl"
 QA = ROOT / "eval" / "qa_set.jsonl"
 
 pytestmark = pytest.mark.skipif(
-    not CHUNKS.exists(), reason="run `make corpus` first"
+    not all(config.chunks_path(v).exists() for v in config.VERSIONS),
+    reason="run `make corpus` first",
 )
 
 
+def _load(version):
+    return [json.loads(l) for l in open(config.chunks_path(version), encoding="utf-8")]
+
+
+@pytest.fixture(scope="module", params=sorted(config.VERSIONS))
+def chunks(request):
+    """Every corpus-integrity test runs on every version of the text."""
+    return _load(request.param)
+
+
 @pytest.fixture(scope="module")
-def chunks():
-    return [json.loads(l) for l in open(CHUNKS, encoding="utf-8")]
+def original():
+    return _load(config.ORIGINAL)
 
 
 @pytest.fixture(scope="module")
@@ -38,9 +48,34 @@ def qa():
 
 
 # --- corpus integrity -----------------------------------------------------
-def test_all_113_articles_present(chunks):
+# Articles the Digital Omnibus on AI (Regulation (EU) 2026/1744) inserted.
+INSERTED_2026 = {"art_4a", "art_60a", "art_75a", "art_75b", "art_75c", "art_75d"}
+
+
+def test_all_articles_present(chunks):
     arts = {c["unit_id"] for c in chunks if c["kind"] == "article"}
-    assert arts == {f"art_{i}" for i in range(1, 114)}
+    want = {f"art_{i}" for i in range(1, 114)}
+    if chunks[0]["version"] != config.ORIGINAL:
+        want |= INSERTED_2026
+    assert arts == want
+
+
+def test_every_chunk_is_stamped_with_its_version(chunks):
+    assert len({c["version"] for c in chunks}) == 1
+    assert chunks[0]["version"] in config.VERSIONS
+
+
+def test_amended_text_differs_only_where_it_was_amended(original):
+    """The two renderings use different markup. If the parser read them
+    differently, unamended articles would differ too; most must be identical.
+    Article 113 must not be, it carries the new dates."""
+    amended = _load(config.LATEST)
+    body = lambda cs, u: " ".join(c["body"] for c in cs if c["unit_id"] == u)
+    units = {c["unit_id"] for c in original}
+    same = sum(body(original, u) == body(amended, u) for u in units)
+    assert same / len(units) > 0.75
+    assert "2 December 2027" in body(amended, "art_113")
+    assert "2 December 2027" not in body(original, "art_113")
 
 
 def test_chunks_fit_the_encoder_window(chunks):
@@ -71,8 +106,8 @@ def test_superscript_exponent_survives_parsing(chunks):
 
 
 # --- eval set integrity ---------------------------------------------------
-def test_gold_units_exist(qa, chunks):
-    units = {c["unit_id"] for c in chunks}
+def test_gold_units_exist(qa, original):
+    units = {c["unit_id"] for c in original}
     missing = [(q["id"], u) for q in qa for u in q["gold_units"] if u not in units]
     assert not missing
 
@@ -222,7 +257,7 @@ def test_hybrid_breaks_rrf_ties_the_same_way_everywhere(monkeypatch):
     a = {"chunk_id": "art_2", "kind": "article", "rank": 1}
     b = {"chunk_id": "art_1", "kind": "article", "rank": 1}
     for first, second in ((a, b), (b, a)):
-        monkeypatch.setattr(retrieve, "dense", lambda q, p, f=first: [dict(f)])
-        monkeypatch.setattr(retrieve, "bm25", lambda q, p, s=second: [dict(s)])
+        monkeypatch.setattr(retrieve, "dense", lambda q, p, v=None, f=first: [dict(f)])
+        monkeypatch.setattr(retrieve, "bm25", lambda q, p, v=None, s=second: [dict(s)])
         out = retrieve.hybrid("q", k=2, recital_weight=1.0)
         assert [h["chunk_id"] for h in out] == ["art_1", "art_2"]

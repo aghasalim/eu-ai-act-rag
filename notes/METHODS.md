@@ -250,7 +250,7 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
   0.790 to 0.795 and nDCG from 0.754 to 0.756 on the headline row, and by 0.020
   at recital weight 1.0 where there are more ties. The latency figures are still
   this laptop's, since a runner's clock is not a number about this system.
-- `data/processed/chunks.jsonl` is generated, not source. It's committed so you can look
+- `data/processed/chunks_<version>.jsonl` is generated, not source. It's committed so you can look
   at the chunking without installing anything; CI rebuilds it from the raw document and
   re-tests it.
 - This is a student project, not legal advice. Please don't make compliance decisions

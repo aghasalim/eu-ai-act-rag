@@ -169,7 +169,7 @@ for (const [name, re, actual, ulp] of prose) {
 {
   const kinds = { article: new Set(), recital: new Set(), annex: new Set() };
   let nChunks = 0;
-  for (const line of read('data', 'processed', 'chunks.jsonl').split('\n')) {
+  for (const line of read('data', 'processed', 'chunks_2024-07-12.jsonl').split('\n')) {
     if (!line.trim()) continue;
     const c = JSON.parse(line);
     nChunks += 1;

@@ -56,10 +56,11 @@ def warm():
     """
     from src.euactrag import index as idx, retrieve
 
-    try:
-        idx.get_collection().count()
-    except Exception:
-        idx.build()
+    for version in config.VERSIONS:
+        try:
+            idx.get_collection(version=version).count()
+        except Exception:
+            idx.build(version=version)
     retrieve.search("warmup", k=1, mode="hybrid")
     return True
 
@@ -74,7 +75,8 @@ EXAMPLES = [
 
 st.title("EU AI Act, Retrieval-Augmented QA")
 st.caption(
-    "Answers are grounded in Regulation (EU) 2024/1689 only. Every claim is cited, "
+    "Answers are grounded in Regulation (EU) 2024/1689 only, by default as amended "
+    "by Regulation (EU) 2026/1744 (text as of 27 July 2026). Every claim is cited, "
     "and the passages the answer was built from are shown on the right. "
     "The last example question is deliberately out of scope, the system should "
     "refuse it."
@@ -82,6 +84,13 @@ st.caption(
 
 with st.sidebar:
     st.header("Retrieval")
+    versions = sorted(config.VERSIONS, reverse=True)
+    version = st.selectbox(
+        "Text of the Act", versions, index=versions.index(config.CORPUS_VERSION),
+        format_func=lambda v: f"{v} (as amended)" if v != config.ORIGINAL
+        else f"{v} (original, superseded)",
+        help="2026-07-27 is the consolidated text after the Digital Omnibus on AI. "
+             "2024-07-12 is the original Official Journal text, kept for comparison.")
     mode = st.radio("Strategy", ["hybrid", "dense", "bm25"], index=0,
                     help="hybrid = dense + BM25 fused with reciprocal rank fusion")
     k = st.slider("Passages retrieved (k)", 3, 12, config.TOP_K)
@@ -183,7 +192,7 @@ question = st.text_input(
 
 if question:
     with st.spinner("Retrieving and generating…"):
-        res = pipeline.answer(question, k=k, mode=mode)
+        res = pipeline.answer(question, k=k, mode=mode, version=version)
 
     left, right = st.columns([1.15, 1])
     with left:
@@ -224,5 +233,6 @@ if question:
 st.divider()
 st.caption(
     "Corpus: Regulation (EU) 2024/1689, retrieved from the EU Publications Office "
-    "(CELEX 32024R1689). Not legal advice."
+    "(CELEX 32024R1689 as published, 02024R1689-20260727 as amended). "
+    "Not legal advice."
 )

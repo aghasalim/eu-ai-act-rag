@@ -166,7 +166,7 @@ func agrees(got, want float64) bool { return math.Abs(got-want) <= tol }
 // 13 annexes -> 464 chunks". Those four numbers are the only description a
 // reader gets of what the system searches, and they were typed by hand.
 func checkCorpus(root string, p *problems) map[string]bool {
-	path := filepath.Join(root, "data", "processed", "chunks.jsonl")
+	path := filepath.Join(root, "data", "processed", "chunks_2024-07-12.jsonl")
 	rows, err := readJSONL(path)
 	if err != nil {
 		p.add("chunks.jsonl: %v", err)
