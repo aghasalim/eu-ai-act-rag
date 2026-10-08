@@ -46,12 +46,14 @@ def mean(xs: list[float | None]) -> float | None:
 # --------------------------------------------------------------------------
 # Pass 1: retrieval (exact)
 # --------------------------------------------------------------------------
-def score_retrieval(qa: list[dict], modes: list[str], ks: list[int]) -> dict:
+def score_retrieval(qa: list[dict], modes: list[str], ks: list[int],
+                    version: str | None = None) -> dict:
     answerable = [q for q in qa if q["gold_units"]]
     out: dict = {}
     for mode in modes:
         t0 = time.time()
-        hits_by_q = {q["id"]: retrieve.search(q["question"], k=max(ks), mode=mode)
+        hits_by_q = {q["id"]: retrieve.search(q["question"], k=max(ks), mode=mode,
+                                              version=version)
                      for q in answerable}
         elapsed = (time.time() - t0) / len(answerable)
         out[mode] = {"latency_s_per_query": round(elapsed, 4), "at_k": {}}
@@ -71,7 +73,8 @@ def score_retrieval(qa: list[dict], modes: list[str], ks: list[int]) -> dict:
 
 
 def ablate_recital_weight(qa: list[dict], k: int,
-                          weights=(1.0, 0.75, 0.5, 0.25, 0.0)) -> dict:
+                          weights=(1.0, 0.75, 0.5, 0.25, 0.0),
+                          version: str | None = None) -> dict:
     """Sweep the recital down-weighting prior.
 
     Reported so a reader can see whether the default is a tuned argmax or a
@@ -83,7 +86,8 @@ def ablate_recital_weight(qa: list[dict], k: int,
     out = {}
     for w in weights:
         sc = [M.retrieval_scores(
-                  retrieve.hybrid(q["question"], k, recital_weight=w),
+                  retrieve.hybrid(q["question"], k, recital_weight=w,
+                                  version=version),
                   q["gold_units"], k)
               for q in answerable]
         out[str(w)] = {n: mean([s[n] for s in sc]) for n in M.RETRIEVAL_METRICS}
@@ -128,7 +132,8 @@ def models_from(rows: list[dict]) -> dict:
 
 
 def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
-                     judge_model: str, checkpoint: Path | None = None) -> dict:
+                     judge_model: str, checkpoint: Path | None = None,
+                     version: str | None = None) -> dict:
     """Score every question, checkpointing each row as it completes.
 
     Free-tier providers meter tokens *per day*, and a full run can exceed that
@@ -147,7 +152,8 @@ def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
         if q["id"] in done:
             continue
         t0 = time.time()
-        a = pipeline.answer(q["question"], k=k, mode=mode, model=gen_model)
+        a = pipeline.answer(q["question"], k=k, mode=mode, model=gen_model,
+                            version=version)
         latency = time.time() - t0
         contexts = [h["text"] for h in a.contexts]
 
@@ -271,6 +277,10 @@ def main() -> None:
     p.add_argument("--no-generation", action="store_true")
     p.add_argument("--limit", type=int, default=None)
     p.add_argument("--tag", default="latest")
+    p.add_argument("--corpus", default=config.CORPUS_VERSION,
+                   choices=sorted(config.VERSIONS),
+                   help="corpus version to search; the published headline run "
+                        "is on 2024-07-12")
     a = p.parse_args()
 
     qa = load_qa()
@@ -280,18 +290,18 @@ def main() -> None:
     # The headline k must always be in the sweep, otherwise the summary and the
     # report have no row to read.
     ks = sorted({int(x) for x in a.ks.split(",")} | {a.k})
-    n_chunks = len(load_chunks())
+    n_chunks = len(load_chunks(a.corpus))
 
-    print(f"corpus: {n_chunks} chunks | qa: {len(qa)} questions")
+    print(f"corpus {a.corpus}: {n_chunks} chunks | qa: {len(qa)} questions")
     print(f"\n== retrieval ({', '.join(modes)}) ==")
-    ret = score_retrieval(qa, modes, ks)
+    ret = score_retrieval(qa, modes, ks, a.corpus)
     for mode in modes:
         s = ret[mode]["at_k"][str(a.k)]["overall"]
         print(f"  {mode:<7} @{a.k}  hit={s['hit_rate']}  recall={s['recall']}  "
               f"full={s['full_recall']}  mrr={s['mrr']}  ndcg={s['ndcg']}")
 
     print("\n== ablation: recital down-weighting ==")
-    abl = ablate_recital_weight(qa, a.k)
+    abl = ablate_recital_weight(qa, a.k, version=a.corpus)
     for w, s in abl.items():
         print(f"  w={w:<5} hit={s['hit_rate']}  full={s['full_recall']}  "
               f"mrr={s['mrr']}  ndcg={s['ndcg']}")
@@ -302,6 +312,7 @@ def main() -> None:
             "gen_mode": a.gen_mode, "rrf_k": config.RRF_K,
             "recital_weight": config.RECITAL_WEIGHT,
             "n_chunks": n_chunks, "n_questions": len(qa),
+            "corpus_version": a.corpus,
         },
         "retrieval": ret,
         "ablation_recital_weight": abl,
@@ -338,7 +349,8 @@ def main() -> None:
         ckpt = config.RESULTS_DIR / f"rows_{a.tag}.jsonl"
         config.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
         try:
-            gen = score_generation(qa, a.k, a.gen_mode, a.model, judge_model, ckpt)
+            gen = score_generation(qa, a.k, a.gen_mode, a.model, judge_model, ckpt,
+                                   version=a.corpus)
         except llm.DailyQuotaExhausted as e:
             print(f"\n[stopped] {e}")
             print(f"[progress kept] {ckpt}, rerun the same command to resume.")
