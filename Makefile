@@ -1,7 +1,7 @@
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup corpus index eval eval-retrieval app test report report-check docker clean all
+.PHONY: setup corpus index eval eval-retrieval eval-versions app test report report-check docker clean all
 
 setup:
 	python3 -m venv .venv && $(PIP) install -q -U pip && $(PIP) install -q -r requirements.txt
@@ -18,6 +18,11 @@ eval:            ## published evaluation, original text (needs GROQ_API_KEY)
 
 eval-retrieval:  ## retrieval metrics only, no API key needed
 	$(PY) eval/run_eval.py --corpus 2024-07-12 --no-generation --tag retrieval_only
+
+eval-versions:   ## retrieval on both texts of the Act, amended questions too, no API key
+	$(PY) eval/run_eval.py --corpus 2024-07-12 --qa amended --no-generation --tag amended_2024-07-12
+	$(PY) eval/run_eval.py --corpus 2026-07-27 --qa amended --no-generation --tag amended_2026-07-27
+	$(PY) eval/run_eval.py --corpus 2026-07-27 --qa original --no-generation --tag original_2026-07-27
 
 report:          ## regenerate RESULTS.md from the latest eval json
 	$(PY) eval/report.py

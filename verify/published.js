@@ -309,6 +309,92 @@ for (const [name, re, actual, ulp] of prose) {
   }
 }
 
+// --- the stale-law comparison ------------------------------------------------
+// Four retrieval runs: each question set against each text of the Act. The
+// README and RESULTS.md print the same summary table, and RESULTS.md adds a
+// yes/no row per amended question. All of it is read back from the json here.
+
+{
+  const runFile = {
+    'original|2024-07-12': 'eval_latest.json',
+    'original|2026-07-27': 'eval_original_2026-07-27.json',
+    'amended|2024-07-12': 'eval_amended_2024-07-12.json',
+    'amended|2026-07-27': 'eval_amended_2026-07-27.json',
+  };
+  const runs = {};
+  for (const [key, f] of Object.entries(runFile)) {
+    runs[key] = JSON.parse(read('eval', 'results', f)).retrieval.hybrid.at_k[k];
+  }
+  const checkSummary = (where, t) => {
+    if (!t) return;
+    if (t.rows.length !== 4) problems.push(`${where} stale-law table has ${t.rows.length} rows, expected 4`);
+    for (const row of t.rows) {
+      const r = runs[`${row[0]}|${row[1]}`];
+      if (!r) { problems.push(`${where} stale-law table has an unknown row "${row[0]}/${row[1]}"`); continue; }
+      const tag = `${where} stale ${row[0]}/${row[1]}`;
+      agree(`${tag} n`, asNum(row[2]), Object.keys(r.per_question).length, 0);
+      agree(`${tag} hit rate`, asRate(row[3]), r.overall.hit_rate, rateUlp);
+      agree(`${tag} full recall`, asRate(row[4]), r.overall.full_recall, rateUlp);
+      agree(`${tag} mrr`, asNum(row[5]), r.overall.mrr, scoreUlp);
+      // Recomputed from the per-question entries, not read off the aggregate.
+      const ev = Object.values(r.per_question).filter((q) => 'evidence_hit' in q);
+      if (ev.length) {
+        const mean = ev.reduce((a, q) => a + q.evidence_hit, 0) / ev.length;
+        agree(`${tag} wording`, asRate(row[6]), mean, rateUlp);
+      } else if (row[6] !== 'n/a') {
+        problems.push(`${tag}: prints "${row[6]}" for wording, the json has no evidence checks`);
+      }
+    }
+  };
+  const SSTART = '<!-- STALE_TABLE:START -->';
+  const SEND = '<!-- STALE_TABLE:END -->';
+  if (!readme.includes(SSTART) || !readme.includes(SEND)) {
+    problems.push('README.md has lost its stale-law table markers');
+  } else {
+    checkSummary('README', tables(readme.split(SSTART)[1].split(SEND)[0])[0]);
+  }
+  checkSummary('RESULTS', tableWith(results, 'questions', 'text searched'));
+
+  const t = tableWith(results, 'id', 'hit, 2024 text');
+  if (t) {
+    const old = runs['amended|2024-07-12'].per_question;
+    const neu = runs['amended|2026-07-27'].per_question;
+    if (t.rows.length !== Object.keys(neu).length) {
+      problems.push(`RESULTS per-question stale table has ${t.rows.length} rows, the json has ${Object.keys(neu).length}`);
+    }
+    for (const row of t.rows) {
+      const id = row[0].replace(/`/g, '');
+      if (!old[id] || !neu[id]) { problems.push(`RESULTS stale table has an unknown id "${id}"`); continue; }
+      const yes = (c) => (c === 'yes' ? 1 : c === 'no' ? 0 : NaN);
+      agree(`RESULTS ${id} hit 2024`, yes(row[3]), old[id].hit_rate, 0);
+      agree(`RESULTS ${id} wording 2024`, yes(row[4]), old[id].evidence_hit, 0);
+      agree(`RESULTS ${id} hit 2026`, yes(row[5]), neu[id].hit_rate, 0);
+      agree(`RESULTS ${id} wording 2026`, yes(row[6]), neu[id].evidence_hit, 0);
+    }
+  }
+}
+
+// The amended corpus is described in prose too: articles + recitals + annexes.
+{
+  const kinds = { article: new Set(), recital: new Set(), annex: new Set() };
+  let nChunks = 0;
+  for (const line of read('data', 'processed', 'chunks_2026-07-27.jsonl').split('\n')) {
+    if (!line.trim()) continue;
+    const c = JSON.parse(line);
+    nChunks += 1;
+    if (kinds[c.kind]) kinds[c.kind].add(c.unit_id);
+  }
+  const m = /recitals are carried over: (\d+) articles \+ (\d+) recitals \+ (\d+) annexes[^\d]+(\d+) chunks/.exec(readme);
+  if (!m) {
+    problems.push('README: no sentence describing the amended corpus');
+  } else {
+    agree('README amended articles', parseInt(m[1], 10), kinds.article.size, 0);
+    agree('README amended recitals', parseInt(m[2], 10), kinds.recital.size, 0);
+    agree('README amended annexes', parseInt(m[3], 10), kinds.annex.size, 0);
+    agree('README amended chunk total', parseInt(m[4], 10), nChunks, 0);
+  }
+}
+
 if (problems.length) {
   for (const p of problems) console.error('  ' + p);
   console.error(`  ${problems.length} disagreement(s) out of ${checked} published figures`);
