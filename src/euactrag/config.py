@@ -6,16 +6,38 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
-RAW_XHTML = DATA / "raw" / "ai_act.xhtml"
-CHUNKS = DATA / "processed" / "chunks.jsonl"
 INDEX_DIR = DATA / "index"
 EVAL_DIR = ROOT / "eval"
 RESULTS_DIR = EVAL_DIR / "results"
 
-# Canonical source: Publications Office Cellar, Regulation (EU) 2024/1689.
-CELEX = "32024R1689"
-SOURCE_URL = f"http://publications.europa.eu/resource/celex/{CELEX}"
-ELI_BASE = "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng"
+# --- Corpus versions --------------------------------------------------------
+# The Act is amended law now, so the corpus is versioned by the date of the text
+# it holds. "2024-07-12" is the original Official Journal text of Regulation (EU)
+# 2024/1689. "2026-07-27" is the consolidated text after Regulation (EU) 2026/1744
+# (the Digital Omnibus on AI), which entered into force that day. Both are fetched
+# from the Publications Office Cellar by CELEX number; the consolidated one has a
+# different CELEX and different markup, see ingest.py.
+VERSIONS = {
+    "2024-07-12": {
+        "celex": "32024R1689",
+        "raw": DATA / "raw" / "ai_act.xhtml",
+        "eli": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng",
+    },
+    "2026-07-27": {
+        "celex": "02024R1689-20260727",
+        "raw": DATA / "raw" / "ai_act_2026-07-27.xhtml",
+        "eli": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02024R1689-20260727",
+    },
+}
+ORIGINAL = "2024-07-12"
+LATEST = max(VERSIONS)
+# What the app and search use unless told otherwise. Eval takes --corpus.
+CORPUS_VERSION = os.getenv("CORPUS_VERSION", LATEST)
+
+
+def chunks_path(version: str) -> Path:
+    return DATA / "processed" / f"chunks_{version}.jsonl"
+
 
 # --- Chunking -------------------------------------------------------------
 # bge-small-en-v1.5 has a 512-token window. We keep a margin for the breadcrumb

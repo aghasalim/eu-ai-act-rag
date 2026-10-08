@@ -6,6 +6,9 @@ a normalisation constant that has to be re-tuned per corpus. RRF only consumes
 *ranks*, so it has one parameter (k=60, the value from Cormack et al. 2009) and
 no per-corpus tuning, which matters when the point of the project is to report
 honest numbers rather than numbers fitted to the eval set.
+
+Every function takes the corpus `version` (see config.VERSIONS); None means
+config.CORPUS_VERSION, the latest text unless the environment says otherwise.
 """
 from __future__ import annotations
 
@@ -23,17 +26,17 @@ def _encoder():
     return get_encoder()
 
 
-@functools.lru_cache(maxsize=1)
-def _bm25():
+@functools.lru_cache(maxsize=None)
+def _bm25(version: str):
     from rank_bm25 import BM25Okapi
 
-    chunks = load_chunks()
+    chunks = load_chunks(version)
     return BM25Okapi([tokenize(c["text"]) for c in chunks]), chunks
 
 
-@functools.lru_cache(maxsize=1)
-def _collection():
-    return get_collection()
+@functools.lru_cache(maxsize=None)
+def _collection(version: str):
+    return get_collection(version=version)
 
 
 def _as_hit(chunk_id: str, text: str, meta: dict, score: float, rank: int) -> dict:
@@ -44,11 +47,11 @@ def _as_hit(chunk_id: str, text: str, meta: dict, score: float, rank: int) -> di
     }
 
 
-def dense(query: str, k: int = 10) -> list[dict]:
+def dense(query: str, k: int = 10, version: str | None = None) -> list[dict]:
     q = _encoder().encode(
         [config.QUERY_PREFIX + query], normalize_embeddings=True
     )[0].tolist()
-    r = _collection().query(query_embeddings=[q], n_results=k)
+    r = _collection(version or config.CORPUS_VERSION).query(query_embeddings=[q], n_results=k)
     return [
         # Chroma returns cosine *distance*; flip it so higher is better.
         _as_hit(i, d, m, 1.0 - dist, rank)
@@ -58,8 +61,8 @@ def dense(query: str, k: int = 10) -> list[dict]:
     ]
 
 
-def bm25(query: str, k: int = 10) -> list[dict]:
-    model, chunks = _bm25()
+def bm25(query: str, k: int = 10, version: str | None = None) -> list[dict]:
+    model, chunks = _bm25(version or config.CORPUS_VERSION)
     scores = model.get_scores(tokenize(query))
     order = sorted(range(len(scores)), key=lambda i: -scores[i])[:k]
     return [
@@ -69,14 +72,15 @@ def bm25(query: str, k: int = 10) -> list[dict]:
 
 
 def hybrid(query: str, k: int = 10, pool: int = 30,
-           recital_weight: float | None = None) -> list[dict]:
+           recital_weight: float | None = None,
+           version: str | None = None) -> list[dict]:
     """Fuse dense and lexical rankings by RRF: score = sum w / (K + rank).
 
     `w` is 1.0 for binding provisions (articles, annexes) and
     `config.RECITAL_WEIGHT` for recitals, see the note there for why.
     """
     w = config.RECITAL_WEIGHT if recital_weight is None else recital_weight
-    runs = [dense(query, pool), bm25(query, pool)]
+    runs = [dense(query, pool, version), bm25(query, pool, version)]
     fused: dict[str, dict] = {}
     for run in runs:
         for h in run:
@@ -98,8 +102,9 @@ def hybrid(query: str, k: int = 10, pool: int = 30,
     return out
 
 
-def search(query: str, k: int | None = None, mode: str | None = None) -> list[dict]:
+def search(query: str, k: int | None = None, mode: str | None = None,
+           version: str | None = None) -> list[dict]:
     k = k or config.TOP_K
     mode = mode or config.RETRIEVAL_MODE
     fn = {"dense": dense, "bm25": bm25, "hybrid": hybrid}[mode]
-    return fn(query, k)
+    return fn(query, k, version=version)

@@ -34,7 +34,7 @@ jobs:
 
       # Deterministic half. No key, same answer every time, so drift here is real.
       - name: Retrieval evaluation
-        run: python eval/run_eval.py --no-generation --tag fresh
+        run: python eval/run_eval.py --corpus 2024-07-12 --no-generation --tag fresh
 
       # Sampled half. Only runs where a key exists, which is why the retrieval
       # step above is separate: a fork without the secret still gets that much.
@@ -49,7 +49,7 @@ jobs:
             echo "no GROQ_API_KEY on this repository, keeping the retrieval half only"
             exit 0
           fi
-          python eval/run_eval.py --tag fresh
+          python eval/run_eval.py --corpus 2024-07-12 --tag fresh
 
       - name: Compare against the committed evaluation
         run: python eval/compare.py eval_latest.json eval_fresh.json
