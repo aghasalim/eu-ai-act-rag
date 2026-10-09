@@ -263,7 +263,10 @@ def _split_paragraphs(body: str, max_tokens: int) -> list[str]:
 
     # Fold a runt tail back into its predecessor rather than emitting a stub.
     if len(parts) > 1 and approx_tokens(parts[-1]) < config.MIN_CHUNK_TOKENS:
-        parts[-2] = parts[-2] + "\n" + parts.pop()
+        # Pop first: written as one expression, the pop runs before the
+        # assignment and [-2] then points one part too far back.
+        tail = parts.pop()
+        parts[-1] = parts[-1] + "\n" + tail
     return parts or [body]
 
 
@@ -278,12 +281,125 @@ def _emit(base: Chunk, body: str, out: list[Chunk]) -> None:
         out.append(c)
 
 
-def parse(version: str = config.ORIGINAL) -> list[Chunk]:
+# ---- Paragraph granularity -----------------------------------------------
+# A legal answer is cited as "Article 6(3)" or "Annex III, point 4(a)", not as
+# "Article 6". The paragraph chunker labels every line of a unit with its place
+# in the outline (paragraph, point, sub-point) and cuts one chunk per top-level
+# item, so a retrieved chunk can be cited to its paragraph.
+#
+# Reference format: the unit id followed by each outline marker in brackets.
+# art_6(3), art_5(1)(ba), art_3(12), art_113(c)(i), anx_III(4)(a), anx_I(A)(1).
+# Unnumbered paragraphs (Article 113's first lines, Article 4 in 2024) have no
+# marker of their own, so text there is cited to the unit alone.
+_M_PARA = re.compile(r"^(\d+[a-z]*)\.\s")           # 1.  1a.
+_M_NUM = re.compile(r"^\((\d+[a-z]*)\)\s")          # (1) (12a), definitions
+_M_ALPHA = re.compile(r"^\(([a-z]{1,3})\)\s")        # (a) (ba) (iv)
+_M_SECTION = re.compile(r"^Section\s+([A-Z]|\d+)(?:\.|\s+[—-]\s|$)")  # "Section A.", "Section A —", "Section 1"
+_ROMAN = re.compile(r"^(?=[ivx])x{0,3}(ix|iv|v?i{0,3})$")
+
+
+def outline_paths(lines: list[str]) -> list[tuple[str, ...]]:
+    """The outline position of every line, e.g. ("3", "a") for Article 6(3)(a).
+
+    Ranks: Section A. < 1. < (1) < (a) < (i). "(i)", "(v)" and "(x)" are read as
+    roman sub-points only when indented under a letter point, since the renderer
+    indents nested items; at the same depth they are the next letter. An
+    unmarked line with no indent closes the points above it: it is the next
+    subparagraph of the same paragraph, not a continuation of the last point.
+    """
+    stack: list[tuple[int, str, int]] = []  # (rank, marker, indent)
+    out = []
+    for ln in lines:
+        s = ln.lstrip()
+        indent = len(ln) - len(s)
+        rank = val = None
+        for r, rx in ((-1, _M_SECTION), (0, _M_PARA), (1, _M_NUM)):
+            m = rx.match(s)
+            if m:
+                rank, val = r, m.group(1)
+                break
+        else:
+            m = _M_ALPHA.match(s)
+            if m:
+                val = m.group(1)
+                letters = [i for r, _, i in stack if r == 2]
+                nested = bool(letters) and indent > letters[-1]
+                rank = 3 if (_ROMAN.match(val) and nested) else 2
+        if rank is not None:
+            while stack and stack[-1][0] >= rank:
+                stack.pop()
+            stack.append((rank, val, indent))
+        elif indent == 0:
+            while stack and stack[-1][0] >= 2:
+                stack.pop()
+        out.append(tuple(v for _, v, _ in stack))
+    return out
+
+
+def ref_of(unit_id: str, path: tuple[str, ...]) -> str:
+    return unit_id + "".join(f"({p})" for p in path)
+
+
+def _common(paths: list[tuple[str, ...]]) -> tuple[str, ...]:
+    out: list[str] = []
+    for level in zip(*paths):
+        if len(set(level)) > 1:
+            break
+        out.append(level[0])
+    return tuple(out)
+
+
+def _emit_paragraphs(base: Chunk, body: str, out: list[Chunk]) -> None:
+    """One chunk per top-level outline item, split further only if oversized.
+
+    Each chunk records `ref`, what it is cited as (the deepest outline position
+    all its lines share), and `refs`, every position it contains.
+    """
+    lines = [ln for ln in body.split("\n") if ln.strip()]
+    paths = outline_paths(lines)
+    groups: list[list[int]] = []
+    for i, p in enumerate(paths):
+        if groups and paths[groups[-1][0]][:1] == p[:1]:
+            groups[-1].append(i)
+        else:
+            groups.append([i])
+    label = base.citation.split(" - ", 1)[0]
+    seen: dict[str, int] = {}
+    for g in groups:
+        text = "\n".join(lines[i] for i in g)
+        parts = _split_paragraphs(text, config.MAX_CHUNK_TOKENS)
+        top = ref_of(base.unit_id, paths[g[0]][:1])
+        # Unnumbered text can come back after the points (Article 75b), so the
+        # same reference can open two groups; the id has to stay unique.
+        seen[top] = seen.get(top, 0) + 1
+        cid = top if seen[top] == 1 else f"{top}~{seen[top]}"
+        for n, p in enumerate(parts, 1):
+            # ponytail: a line is matched to its part by its opening words; a
+            # sentence-split line only claims the first part, later parts fall
+            # back to the paragraph's own reference.
+            own = [paths[i] for i in g if lines[i].strip()[:60] in p]
+            path = _common(own) if own else paths[g[0]][:1]
+            ref = ref_of(base.unit_id, path)
+            c = replace(base, part=n, n_parts=len(parts),
+                        meta={**base.meta, "ref": ref,
+                              "refs": sorted({ref_of(base.unit_id, q) for q in own} | {ref})})
+            c.citation = (f"{label}{ref[len(base.unit_id):]} - {base.title}"
+                          if base.title else f"{label}{ref[len(base.unit_id):]}")
+            c.body = p.strip()
+            c.chunk_id = cid if len(parts) == 1 else f"{cid}#p{n}"
+            c.text = _breadcrumb(c) + c.body
+            c.n_tokens = approx_tokens(c.text)
+            out.append(c)
+
+
+def parse(version: str = config.ORIGINAL, granularity: str = "article") -> list[Chunk]:
     eli = config.VERSIONS[version]["eli"]
     xhtml_path = config.VERSIONS[version]["raw"]
     soup = BeautifulSoup(open(xhtml_path, encoding="utf-8").read(), "lxml")
     _fix_superscripts(soup)
     chunks: list[Chunk] = []
+    # Recitals are one short paragraph each, so they stay whole either way.
+    emit = _emit_paragraphs if granularity == "paragraph" else _emit
 
     # Chapter/section headings are plain <p> in document order, not wrapped in a
     # container we can nest on: so we sweep the document once and remember the
@@ -331,7 +447,7 @@ def parse(version: str = config.ORIGINAL) -> list[Chunk]:
                 section=section, section_title=section_title,
                 url=f"{eli}#{eid}", version=version, meta={"article": num},
             )
-            _emit(base, body, chunks)
+            emit(base, body, chunks)
 
         # ---- Recitals -------------------------------------------------
         elif "eli-subdivision" in cls and eid.startswith("rct_"):
@@ -361,7 +477,7 @@ def parse(version: str = config.ORIGINAL) -> list[Chunk]:
                 title=subtitle, chapter="Annexes", chapter_title="Annexes",
                 url=f"{eli}#{eid}", version=version, meta={"annex": roman},
             )
-            _emit(base, body, chunks)
+            emit(base, body, chunks)
 
     # A consolidated text is published without the preamble. The recitals of
     # 2024/1689 are not amended (the Omnibus has recitals of its own, which
@@ -373,16 +489,17 @@ def parse(version: str = config.ORIGINAL) -> list[Chunk]:
     return chunks
 
 
-def write_jsonl(chunks: list[Chunk], version: str) -> None:
-    path = config.chunks_path(version)
+def write_jsonl(chunks: list[Chunk], version: str, granularity: str = "article") -> None:
+    path = config.chunks_path(version, granularity)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         for c in chunks:
             f.write(json.dumps(asdict(c), ensure_ascii=False) + "\n")
 
 
-def load_chunks(version: str | None = None) -> list[dict]:
-    path = config.chunks_path(version or config.CORPUS_VERSION)
+def load_chunks(version: str | None = None, granularity: str | None = None) -> list[dict]:
+    path = config.chunks_path(version or config.CORPUS_VERSION,
+                              granularity or config.GRANULARITY)
     with open(path, encoding="utf-8") as f:
         return [json.loads(l) for l in f if l.strip()]
 
@@ -390,18 +507,19 @@ def load_chunks(version: str | None = None) -> list[dict]:
 def main() -> None:
     from collections import Counter
 
-    for version in sorted(config.VERSIONS):
-        chunks = parse(version)
-        write_jsonl(chunks, version)
+    for version, gran in [(v, g) for v in sorted(config.VERSIONS)
+                          for g in config.GRANULARITIES]:
+        chunks = parse(version, gran)
+        write_jsonl(chunks, version, gran)
         kinds = Counter(c.kind for c in chunks)
         toks = sorted(c.n_tokens for c in chunks)
         units = len({c.unit_id for c in chunks})
-        print(f"[{version}] chunks={len(chunks)} units={units} {dict(kinds)}")
+        print(f"[{version} {gran}] chunks={len(chunks)} units={units} {dict(kinds)}")
         print(
             f"  tokens: min={toks[0]} p50={toks[len(toks)//2]} "
             f"p95={toks[int(len(toks)*.95)]} max={toks[-1]}"
         )
-        print(f"  -> {config.chunks_path(version)}")
+        print(f"  -> {config.chunks_path(version, gran)}")
 
 
 if __name__ == "__main__":

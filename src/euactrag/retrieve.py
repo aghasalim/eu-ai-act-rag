@@ -27,31 +27,36 @@ def _encoder():
 
 
 @functools.lru_cache(maxsize=None)
-def _bm25(version: str):
+def _bm25(version: str, granularity: str = "article"):
     from rank_bm25 import BM25Okapi
 
-    chunks = load_chunks(version)
+    chunks = load_chunks(version, granularity)
     return BM25Okapi([tokenize(c["text"]) for c in chunks]), chunks
 
 
 @functools.lru_cache(maxsize=None)
-def _collection(version: str):
-    return get_collection(version=version)
+def _collection(version: str, granularity: str = "article"):
+    return get_collection(version=version, granularity=granularity)
 
 
 def _as_hit(chunk_id: str, text: str, meta: dict, score: float, rank: int) -> dict:
-    return {
+    hit = {
         "chunk_id": chunk_id, "text": text, "score": float(score),
         "rank": rank, **{k: meta.get(k) for k in
                          ("kind", "unit_id", "citation", "chapter_title", "url")},
     }
+    # Chroma metadata is flat; a chunk read from the jsonl keeps it under "meta".
+    hit["ref"] = meta.get("ref") or (meta.get("meta") or {}).get("ref") or hit["unit_id"]
+    return hit
 
 
-def dense(query: str, k: int = 10, version: str | None = None) -> list[dict]:
+def dense(query: str, k: int = 10, version: str | None = None,
+          granularity: str | None = None) -> list[dict]:
     q = _encoder().encode(
         [config.QUERY_PREFIX + query], normalize_embeddings=True
     )[0].tolist()
-    r = _collection(version or config.CORPUS_VERSION).query(query_embeddings=[q], n_results=k)
+    r = _collection(version or config.CORPUS_VERSION,
+                    granularity or config.GRANULARITY).query(query_embeddings=[q], n_results=k)
     return [
         # Chroma returns cosine *distance*; flip it so higher is better.
         _as_hit(i, d, m, 1.0 - dist, rank)
@@ -61,8 +66,10 @@ def dense(query: str, k: int = 10, version: str | None = None) -> list[dict]:
     ]
 
 
-def bm25(query: str, k: int = 10, version: str | None = None) -> list[dict]:
-    model, chunks = _bm25(version or config.CORPUS_VERSION)
+def bm25(query: str, k: int = 10, version: str | None = None,
+         granularity: str | None = None) -> list[dict]:
+    model, chunks = _bm25(version or config.CORPUS_VERSION,
+                          granularity or config.GRANULARITY)
     scores = model.get_scores(tokenize(query))
     order = sorted(range(len(scores)), key=lambda i: -scores[i])[:k]
     return [
@@ -73,14 +80,15 @@ def bm25(query: str, k: int = 10, version: str | None = None) -> list[dict]:
 
 def hybrid(query: str, k: int = 10, pool: int = 30,
            recital_weight: float | None = None,
-           version: str | None = None) -> list[dict]:
+           version: str | None = None, granularity: str | None = None) -> list[dict]:
     """Fuse dense and lexical rankings by RRF: score = sum w / (K + rank).
 
     `w` is 1.0 for binding provisions (articles, annexes) and
     `config.RECITAL_WEIGHT` for recitals, see the note there for why.
     """
     w = config.RECITAL_WEIGHT if recital_weight is None else recital_weight
-    runs = [dense(query, pool, version), bm25(query, pool, version)]
+    runs = [dense(query, pool, version, granularity),
+            bm25(query, pool, version, granularity)]
     fused: dict[str, dict] = {}
     for run in runs:
         for h in run:
@@ -103,8 +111,8 @@ def hybrid(query: str, k: int = 10, pool: int = 30,
 
 
 def search(query: str, k: int | None = None, mode: str | None = None,
-           version: str | None = None) -> list[dict]:
+           version: str | None = None, granularity: str | None = None) -> list[dict]:
     k = k or config.TOP_K
     mode = mode or config.RETRIEVAL_MODE
     fn = {"dense": dense, "bm25": bm25, "hybrid": hybrid}[mode]
-    return fn(query, k, version=version)
+    return fn(query, k, version=version, granularity=granularity)

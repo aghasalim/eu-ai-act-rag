@@ -52,13 +52,13 @@ def mean(xs: list[float | None]) -> float | None:
 # Pass 1: retrieval (exact)
 # --------------------------------------------------------------------------
 def score_retrieval(qa: list[dict], modes: list[str], ks: list[int],
-                    version: str | None = None) -> dict:
+                    version: str | None = None, granularity: str | None = None) -> dict:
     answerable = [q for q in qa if q["gold_units"]]
     out: dict = {}
     for mode in modes:
         t0 = time.time()
         hits_by_q = {q["id"]: retrieve.search(q["question"], k=max(ks), mode=mode,
-                                              version=version)
+                                              version=version, granularity=granularity)
                      for q in answerable}
         elapsed = (time.time() - t0) / len(answerable)
         out[mode] = {"latency_s_per_query": round(elapsed, 4), "at_k": {}}
@@ -76,6 +76,14 @@ def score_retrieval(qa: list[dict], modes: list[str], ks: list[int],
             if with_ev:
                 agg["evidence_hit"] = mean(
                     [per_q[q["id"]]["evidence_hit"] for q in with_ev])
+            # Paragraph level: is each retrieved chunk cited to the right
+            # paragraph? Article-level chunks are cited as the whole article.
+            with_refs = [q for q in answerable if q.get("gold_refs")]
+            for q in with_refs:
+                per_q[q["id"]].update(M.paragraph_scores(
+                    hits_by_q[q["id"]], q["gold_refs"], k))
+            for name in M.PARAGRAPH_METRICS if with_refs else ():
+                agg[name] = mean([per_q[q["id"]][name] for q in with_refs])
             by_type = {}
             for t in ("single_hop", "multi_hop"):
                 sub = [q for q in answerable if q["type"] == t]
@@ -88,7 +96,8 @@ def score_retrieval(qa: list[dict], modes: list[str], ks: list[int],
 
 def ablate_recital_weight(qa: list[dict], k: int,
                           weights=(1.0, 0.75, 0.5, 0.25, 0.0),
-                          version: str | None = None) -> dict:
+                          version: str | None = None,
+                          granularity: str | None = None) -> dict:
     """Sweep the recital down-weighting prior.
 
     Reported so a reader can see whether the default is a tuned argmax or a
@@ -101,7 +110,7 @@ def ablate_recital_weight(qa: list[dict], k: int,
     for w in weights:
         sc = [M.retrieval_scores(
                   retrieve.hybrid(q["question"], k, recital_weight=w,
-                                  version=version),
+                                  version=version, granularity=granularity),
                   q["gold_units"], k)
               for q in answerable]
         out[str(w)] = {n: mean([s[n] for s in sc]) for n in M.RETRIEVAL_METRICS}
@@ -147,7 +156,7 @@ def models_from(rows: list[dict]) -> dict:
 
 def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
                      judge_model: str, checkpoint: Path | None = None,
-                     version: str | None = None) -> dict:
+                     version: str | None = None, granularity: str | None = None) -> dict:
     """Score every question, checkpointing each row as it completes.
 
     Free-tier providers meter tokens *per day*, and a full run can exceed that
@@ -167,7 +176,7 @@ def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
             continue
         t0 = time.time()
         a = pipeline.answer(q["question"], k=k, mode=mode, model=gen_model,
-                            version=version)
+                            version=version, granularity=granularity)
         latency = time.time() - t0
         contexts = [h["text"] for h in a.contexts]
 
@@ -179,6 +188,9 @@ def score_generation(qa: list[dict], k: int, mode: str, gen_model: str,
             "cited_units": a.cited_units,
             "contexts": contexts,
             "citation_validity": M.citation_validity(a.cited_units, a.contexts),
+            "cited_refs": a.cited_refs,
+            "citation_precision": (M.citation_precision(a.cited_refs, q["gold_refs"])
+                                   if q.get("gold_refs") else None),
             "latency_s": round(latency, 3),
             "retrieval": (M.retrieval_scores(a.contexts, q["gold_units"], k)
                           if q["gold_units"] else {}),
@@ -238,6 +250,8 @@ def summarise(rows: list[dict]) -> dict:
             [r["grade"] in {"correct", "partial"} for r in graded]),
         "faithfulness": mean([r["faithfulness"] for r in ans]),
         "citation_validity": mean([r["citation_validity"] for r in rows]),
+        # Rows written before paragraph citations existed have no such field.
+        "citation_precision": mean([r.get("citation_precision") for r in rows]),
         "correct_abstention_rate": mean([r["abstained"] for r in una]),
         "false_abstention_rate": mean([r["abstained"] for r in ans]),
         "hallucination_rate_unanswerable": mean([not r["abstained"] for r in una]),
@@ -296,6 +310,8 @@ def main() -> None:
                    help="corpus version to search; the published headline run "
                         "is on 2024-07-12")
     p.add_argument("--qa", default="original", choices=sorted(QA_SETS))
+    p.add_argument("--granularity", default="article", choices=config.GRANULARITIES,
+                   help="chunk unit to retrieve; the published numbers are article")
     a = p.parse_args()
 
     qa = load_qa(a.qa)
@@ -305,19 +321,23 @@ def main() -> None:
     # The headline k must always be in the sweep, otherwise the summary and the
     # report have no row to read.
     ks = sorted({int(x) for x in a.ks.split(",")} | {a.k})
-    n_chunks = len(load_chunks(a.corpus))
+    n_chunks = len(load_chunks(a.corpus, a.granularity))
 
-    print(f"corpus {a.corpus}: {n_chunks} chunks | qa {a.qa}: {len(qa)} questions")
+    print(f"corpus {a.corpus} ({a.granularity}): {n_chunks} chunks | "
+          f"qa {a.qa}: {len(qa)} questions")
     print(f"\n== retrieval ({', '.join(modes)}) ==")
-    ret = score_retrieval(qa, modes, ks, a.corpus)
+    ret = score_retrieval(qa, modes, ks, a.corpus, a.granularity)
     for mode in modes:
         s = ret[mode]["at_k"][str(a.k)]["overall"]
         print(f"  {mode:<7} @{a.k}  hit={s['hit_rate']}  recall={s['recall']}  "
               f"full={s['full_recall']}  mrr={s['mrr']}  ndcg={s['ndcg']}"
-              + (f"  evidence={s['evidence_hit']}" if "evidence_hit" in s else ""))
+              + (f"  evidence={s['evidence_hit']}" if "evidence_hit" in s else "")
+              + (f"  para_hit={s['para_hit_rate']}  para_full={s['para_full_recall']}"
+                 f"  cite_prec={s['citation_precision']}"
+                 if "citation_precision" in s else ""))
 
     print("\n== ablation: recital down-weighting ==")
-    abl = ablate_recital_weight(qa, a.k, version=a.corpus)
+    abl = ablate_recital_weight(qa, a.k, version=a.corpus, granularity=a.granularity)
     for w, s in abl.items():
         print(f"  w={w:<5} hit={s['hit_rate']}  full={s['full_recall']}  "
               f"mrr={s['mrr']}  ndcg={s['ndcg']}")
@@ -329,6 +349,7 @@ def main() -> None:
             "recital_weight": config.RECITAL_WEIGHT,
             "n_chunks": n_chunks, "n_questions": len(qa),
             "corpus_version": a.corpus, "qa_set": a.qa,
+            "granularity": a.granularity,
         },
         "retrieval": ret,
         "ablation_recital_weight": abl,
@@ -366,7 +387,7 @@ def main() -> None:
         config.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
         try:
             gen = score_generation(qa, a.k, a.gen_mode, a.model, judge_model, ckpt,
-                                   version=a.corpus)
+                                   version=a.corpus, granularity=a.granularity)
         except llm.DailyQuotaExhausted as e:
             print(f"\n[stopped] {e}")
             print(f"[progress kept] {ckpt}, rerun the same command to resume.")
