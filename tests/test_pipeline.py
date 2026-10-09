@@ -377,3 +377,25 @@ def test_every_question_set_matches_the_text():
         problems, rows = check_qa.check(name, version)
         assert not problems, problems[:5]
         assert rows
+
+
+# --- judge agreement ------------------------------------------------------
+def test_cohen_kappa_matches_hand_computed_values():
+    from eval.agreement import cohen_kappa
+    # 2x2 table [[20, 5], [10, 15]]: po = 0.7, pe = 0.5, kappa = 0.4.
+    a = ["y"] * 25 + ["n"] * 25
+    b = ["y"] * 20 + ["n"] * 5 + ["y"] * 10 + ["n"] * 15
+    assert cohen_kappa(a, b) == pytest.approx(0.4)
+    assert cohen_kappa(a, a) == 1.0
+    assert cohen_kappa([], []) is None
+
+
+def test_human_labels_point_at_real_rows():
+    from eval.agreement import LABELS, load_rows
+    rows = load_rows()
+    labels = [json.loads(l) for l in open(LABELS, encoding="utf-8") if l.strip()]
+    assert len(labels) >= 40
+    for lab in labels:
+        r = rows[(lab["source"], lab["id"])]
+        assert r["answer"].strip() and not r["abstained"]
+        assert lab["human_grade"] in {"correct", "partial", "incorrect"}
