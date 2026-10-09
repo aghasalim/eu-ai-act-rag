@@ -33,13 +33,21 @@ from eval import metrics as M  # noqa: E402
 
 # "original": the 45 questions written against the 2024 text. "amended": questions
 # whose gold answer only the 2026-07-27 consolidated text supports.
+# "extended": 67 questions written from the 2026-07-27 text with paragraph
+# references and quotes, checked by eval/check_qa.py. "all": the three together,
+# less the original questions the amendments superseded, for the 2026 text.
 QA_SETS = {
     "original": Path(__file__).parent / "qa_set.jsonl",
     "amended": Path(__file__).parent / "qa_amended.jsonl",
+    "extended": Path(__file__).parent / "qa_extended.jsonl",
+    "all": None,
 }
 
 
 def load_qa(name: str = "original") -> list[dict]:
+    if name == "all":
+        return [q for n in ("original", "amended", "extended") for q in load_qa(n)
+                if q.get("stale", {}).get("status") != "superseded"]
     return [json.loads(l) for l in open(QA_SETS[name], encoding="utf-8") if l.strip()]
 
 

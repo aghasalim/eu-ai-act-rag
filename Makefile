@@ -1,7 +1,7 @@
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup corpus index eval eval-retrieval eval-versions eval-paragraph app test report report-check docker clean all
+.PHONY: setup corpus index eval eval-retrieval eval-versions eval-paragraph eval-extended check-qa app test report report-check docker clean all
 
 setup:
 	python3 -m venv .venv && $(PIP) install -q -U pip && $(PIP) install -q -r requirements.txt
@@ -29,6 +29,15 @@ eval-paragraph:  ## article against paragraph chunks, paragraph-level citation m
 	  $(PY) eval/run_eval.py --corpus 2024-07-12 --qa original --granularity $$g --no-generation --tag cite_$${g}_original_2024-07-12 && \
 	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa amended --granularity $$g --no-generation --tag cite_$${g}_amended_2026-07-27 || exit 1; \
 	done
+
+eval-extended:   ## all 122 questions current for the 2026 text, both chunkings, no API key
+	for g in article paragraph; do \
+	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa extended --granularity $$g --no-generation --tag $${g}_extended_2026-07-27 && \
+	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa all --granularity $$g --no-generation --tag $${g}_all_2026-07-27 || exit 1; \
+	done
+
+check-qa:        ## every gold reference and quote checked against the text
+	$(PY) eval/check_qa.py
 
 report:          ## regenerate RESULTS.md from the latest eval json
 	$(PY) eval/report.py
