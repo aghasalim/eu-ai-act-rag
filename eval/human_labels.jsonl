@@ -1,0 +1,41 @@
+{"source": "latest", "id": "s01", "human_grade": "incorrect", "human_cited_units": ["art_100"], "note": "Gives the EUR 1 500 000 cap for Union institutions (Article 100(2)), not the Article 99(3) cap."}
+{"source": "latest", "id": "s03", "human_grade": "correct", "human_cited_units": ["art_51"], "note": ""}
+{"source": "latest", "id": "s04", "human_grade": "correct", "human_cited_units": ["art_3"], "note": ""}
+{"source": "latest", "id": "s05", "human_grade": "correct", "human_cited_units": ["art_2"], "note": ""}
+{"source": "latest", "id": "s06", "human_grade": "correct", "human_cited_units": ["art_73"], "note": ""}
+{"source": "latest", "id": "s07", "human_grade": "correct", "human_cited_units": ["art_73"], "note": ""}
+{"source": "latest", "id": "s08", "human_grade": "correct", "human_cited_units": ["art_73"], "note": ""}
+{"source": "latest", "id": "s09", "human_grade": "correct", "human_cited_units": ["art_5"], "note": ""}
+{"source": "latest", "id": "s10", "human_grade": "correct", "human_cited_units": ["art_50"], "note": ""}
+{"source": "latest", "id": "s11", "human_grade": "correct", "human_cited_units": ["art_2", "rct_25"], "note": ""}
+{"source": "latest", "id": "s13", "human_grade": "correct", "human_cited_units": ["art_53"], "note": ""}
+{"source": "latest", "id": "s14", "human_grade": "correct", "human_cited_units": ["art_5"], "note": ""}
+{"source": "latest", "id": "s15", "human_grade": "correct", "human_cited_units": ["art_113"], "note": "Right for the 2024 text the run used."}
+{"source": "latest", "id": "s16", "human_grade": "correct", "human_cited_units": ["art_99"], "note": ""}
+{"source": "latest", "id": "s17", "human_grade": "correct", "human_cited_units": ["art_99"], "note": ""}
+{"source": "latest", "id": "s18", "human_grade": "correct", "human_cited_units": ["art_111"], "note": ""}
+{"source": "latest", "id": "s19", "human_grade": "correct", "human_cited_units": ["anx_III"], "note": ""}
+{"source": "latest", "id": "m01", "human_grade": "correct", "human_cited_units": ["art_5", "art_50"], "note": ""}
+{"source": "latest", "id": "m02", "human_grade": "correct", "human_cited_units": ["art_6"], "note": "Right conclusion; labels the profiling clause Article 6(1)(d) when it is the last subparagraph of 6(3)."}
+{"source": "latest", "id": "m03", "human_grade": "incorrect", "human_cited_units": ["art_53"], "note": "Says the exemption applies; misses that 10^26 FLOP triggers the systemic-risk presumption in Article 51(2)."}
+{"source": "latest", "id": "m04", "human_grade": "partial", "human_cited_units": ["art_2"], "note": "Right list of provisions, but describes Articles 102 to 109 and 112 wrongly."}
+{"source": "latest", "id": "m07", "human_grade": "incorrect", "human_cited_units": ["art_53", "art_111"], "note": "Says Chapter V applies from entry into force; it applies from 2 August 2025. The 2027 deadline is right."}
+{"source": "latest", "id": "m08", "human_grade": "correct", "human_cited_units": ["art_5", "anx_III", "rct_54"], "note": ""}
+{"source": "latest", "id": "s21", "human_grade": "correct", "human_cited_units": ["art_6", "art_49"], "note": ""}
+{"source": "latest", "id": "m10", "human_grade": "correct", "human_cited_units": ["art_55"], "note": "Cites Article 55 in bold, not in brackets."}
+{"source": "latest", "id": "m13", "human_grade": "correct", "human_cited_units": ["art_54", "art_53"], "note": "Reaches 'applies' through Article 54 rather than Article 2(1)(a); documentation is right."}
+{"source": "cap800", "id": "s01", "human_grade": "incorrect", "human_cited_units": ["art_100"], "note": "Same Article 100 mistake."}
+{"source": "cap800", "id": "s04", "human_grade": "correct", "human_cited_units": ["art_3"], "note": ""}
+{"source": "cap800", "id": "s06", "human_grade": "correct", "human_cited_units": ["art_73"], "note": "Ties the 15 days to a causal link being established, which the text does not; the number is right."}
+{"source": "cap800", "id": "s07", "human_grade": "correct", "human_cited_units": ["art_73"], "note": ""}
+{"source": "cap800", "id": "s10", "human_grade": "correct", "human_cited_units": ["art_50"], "note": ""}
+{"source": "cap800", "id": "s13", "human_grade": "correct", "human_cited_units": ["art_53"], "note": ""}
+{"source": "cap800", "id": "s15", "human_grade": "correct", "human_cited_units": ["art_113"], "note": ""}
+{"source": "cap800", "id": "s17", "human_grade": "correct", "human_cited_units": ["art_99"], "note": "Cut off at the end, but the answer is already given."}
+{"source": "cap800", "id": "m01", "human_grade": "correct", "human_cited_units": ["art_5", "art_50"], "note": "Cut off at the end, both parts already given."}
+{"source": "cap800", "id": "m03", "human_grade": "incorrect", "human_cited_units": ["art_53"], "note": "Same mistake as the latest run."}
+{"source": "cap800", "id": "m04", "human_grade": "partial", "human_cited_units": ["art_2"], "note": "Same wrong descriptions as the latest run."}
+{"source": "cap800", "id": "m08", "human_grade": "correct", "human_cited_units": ["art_5", "anx_III", "rct_54"], "note": ""}
+{"source": "cap800", "id": "s21", "human_grade": "correct", "human_cited_units": ["art_6", "art_49"], "note": ""}
+{"source": "cap800", "id": "m10", "human_grade": "correct", "human_cited_units": ["art_55"], "note": "Cites Article 55 in bold, not in brackets."}
+{"source": "cap800", "id": "m13", "human_grade": "correct", "human_cited_units": ["art_54", "art_53", "art_91"], "note": ""}
