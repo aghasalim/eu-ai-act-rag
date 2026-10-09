@@ -365,3 +365,15 @@ def test_parse_refs_reads_paragraphs_and_points():
             "【ANNEX III(4)(a) - High-risk AI systems】, see [Article 6 - X] and "
             "[Recital (27)] and again [Article 5(1)(f) - Prohibited AI practices].")
     assert pipeline.parse_refs(text) == ["art_5(1)(f)", "anx_III(4)(a)", "art_6"]
+
+
+def test_every_question_set_matches_the_text():
+    """Gold references exist, quotes sit in a gold paragraph, and every gold
+    paragraph of the extended set is backed by a quote. See eval/check_qa.py."""
+    from eval import check_qa
+    for name, version in check_qa.SETS.items():
+        if not config.chunks_path(version, "paragraph").exists():
+            pytest.skip("run `make corpus` first")
+        problems, rows = check_qa.check(name, version)
+        assert not problems, problems[:5]
+        assert rows
