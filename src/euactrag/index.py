@@ -28,7 +28,8 @@ def get_encoder():
     return SentenceTransformer(config.EMBED_MODEL)
 
 
-def get_collection(create: bool = False, version: str | None = None):
+def get_collection(create: bool = False, version: str | None = None,
+                   granularity: str | None = None):
     # Must be set before chromadb is imported. The Settings flag below is not
     # enough on 0.6.x, whose telemetry hook raises a signature error on every
     # call and floods stderr.
@@ -41,6 +42,8 @@ def get_collection(create: bool = False, version: str | None = None):
         settings=Settings(anonymized_telemetry=False, allow_reset=True),
     )
     name = f"ai_act_{version or config.CORPUS_VERSION}"
+    if (granularity or config.GRANULARITY) != "article":
+        name += f"_{granularity or config.GRANULARITY}"
     if create:
         try:
             client.delete_collection(name)
@@ -57,9 +60,11 @@ META_KEYS = ("kind", "unit_id", "citation", "title", "chapter_title",
              "section_title", "part", "n_parts", "url", "n_tokens")
 
 
-def build(include_recitals: bool = True, version: str | None = None) -> int:
+def build(include_recitals: bool = True, version: str | None = None,
+          granularity: str | None = None) -> int:
     version = version or config.CORPUS_VERSION
-    chunks = load_chunks(version)
+    granularity = granularity or config.GRANULARITY
+    chunks = load_chunks(version, granularity)
     if not include_recitals:
         chunks = [c for c in chunks if c["kind"] != "recital"]
 
@@ -70,14 +75,17 @@ def build(include_recitals: bool = True, version: str | None = None) -> int:
         texts, batch_size=32, normalize_embeddings=True, show_progress_bar=True
     )
 
-    col = get_collection(create=True, version=version)
+    col = get_collection(create=True, version=version, granularity=granularity)
     col.add(
         ids=[c["chunk_id"] for c in chunks],
         embeddings=[v.tolist() for v in vecs],
         documents=texts,
-        metadatas=[{k: c[k] for k in META_KEYS} for c in chunks],
+        # `ref` is what the chunk is cited as: art_6(3) at paragraph granularity,
+        # the unit id at article granularity.
+        metadatas=[{**{k: c[k] for k in META_KEYS},
+                    "ref": c["meta"].get("ref", c["unit_id"])} for c in chunks],
     )
-    print(f"[{version}] indexed {len(chunks)} chunks -> {config.INDEX_DIR}")
+    print(f"[{version} {granularity}] indexed {len(chunks)} chunks -> {config.INDEX_DIR}")
     return len(chunks)
 
 
@@ -89,6 +97,9 @@ if __name__ == "__main__":
                    help="ablation: index binding articles + annexes only")
     p.add_argument("--version", choices=sorted(config.VERSIONS),
                    help="one corpus version; default is all of them")
+    p.add_argument("--granularity", choices=config.GRANULARITIES,
+                   help="one chunk granularity; default is all of them")
     a = p.parse_args()
     for ver in [a.version] if a.version else sorted(config.VERSIONS):
-        build(include_recitals=not a.no_recitals, version=ver)
+        for gran in [a.granularity] if a.granularity else config.GRANULARITIES:
+            build(include_recitals=not a.no_recitals, version=ver, granularity=gran)

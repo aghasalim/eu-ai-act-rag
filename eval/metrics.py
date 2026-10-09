@@ -95,3 +95,63 @@ def citation_validity(cited: list[str], hits: list[dict]) -> float | None:
         return None
     retrieved = {h["unit_id"] for h in hits}
     return sum(c in retrieved for c in cited) / len(cited)
+
+
+# --------------------------------------------------------------------------
+# Paragraph level
+# --------------------------------------------------------------------------
+# A reference is a unit id followed by outline markers: art_6(3), art_5(1)(f),
+# anx_III(4)(a), art_113(c)(i). Paragraph-level scoring compares the unit plus
+# the first marker, so art_5(1)(f) and art_5(1)(h) are the same paragraph and
+# art_6(3) and art_6(4) are not. A citation with no marker (a whole article)
+# only counts against gold that has no marker either: citing "Article 6" for an
+# answer in Article 6(3) is not a paragraph-level citation.
+
+def para_key(ref: str) -> str:
+    """art_5(1)(f) -> art_5(1). art_113 -> art_113."""
+    i = ref.find("(")
+    if i < 0:
+        return ref
+    return ref[: ref.index(")", i) + 1]
+
+
+def _cited_refs(hits: list[dict], k: int) -> list[str]:
+    """Top-k chunks collapsed to unique paragraph keys of what they are cited as.
+    An article-level chunk is cited as its unit."""
+    seen, out = set(), []
+    for h in hits[:k]:
+        key = para_key(h.get("ref") or h["unit_id"])
+        if key not in seen:
+            seen.add(key)
+            out.append(key)
+    return out
+
+
+def citation_precision(cited: list[str], gold_refs: list[str]) -> float | None:
+    """Share of cited references that name a gold paragraph. None if nothing
+    was cited, as with citation_validity."""
+    if not cited:
+        return None
+    gold = {para_key(g) for g in gold_refs}
+    keys = list(dict.fromkeys(para_key(c) for c in cited))
+    return sum(c in gold for c in keys) / len(keys)
+
+
+def paragraph_scores(hits: list[dict], gold_refs: list[str], k: int) -> dict:
+    """Paragraph-level hit rate, recall, MRR and citation precision of the top k,
+    treating each retrieved chunk as a citation of what it is labelled as."""
+    cited = _cited_refs(hits, k)
+    gold = list(dict.fromkeys(para_key(g) for g in gold_refs))
+    found = [g for g in gold if g in cited]
+    first = next((i for i, c in enumerate(cited, 1) if c in gold), 0)
+    return {
+        "para_hit_rate": float(bool(found)),
+        "para_recall": len(found) / len(gold),
+        "para_full_recall": float(len(found) == len(gold)),
+        "para_mrr": 1.0 / first if first else 0.0,
+        "citation_precision": citation_precision(cited, gold_refs) or 0.0,
+    }
+
+
+PARAGRAPH_METRICS = ("para_hit_rate", "para_recall", "para_full_recall",
+                     "para_mrr", "citation_precision")
