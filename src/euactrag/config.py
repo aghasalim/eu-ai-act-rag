@@ -5,7 +5,11 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA = ROOT / "data"
+# In a checkout the corpus and index live in ./data. An installed package has no
+# checkout around it, so it keeps them in ~/.cache/euactrag unless EUACTRAG_DATA
+# says where.
+DATA = Path(os.getenv("EUACTRAG_DATA") or (
+    ROOT / "data" if (ROOT / "data").is_dir() else Path.home() / ".cache" / "euactrag"))
 INDEX_DIR = DATA / "index"
 EVAL_DIR = ROOT / "eval"
 RESULTS_DIR = EVAL_DIR / "results"
