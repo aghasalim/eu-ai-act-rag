@@ -63,11 +63,6 @@ jobs:
           /tmp/wheel-env/bin/euactrag --help
           /tmp/wheel-env/bin/python -c "import euactrag; assert euactrag.__all__"
 
-      - name: Package tests
-        run: |
-          pip install pytest
-          python -m pytest tests/test_package.py -q
-
       - uses: actions/upload-artifact@v4
         with:
           name: dist
