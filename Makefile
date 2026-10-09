@@ -1,7 +1,7 @@
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup corpus index eval eval-retrieval eval-versions app test report report-check docker clean all
+.PHONY: setup corpus index eval eval-retrieval eval-versions eval-paragraph app test report report-check docker clean all
 
 setup:
 	python3 -m venv .venv && $(PIP) install -q -U pip && $(PIP) install -q -r requirements.txt
@@ -23,6 +23,12 @@ eval-versions:   ## retrieval on both texts of the Act, amended questions too, n
 	$(PY) eval/run_eval.py --corpus 2024-07-12 --qa amended --no-generation --tag amended_2024-07-12
 	$(PY) eval/run_eval.py --corpus 2026-07-27 --qa amended --no-generation --tag amended_2026-07-27
 	$(PY) eval/run_eval.py --corpus 2026-07-27 --qa original --no-generation --tag original_2026-07-27
+
+eval-paragraph:  ## article against paragraph chunks, paragraph-level citation metrics, no API key
+	for g in article paragraph; do \
+	  $(PY) eval/run_eval.py --corpus 2024-07-12 --qa original --granularity $$g --no-generation --tag cite_$${g}_original_2024-07-12 && \
+	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa amended --granularity $$g --no-generation --tag cite_$${g}_amended_2026-07-27 || exit 1; \
+	done
 
 report:          ## regenerate RESULTS.md from the latest eval json
 	$(PY) eval/report.py

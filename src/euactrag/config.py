@@ -35,8 +35,17 @@ LATEST = max(VERSIONS)
 CORPUS_VERSION = os.getenv("CORPUS_VERSION", LATEST)
 
 
-def chunks_path(version: str) -> Path:
-    return DATA / "processed" / f"chunks_{version}.jsonl"
+# "article" is the unit the published numbers were measured on. "paragraph",
+# the default for search and the app since it measured better on both sets,
+# cuts one chunk per numbered paragraph (or top-level point) so that a retrieved
+# chunk can be cited as Article 6(3) rather than Article 6. See ingest.py.
+GRANULARITIES = ("article", "paragraph")
+GRANULARITY = os.getenv("GRANULARITY", "paragraph")
+
+
+def chunks_path(version: str, granularity: str = "article") -> Path:
+    suffix = "" if granularity == "article" else f"_{granularity}"
+    return DATA / "processed" / f"chunks_{version}{suffix}.jsonl"
 
 
 # --- Chunking -------------------------------------------------------------

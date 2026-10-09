@@ -257,8 +257,8 @@ def test_hybrid_breaks_rrf_ties_the_same_way_everywhere(monkeypatch):
     a = {"chunk_id": "art_2", "kind": "article", "rank": 1}
     b = {"chunk_id": "art_1", "kind": "article", "rank": 1}
     for first, second in ((a, b), (b, a)):
-        monkeypatch.setattr(retrieve, "dense", lambda q, p, v=None, f=first: [dict(f)])
-        monkeypatch.setattr(retrieve, "bm25", lambda q, p, v=None, s=second: [dict(s)])
+        monkeypatch.setattr(retrieve, "dense", lambda q, p, v=None, g=None, f=first: [dict(f)])
+        monkeypatch.setattr(retrieve, "bm25", lambda q, p, v=None, g=None, s=second: [dict(s)])
         out = retrieve.hybrid("q", k=2, recital_weight=1.0)
         assert [h["chunk_id"] for h in out] == ["art_1", "art_2"]
 
@@ -297,3 +297,71 @@ def test_evidence_hit_needs_every_quote():
     assert M.evidence_hit(hits, ["2 december 2027"], 2) == 1.0
     assert M.evidence_hit(hits, ["2 December 2027", "2 August 2028"], 2) == 0.0
     assert M.evidence_hit(hits, ["2 December 2027"], 0) == 0.0
+
+
+# --- paragraph-level citations --------------------------------------------
+def _paragraph_chunks(version):
+    path = config.chunks_path(version, "paragraph")
+    if not path.exists():
+        pytest.skip("run `make corpus` first")
+    return [json.loads(l) for l in open(path, encoding="utf-8")]
+
+
+def test_outline_paths_tell_letters_from_roman_numerals():
+    from src.euactrag.ingest import outline_paths
+    lines = ["1. The following shall be prohibited:",
+             "(h) the use of real-time systems, unless:",
+             "    (i) the targeted search for victims;",
+             "    (ii) the prevention of a threat;",
+             "(i) a letter point after (h);",
+             "The first subparagraph shall apply.",
+             "2. Next paragraph."]
+    assert outline_paths(lines) == [("1",), ("1", "h"), ("1", "h", "i"),
+                                    ("1", "h", "ii"), ("1", "i"), ("1",), ("2",)]
+
+
+def test_paragraph_chunks_have_unique_ids_and_known_refs():
+    for v in config.VERSIONS:
+        ch = _paragraph_chunks(v)
+        assert len({c["chunk_id"] for c in ch}) == len(ch)
+        art6 = {c["meta"]["ref"] for c in ch if c["unit_id"] == "art_6"}
+        assert {"art_6(1)", "art_6(2)", "art_6(3)", "art_6(4)"} <= art6
+        # Same text as the article chunks, cut differently.
+        arts = [json.loads(l) for l in open(config.chunks_path(v), encoding="utf-8")]
+        words = lambda cs: sum(len(c["body"].split()) for c in cs)
+        assert words(ch) == words(arts)
+
+
+def test_every_gold_ref_exists_in_the_text_it_is_scored_on():
+    """A gold reference that names a paragraph the corpus does not have would
+    score as a miss forever and nobody would notice."""
+    for path, version in ((QA, config.ORIGINAL), (AMENDED, config.LATEST)):
+        known = {r for c in _paragraph_chunks(version)
+                 for r in c["meta"].get("refs", [c["unit_id"]])}
+        known |= {c["unit_id"] for c in _paragraph_chunks(version)}
+        for q in (json.loads(l) for l in open(path, encoding="utf-8") if l.strip()):
+            assert bool(q["gold_refs"]) == bool(q["gold_units"]), q["id"]
+            for r in q["gold_refs"]:
+                assert r in known, (q["id"], r)
+                assert r.split("(")[0] in q["gold_units"], (q["id"], r)
+
+
+def test_paragraph_metrics():
+    hits = [{"unit_id": "art_6", "ref": "art_6(4)"},
+            {"unit_id": "art_6", "ref": "art_6(3)"},
+            {"unit_id": "art_5", "ref": "art_5(1)"}]
+    s = M.paragraph_scores(hits, ["art_6(3)", "art_5(1)(f)"], 3)
+    assert s["para_full_recall"] == 1.0 and s["para_mrr"] == 0.5
+    assert s["citation_precision"] == pytest.approx(2 / 3)
+    # An article-level chunk is cited as the whole article: not a paragraph hit.
+    art = [{"unit_id": "art_6", "ref": "art_6"}]
+    assert M.paragraph_scores(art, ["art_6(3)"], 1)["para_hit_rate"] == 0.0
+    assert M.paragraph_scores(art, ["art_6"], 1)["para_hit_rate"] == 1.0
+    assert M.citation_precision([], ["art_6(3)"]) is None
+
+
+def test_parse_refs_reads_paragraphs_and_points():
+    text = ("Prohibited [Article 5(1)(f) - Prohibited AI practices], high-risk "
+            "【ANNEX III(4)(a) - High-risk AI systems】, see [Article 6 - X] and "
+            "[Recital (27)] and again [Article 5(1)(f) - Prohibited AI practices].")
+    assert pipeline.parse_refs(text) == ["art_5(1)(f)", "anx_III(4)(a)", "art_6"]

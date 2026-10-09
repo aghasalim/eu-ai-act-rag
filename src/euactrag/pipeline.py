@@ -55,6 +55,7 @@ class Answer:
     contexts: list[dict] = field(default_factory=list)
     abstained: bool = False
     cited_units: list[str] = field(default_factory=list)
+    cited_refs: list[str] = field(default_factory=list)
     mode: str = ""
     model: str = ""
 
@@ -102,6 +103,30 @@ def parse_citations(text: str) -> list[str]:
     return out
 
 
+# The same labels read at paragraph level: "Article 6(3)", "Article 5(1)(f)",
+# "ANNEX III(4)(a)". Recitals carry no outline, so they are not matched here.
+_REF = re.compile(
+    r"\b(Article|Annex)\s+(\d+[a-z]?|[IVXLC]+)((?:\s*\((?:\d+[a-z]*|[a-z]{1,4}|[A-Z])\))*)",
+    re.I)
+
+
+def parse_refs(text: str) -> list[str]:
+    """Paragraph-level references inside citation brackets, order-preserving:
+    "[Article 5(1)(f) - Prohibited AI practices]" -> "art_5(1)(f)"."""
+    seen, out = set(), []
+    for br in re.findall(r"[\[【]([^\]】]*)[\]】]", text):
+        m = _REF.match(br.strip())
+        if not m:
+            continue
+        kind = _KIND[m.group(1).lower()]
+        num = m.group(2).upper() if kind == "anx" else m.group(2)
+        ref = f"{kind}_{num}" + re.sub(r"\s+", "", m.group(3))
+        if ref not in seen:
+            seen.add(ref)
+            out.append(ref)
+    return out
+
+
 def answer(
     question: str,
     k: int | None = None,
@@ -109,9 +134,11 @@ def answer(
     model: str | None = None,
     provider: str | None = None,
     version: str | None = None,
+    granularity: str | None = None,
 ) -> Answer:
     mode = mode or config.RETRIEVAL_MODE
-    hits = retrieve.search(question, k=k, mode=mode, version=version)
+    hits = retrieve.search(question, k=k, mode=mode, version=version,
+                           granularity=granularity)
     res = Answer(question=question, answer="", contexts=hits, mode=mode,
                  model=model or config.LLM_MODEL)
 
@@ -137,6 +164,7 @@ def answer(
     res.answer = out
     res.abstained = config.ABSTAIN_STRING in out
     res.cited_units = parse_citations(out)
+    res.cited_refs = parse_refs(out)
     return res
 
 
