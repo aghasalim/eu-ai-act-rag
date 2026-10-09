@@ -289,6 +289,27 @@ cp .env.example .env && echo "GROQ_API_KEY=your_key_here" >> .env
 make eval && make report && make app
 ```
 
+### As a package
+
+The code installs as `euactrag`, with a command and two functions:
+
+```bash
+pip install .            # or: pip install dist/euactrag-0.1.0-py3-none-any.whl
+euactrag fetch && euactrag ingest && euactrag index
+euactrag search "Is emotion recognition at work prohibited?" -k 3
+euactrag ask "What fine applies to a prohibited practice?"    # needs an LLM key
+```
+
+```python
+import euactrag
+hits = euactrag.search("When do the Annex III rules apply?", k=3)
+print(hits[0]["citation"], hits[0]["ref"])
+```
+
+Outside a checkout the corpus and index go to `~/.cache/euactrag`, or wherever
+`EUACTRAG_DATA` points. `make dist` builds the sdist and wheel and checks them, and
+CI does the same on every push and installs the wheel on its own. It is not on PyPI.
+
 Or pull the container:
 
 ```bash
