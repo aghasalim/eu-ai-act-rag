@@ -143,6 +143,44 @@ Three of the original 45 questions are now out of date (m04 superseded, s15 and 
 incomplete). They are marked in `qa_set.jsonl` and left as they were, since they are
 right for the text the published numbers were measured on.
 
+## Citing the paragraph, not the article
+
+A legal answer is cited as "Article 6(3)", not "Article 6". So there is now a
+second chunking: one chunk per numbered paragraph, or per top-level point where an
+article has no numbered paragraphs (Article 3's definitions, Article 113's dates).
+Every line is labelled with its place in the outline, so a chunk knows it is
+Article 5(1) and holds points (f) to (h). The text is the same; it is only cut
+differently: 921 chunks for the 2024 text instead of 464, 994 instead of 498 for 2026.
+
+Each of the 56 questions with an answer now also has gold paragraph references
+(`gold_refs`, e.g. `art_5(1)(f)`), and a test checks that every one of them exists
+in the corpus. The new metrics treat each retrieved chunk as a citation of what it
+is labelled as and compare at paragraph level, so Article 5(1)(f) and 5(1)(h) are
+the same paragraph and 6(3) and 6(4) are not. Citation precision is the share of
+distinct cited paragraphs that are gold.
+
+Hybrid retrieval, k=6 (`make eval-paragraph`):
+
+| questions | chunks | hit rate | full recall | MRR | paragraph hit | paragraph full recall | paragraph MRR | citation precision |
+|---|---|---|---|---|---|---|---|---|
+| original, 2024 text | article | 90.9% | 69.7% | 0.790 | 0.0% | 0.0% | 0.000 | 0.000 |
+| original, 2024 text | paragraph | 97.0% | 75.8% | 0.843 | 90.9% | 75.8% | 0.757 | 0.176 |
+| amended, 2026 text | article | 81.8% | 63.6% | 0.773 | 0.0% | 0.0% | 0.000 | 0.000 |
+| amended, 2026 text | paragraph | 81.8% | 63.6% | 0.818 | 81.8% | 54.5% | 0.773 | 0.155 |
+
+The article rows are zero by construction: an article chunk can only be cited as
+the whole article, and only one gold reference (s02, the general application date in
+Article 113's unnumbered text) is article level, and hybrid misses it.
+Citation precision at k=6 has a low ceiling. Most questions have one or two gold
+paragraphs and six citations, so a perfect ranker would score 0.232 on the original
+set and 0.212 on the amended one. At k=3 it is 0.308 against a ceiling of 0.465.
+
+The surprise was that smaller chunks also helped at article level on the original
+questions: full recall went from 69.7% to 75.8%, two more questions. On 33
+questions that is not a significant gap, but it did not cost anything either, so
+search and the app now use paragraph chunks. The published answer numbers above
+were measured on article chunks and `make eval` still reproduces them that way.
+
 ## Method, briefly
 
 Official XHTML from the EU Publications Office Cellar API (CELEX `32024R1689`), chunked on the document's own articles, recitals and annexes, because the answer to a
@@ -163,6 +201,7 @@ make eval-retrieval
 
 Reproduces every retrieval number above. No API key, no LLM calls, no cost.
 `make eval-versions` adds the runs on the amended text and the amended questions.
+`make eval-paragraph` compares article and paragraph chunks.
 
 For generated answers, add a free [Groq](https://console.groq.com/keys) key:
 
