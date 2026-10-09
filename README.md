@@ -181,6 +181,45 @@ questions that is not a significant gap, but it did not cost anything either, so
 search and the app now use paragraph chunks. The published answer numbers above
 were measured on article chunks and `make eval` still reproduces them that way.
 
+## A bigger question set
+
+45 questions was too few to say much, so there are now 67 more in
+`eval/qa_extended.jsonl`, written from the 2026 text: 123 in all. Each has gold
+article and paragraph references, a short gold answer, and the exact wording the
+answer rests on. `make check-qa` (also a test in CI) checks all three files against
+the corpus: every gold reference has to exist, every quote has to sit inside a gold
+paragraph, and every gold paragraph of the new set has to hold a quote. It also
+works out which questions quote wording the 2024 text does not have. 13 of the 67 do.
+
+| topic | questions |
+|---|---|
+| high-risk classification and obligations | 28 |
+| prohibited practices | 7 |
+| general-purpose AI models | 7 |
+| transparency | 5 |
+| penalties | 6 |
+| dates and transitional periods | 6 |
+| provisions added by the 2026 amendments | 8 |
+
+Hybrid retrieval on the 2026 text, k=6 (`make eval-extended`). "All" is the three
+sets together, less m04, which the amendments superseded: 110 questions with an answer.
+
+| questions | chunks | answerable | hit rate | full recall | MRR | paragraph full recall | citation precision |
+|---|---|---|---|---|---|---|---|
+| new 67 | article | 67 | 95.5% | 89.6% | 0.812 | 0.0% | 0.000 |
+| new 67 | paragraph | 67 | 98.5% | 92.5% | 0.865 | 86.6% | 0.171 |
+| all | article | 110 | 92.7% | 80.9% | 0.799 | 0.9% | 0.002 |
+| all | paragraph | 110 | 96.4% | 83.6% | 0.853 | 79.1% | 0.169 |
+
+The new questions are easier than the original 45, and I think I know why: I wrote
+them with the paragraph open, so they reuse its words, which is what BM25 rewards.
+The original set was written to be harder and still is. Treat the new numbers as a
+regression check for the paragraph chunker and the amended text rather than as
+a measure of how the system does on real users' questions. Paragraph chunks were
+better than article chunks on all of it, by 2.7 points of full recall on the 110.
+The 13 questions that need the amended wording get it in the top 6 for 10 of them with
+paragraph chunks and 11 with article chunks.
+
 ## Method, briefly
 
 Official XHTML from the EU Publications Office Cellar API (CELEX `32024R1689`), chunked on the document's own articles, recitals and annexes, because the answer to a
@@ -201,7 +240,8 @@ make eval-retrieval
 
 Reproduces every retrieval number above. No API key, no LLM calls, no cost.
 `make eval-versions` adds the runs on the amended text and the amended questions.
-`make eval-paragraph` compares article and paragraph chunks.
+`make eval-paragraph` compares article and paragraph chunks, and `make eval-extended`
+runs the 123-question set.
 
 For generated answers, add a free [Groq](https://console.groq.com/keys) key:
 
@@ -222,8 +262,9 @@ docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest
 ## Limitations
 
 - **41.7% full recall on multi-hop questions.** Biggest weakness by far.
-- **45 questions is a small test set, and I wrote them myself** for a system I also
-  built. Small differences between numbers here are noise.
+- **I wrote every question myself** for a system I also built. The headline numbers
+  rest on the original 45, and small differences there are noise. The 67 added later
+  share wording with the text they were written from, so they flatter retrieval.
 - **The answer numbers are for the 2024 text.** Retrieval has been measured on both
   texts; generation only on the original.
 - **The consolidated text has no legal effect.** Only the Official Journal texts are
