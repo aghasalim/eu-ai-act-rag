@@ -34,6 +34,40 @@ jobs:
       - name: RESULTS.md still matches the generator
         run: python eval/report.py --check
 
+  # The installable package. Builds the sdist and wheel, checks the metadata,
+  # installs the wheel on its own and runs the command. Nothing is published:
+  # the built files are kept as a workflow artifact.
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Build
+        run: |
+          pip install build twine
+          python -m build
+          twine check dist/*
+
+      # --no-deps keeps this to seconds; the command and import must not need
+      # the ML stack until a search actually runs.
+      - name: Install the wheel and run it
+        run: |
+          python -m venv /tmp/wheel-env
+          /tmp/wheel-env/bin/pip install --no-deps dist/*.whl
+          cd /tmp
+          /tmp/wheel-env/bin/euactrag --version
+          /tmp/wheel-env/bin/euactrag --help
+          /tmp/wheel-env/bin/python -c "import euactrag; assert euactrag.__all__"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
   # Every number in README.md and RESULTS.md is produced by eval/run_eval.py and
   # printed by eval/report.py. The job above checks that the documents match the
   # generator, which cannot see a mistake inside the generator. This one

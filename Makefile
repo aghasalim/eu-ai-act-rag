@@ -1,7 +1,7 @@
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup corpus index eval eval-retrieval eval-versions eval-paragraph eval-extended check-qa agreement app test report report-check docker clean all
+.PHONY: setup corpus index eval eval-retrieval eval-versions eval-paragraph eval-extended check-qa agreement dist app test report report-check docker clean all
 
 setup:
 	python3 -m venv .venv && $(PIP) install -q -U pip && $(PIP) install -q -r requirements.txt
@@ -41,6 +41,9 @@ check-qa:        ## every gold reference and quote checked against the text
 
 agreement:       ## judge and rule-based metrics against my hand labels, no API key
 	$(PY) eval/agreement.py
+
+dist:            ## build the euactrag sdist and wheel and check them; does not publish
+	rm -rf dist && $(PY) -m build && $(PY) -m twine check dist/*
 
 report:          ## regenerate RESULTS.md from the latest eval json
 	$(PY) eval/report.py
