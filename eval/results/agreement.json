@@ -1,0 +1,143 @@
+{
+  "judge_model": [
+    "qwen/qwen3.6-27b"
+  ],
+  "judge_grade_3way": {
+    "n": 41,
+    "accuracy": 0.8293,
+    "kappa": 0.5152
+  },
+  "judge_grade_binary": {
+    "n": 41,
+    "accuracy": 0.8293,
+    "kappa": 0.4847
+  },
+  "confusion_human_by_judge": {
+    "correct / correct": 29,
+    "correct / partial": 5,
+    "incorrect / incorrect": 5,
+    "partial / correct": 2
+  },
+  "disagreements": [
+    {
+      "item": "latest:m04",
+      "human": "partial",
+      "judge": "correct",
+      "judge_reason": "The candidate answer accurately lists all the specific articles and conditions mentioned in the reference answer regarding the scope of Regulation (EU) 2024/1689 for high-risk AI systems that are safety components."
+    },
+    {
+      "item": "latest:s21",
+      "human": "correct",
+      "judge": "partial",
+      "judge_reason": "The candidate answer correctly identifies the documentation and registration requirements but omits the obligation to provide the documentation to national competent authorities on request."
+    },
+    {
+      "item": "cap800:s13",
+      "human": "correct",
+      "judge": "partial",
+      "judge_reason": "The candidate answer correctly identifies the main obligations but omits the reference to using state-of-the-art technologies to comply with these requirements."
+    },
+    {
+      "item": "cap800:s17",
+      "human": "correct",
+      "judge": "partial",
+      "judge_reason": "The candidate answer is incomplete because the final sentence is cut off and does not finish the explanation."
+    },
+    {
+      "item": "cap800:m01",
+      "human": "correct",
+      "judge": "partial",
+      "judge_reason": "The candidate correctly identifies that the system is not prohibited and mentions the transparency obligation, but omits the reference's requirement to process personal data in accordance with applicable data protection law."
+    },
+    {
+      "item": "cap800:m04",
+      "human": "partial",
+      "judge": "correct",
+      "judge_reason": "The candidate answer accurately lists all the specific articles and conditions mentioned in the reference answer regarding the scope of Regulation (EU) 2024/1689 for high-risk AI systems that are safety components."
+    },
+    {
+      "item": "cap800:m10",
+      "human": "correct",
+      "judge": "partial",
+      "judge_reason": "The candidate correctly identifies the obligation and article for general-purpose AI models but omits the reference to Article 73 regarding high-risk AI systems included in the reference answer."
+    }
+  ],
+  "citation_parser": {
+    "n": 41,
+    "exact_match": 0.8049,
+    "precision": 1.0,
+    "recall": 0.7963,
+    "misses": [
+      {
+        "item": "latest:m07",
+        "parsed": [
+          "art_111"
+        ],
+        "human": [
+          "art_111",
+          "art_53"
+        ]
+      },
+      {
+        "item": "latest:m10",
+        "parsed": [],
+        "human": [
+          "art_55"
+        ]
+      },
+      {
+        "item": "cap800:s06",
+        "parsed": [],
+        "human": [
+          "art_73"
+        ]
+      },
+      {
+        "item": "cap800:m01",
+        "parsed": [
+          "art_5"
+        ],
+        "human": [
+          "art_5",
+          "art_50"
+        ]
+      },
+      {
+        "item": "cap800:m03",
+        "parsed": [],
+        "human": [
+          "art_53"
+        ]
+      },
+      {
+        "item": "cap800:s21",
+        "parsed": [],
+        "human": [
+          "art_49",
+          "art_6"
+        ]
+      },
+      {
+        "item": "cap800:m10",
+        "parsed": [],
+        "human": [
+          "art_55"
+        ]
+      },
+      {
+        "item": "cap800:m13",
+        "parsed": [],
+        "human": [
+          "art_53",
+          "art_54",
+          "art_91"
+        ]
+      }
+    ]
+  },
+  "abstention_rule": {
+    "n": 45,
+    "accuracy": 1.0,
+    "kappa": 1.0
+  }
+}

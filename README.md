@@ -220,6 +220,45 @@ better than article chunks on all of it, by 2.7 points of full recall on the 110
 The 13 questions that need the amended wording get it in the top 6 for 10 of them with
 paragraph chunks and 11 with article chunks.
 
+## Checking the judge
+
+The answer grades above come from an LLM judge, so I graded 41 of the same answers
+by hand, from the text of the Act and without looking at the judge's grade. They are
+every non-empty answer that did not abstain in two runs of the same generator, with
+answers identical across the runs counted once. The labels, with a note on each
+mistake, are in `eval/human_labels.jsonl`; I made all of them myself. `make agreement`
+compares them with the stored outputs, so it needs no API key.
+
+| what is compared | items | agreement | Cohen's kappa |
+|---|---|---|---|
+| judge grade, correct / partial / incorrect | 41 | 82.9% | 0.52 |
+| judge grade, correct against not correct | 41 | 82.9% | 0.48 |
+| abstention rule (`NOT_IN_CORPUS` in the answer) | 45 | 100% | 1.00 |
+
+All 7 disagreements are about "partial". The judge marked 5 answers partial that I
+marked correct: four for leaving out a detail of the reference that I did not think
+the question needed (s13, s21, m01, m10), one for a sentence cut off after the answer
+was already given (s17). It marked
+m04 correct twice where I marked it partial: the list of articles is right, but the
+answer describes Articles 102 to 109 and 112 wrongly, and the judge only compares
+against the reference. So it is strict about omissions and blind to wrong extra
+claims. On the published run the disagreements cancel: strict accuracy is 66.7% and
+lenient 69.7% under either set of grades. Every answer either of us called incorrect,
+both of us did.
+
+The citation parser, which the citation validity number depends on, agrees with my
+reading of what each answer cites on 80.5% of answers. It never invents a citation
+(precision 100%) but misses 20.4% of them (recall 79.6%). Most misses are citations
+outside brackets, "Article 55(c)" in bold or "Article 49(2) requires" in running text;
+two are brackets left unclosed by an answer that was cut off. So the citation validity
+figure is computed over the bracketed citations only.
+
+What this does not cover: the claim-level faithfulness judge. Checking it needs each
+claim read against the retrieved passages, which I have not done. There is no API key
+on this machine, so the judge has not been re-run either. `eval/agreement.py --rejudge
+MODEL` grades the same 41 answers with a live judge and adds it to the comparison
+once a key is in `.env`.
+
 ## Method, briefly
 
 Official XHTML from the EU Publications Office Cellar API (CELEX `32024R1689`), chunked on the document's own articles, recitals and annexes, because the answer to a
