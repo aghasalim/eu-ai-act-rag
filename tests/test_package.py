@@ -1,7 +1,6 @@
 """The installable package: public API, command line, data directory.
 
-Runs without the corpus or the ML stack, so it also runs against a freshly
-installed wheel in CI.
+Needs neither the corpus nor torch and chromadb, so it runs in the light CI job.
 """
 from __future__ import annotations
 
