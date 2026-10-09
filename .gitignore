@@ -8,3 +8,5 @@ data/index/
 *.egg-info/
 .pytest_cache/
 verify/bootstrap/target/
+dist/
+build/
