@@ -183,7 +183,8 @@ were measured on article chunks, and `make eval` still reproduces them that way.
 ## A bigger question set
 
 45 questions was too few to say much, so I wrote 67 more in
-`eval/qa_extended.jsonl` from the 2026 text. That makes 123 in all. Each one has gold
+`eval/qa_extended.jsonl` from the 2026 text. That makes 123 written, and 122 in use once the
+superseded `m04` is dropped. Each one has gold
 article and paragraph references, a short gold answer and the exact wording the
 answer rests on. `make check-qa` (also a test in CI) checks all three files against
 the corpus. Every gold reference has to exist and every quote has to sit inside a gold
@@ -281,7 +282,7 @@ make eval-retrieval
 That reproduces every retrieval number above. It needs no API key and makes no LLM calls, so it's free.
 `make eval-versions` adds the runs on the amended text and the amended questions.
 `make eval-paragraph` compares article and paragraph chunks, and `make eval-extended`
-runs the 123-question set.
+runs the 122-question set.
 
 For generated answers, add a free [Groq](https://console.groq.com/keys) key:
 
