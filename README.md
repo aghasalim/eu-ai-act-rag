@@ -81,7 +81,7 @@ different model family, so the grader isn't marking its own work. This covers al
 
 | metric | value |
 |---|---|
-| **Faithfulness** (claims entailed by retrieved text) | **90.2%** |
+| **Faithfulness** (claims entailed by retrieved text, averaged over the 26 questions it answered that have an answer) | **90.2%** |
 | **Citation validity** (citations pointing at retrieved passages) | **100%** |
 | **Correct abstention** on out-of-scope questions | **100%** (12/12) |
 | **Hallucination rate** on out-of-scope questions | **0%** |

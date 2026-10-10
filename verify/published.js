@@ -147,6 +147,7 @@ const prose = [
   ['ablation nDCG floor', /nDCG only creeps from ([\d.]+)/, Math.min(...belowTop.map((w) => abl[w].ndcg)), scoreUlp],
   ['ablation nDCG ceiling', /nDCG only creeps from [\d.]+\s*\n?to ([\d.]+)/, Math.max(...belowTop.map((w) => abl[w].ndcg)), scoreUlp],
   ['faithfulness', /\*\*Faithfulness\*\*[^|]*\|\s*\*\*([\d.]+)%/, summary.faithfulness, rateUlp],
+  ['faithfulness n', /averaged over the (\d+) questions it answered/, evalJson.generation.rows.filter((r) => r.faithfulness !== null).length, 0],
   ['citation validity', /\*\*Citation validity\*\*[^|]*\|\s*\*\*([\d.]+)%/, summary.citation_validity, rateUlp],
   ['correct abstention', /\*\*Correct abstention\*\*[^|]*\|\s*\*\*([\d.]+)%/, summary.correct_abstention_rate, rateUlp],
   ['hallucination rate', /\*\*Hallucination rate\*\*[^|]*\|\s*\*\*([\d.]+)%/, summary.hallucination_rate_unanswerable, rateUlp],
