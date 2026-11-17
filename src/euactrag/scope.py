@@ -18,9 +18,9 @@ import functools
 import re
 from datetime import datetime
 
+from .config import ROLES
 from .ingest import load_chunks
 
-ROLES = ("provider", "deployer", "importer", "distributor")
 _ROLE = re.compile(r"\b(provider|deployer|importer|distributor|operator)s?\b", re.I)
 
 
