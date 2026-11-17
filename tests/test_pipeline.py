@@ -432,3 +432,25 @@ def test_split_deals_the_parts_in_turn_and_caps_each_article(monkeypatch):
     # The fine's article is in at depth one, and no article gets a third chunk.
     assert [h["chunk_id"] for h in out] == ["a1", "f1", "a2", "f2", "z"]
     assert [h["rank"] for h in out] == [1, 2, 3, 4, 5]
+
+
+def test_expanded_adds_the_titles_a_passage_refers_to():
+    from eval.experiments import expanded
+
+    def chunk(unit, title, body, chapter="CHAPTER XIII", section=""):
+        return {"unit_id": unit, "kind": "article", "title": title, "body": body,
+                "text": body, "chapter": chapter, "chapter_title": f"{chapter} - {title.upper()}",
+                "section": section, "section_title": f"{section} - Codes" if section else ""}
+
+    chunks = [
+        chunk("art_113", "Entry into force", "Chapter V, Section 4 and Article 5(1) "
+              "shall apply early. Article 113 and Article 5 of Regulation (EU) 2016/679 "
+              "do not."),
+        chunk("art_5", "Prohibited AI practices", "No references here.", "CHAPTER II"),
+        chunk("art_56", "Codes of practice", "See above.", "CHAPTER V", "SECTION 4"),
+    ]
+    first, second, _ = expanded(chunks)
+    # The chapter, its section and the article, in the order they are named;
+    # not the passage's own article, and not another law's Article 5 twice.
+    assert first.endswith("\nRefers to: CODES OF PRACTICE; Codes; Prohibited AI practices")
+    assert second == "No references here."

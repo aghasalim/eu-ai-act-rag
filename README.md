@@ -240,9 +240,10 @@ article, because paragraph chunks of a single long article were filling the top 
 A question with one part gets plain hybrid with that cap. There's no model in it, so
 it adds a few milliseconds.
 
-I tried two other things on the same questions: a cross-encoder reranker
-(`bge-reranker-base` over the top 30), and a copy of the embedder fine-tuned on
-synthetic questions (next section). `make experiments` runs all of it with no API key.
+I tried three other things on the same questions: a cross-encoder reranker
+(`bge-reranker-base` over the top 30), a copy of the embedder fine-tuned on
+synthetic questions (next section), and indexing each passage together with the
+titles of what it refers to (below). `make experiments` runs all of it with no API key.
 The last two columns compare each row with the first, question by question, on full
 recall: how many questions got better and worse, and the exact sign test on those.
 
@@ -254,8 +255,11 @@ recall: how many questions got better and worse, and the exact sign test on thos
 | hybrid, bge-small (baseline) | 90.9% | 69.7% | 41.7% | 0.795 | n/a | n/a |
 | + reranker | 97.0% | 84.9% | 66.7% | 0.813 | 5 / 0 | 0.062 |
 | + split and cap (mode: split) | 93.9% | 78.8% | 58.3% | 0.817 | 4 / 1 | 0.375 |
+| + reference titles | 93.9% | 72.7% | 41.7% | 0.821 | 2 / 1 | 1.000 |
+| + split and cap + reference titles | 97.0% | 84.9% | 66.7% | 0.847 | 6 / 1 | 0.125 |
 | hybrid, bge-small-euaiact | 97.0% | 84.9% | 66.7% | 0.846 | 5 / 0 | 0.062 |
 | + split and cap, bge-small-euaiact | 100.0% | 84.9% | 58.3% | 0.848 | 6 / 1 | 0.125 |
+| + split and cap + reference titles, bge-small-euaiact | 97.0% | 84.9% | 66.7% | 0.857 | 6 / 1 | 0.125 |
 
 **all 122, 2026 text, paragraph chunks** (110 with an answer), k=6
 
@@ -264,8 +268,11 @@ recall: how many questions got better and worse, and the exact sign test on thos
 | hybrid, bge-small (baseline) | 97.3% | 84.5% | 26.3% | 0.862 | n/a | n/a |
 | + reranker | 97.3% | 87.3% | 42.1% | 0.852 | 4 / 1 | 0.375 |
 | + split and cap (mode: split) | 97.3% | 90.0% | 57.9% | 0.856 | 6 / 0 | 0.031 |
+| + reference titles | 98.2% | 85.5% | 26.3% | 0.864 | 1 / 0 | 1.000 |
+| + split and cap + reference titles | 98.2% | 90.9% | 57.9% | 0.860 | 7 / 0 | 0.016 |
 | hybrid, bge-small-euaiact | 99.1% | 88.2% | 36.8% | 0.896 | 5 / 1 | 0.219 |
 | + split and cap, bge-small-euaiact | 99.1% | 92.7% | 63.2% | 0.890 | 9 / 0 | 0.004 |
+| + split and cap + reference titles, bge-small-euaiact | 98.2% | 91.8% | 63.2% | 0.869 | 9 / 1 | 0.021 |
 <!-- EXPERIMENTS_TABLE:END -->
 
 On the 110 questions with an answer, split search took six questions from missing
@@ -282,6 +289,16 @@ multi-hop questions is a small set, so this needs new questions before I'd trust
 size of the gain. It also doesn't fix dates. Of the eight multi-hop questions split
 search still fails, five need Article 113, which names chapters ("Chapters I and II
 shall apply from 2 February 2025") and never the thing the question asks about.
+
+So I tried the obvious fix for that. The `+ reference titles` rows index each passage
+with the titles of the chapters, sections, articles and annexes it refers to, so
+Article 113(b) also says "general-purpose AI models". It didn't work. Article 113
+moves up the list for most of the date questions, but into the top 6 for one of them.
+On the 110 questions that is one more question at full recall with the stock embedder
+(90.0% to 90.9%) and one fewer with the fine-tuned one (92.7% to 91.8%), and multi-hop
+doesn't move in either. On the original 45 it finds two more with the stock embedder
+and none with the fine-tuned one. None of that is a result, so it stays in the
+experiment script. The dates need something else.
 
 Dense search runs in memory in this script and through Chroma's approximate index
 everywhere else, so the baseline row can sit a question away from the tables above.

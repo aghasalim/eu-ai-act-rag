@@ -36,7 +36,7 @@ eval-extended:   ## all 122 questions current for the 2026 text, both chunkings,
 	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa all --granularity $$g --no-generation --tag $${g}_all_2026-07-27 || exit 1; \
 	done
 
-experiments:     ## split search, a reranker and other embedders against the baseline, no API key
+experiments:     ## split search, a reranker, reference titles and other embedders against the baseline, no API key
 	$(PY) eval/experiments.py --embed $(or $(wildcard train/bge-small-euaiact),aghasalim/bge-small-euaiact)
 
 train:           ## write synthetic questions (Apple silicon) and fine-tune the embedder on them
