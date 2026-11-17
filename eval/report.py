@@ -183,6 +183,37 @@ def stale_section(k: str) -> list[str]:
     return out
 
 
+EXP_START = "<!-- EXPERIMENTS_TABLE:START -->"
+EXP_END = "<!-- EXPERIMENTS_TABLE:END -->"
+
+
+def experiments_table() -> list[str]:
+    """What eval/experiments.py measured, one table per setting. The last two
+    columns are the paired comparison with the first row: how many questions
+    went from missing something to full recall and back, and the exact
+    two-sided sign test on those."""
+    path = config.RESULTS_DIR / "experiments.json"
+    if not path.exists():
+        return ["_Not run yet: `make experiments`._"]
+    d = json.loads(path.read_text())
+    out: list[str] = []
+    for label, rows in d["settings"].items():
+        n = next(iter(rows.values()))["n"]
+        out += [f"**{label}** ({n} with an answer), k={d['k']}", "",
+                "| variant | hit rate | full recall | multi-hop full recall | MRR "
+                "| better / worse | p |",
+                "|---|---|---|---|---|---|---|"]
+        for i, (name, r) in enumerate(rows.items()):
+            v = r["vs_baseline"]
+            paired = f"{v['better']} / {v['worse']} | {v['p']:.3f}" if i else "n/a | n/a"
+            out.append(f"| {name} | {fmt(r['hit_rate'], True)} | "
+                       f"{fmt(r['full_recall'], True)} | "
+                       f"{fmt(r['multi_hop_full_recall'], True)} | "
+                       f"{fmt(r['mrr'])} | {paired} |")
+        out.append("")
+    return out[:-1]
+
+
 def _replace_between(text: str, start: str, end: str, body: str) -> str | None:
     if start not in text or end not in text:
         return None
@@ -203,6 +234,7 @@ def update_readme(d: dict, k: str, check: bool = False) -> None:
     for name, start, end, body in (
         ("retrieval", README_START, README_END, readme_table(d, k)),
         ("stale-law", STALE_START, STALE_END, stale_table(k)),
+        ("experiments", EXP_START, EXP_END, experiments_table()),
     ):
         new = _replace_between(want, start, end, "\n".join(body))
         if new is None:
