@@ -10,3 +10,6 @@ data/index/
 verify/bootstrap/target/
 dist/
 build/
+_site/
+train/bge-small-euaiact/
+train/runs/
