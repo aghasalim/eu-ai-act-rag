@@ -399,3 +399,36 @@ def test_human_labels_point_at_real_rows():
         r = rows[(lab["source"], lab["id"])]
         assert r["answer"].strip() and not r["abstained"]
         assert lab["human_grade"] in {"correct", "partial", "incorrect"}
+
+
+def test_split_question_only_splits_questions_with_parts():
+    from src.euactrag.retrieve import split_question
+
+    assert split_question("What is the fine for a prohibited practice?") == []
+    assert split_question("Which research and development activities are excluded?") == []
+    assert split_question(
+        "What must a chatbot provider disclose to users, and what fine applies "
+        "if it fails to?") == ["What must a chatbot provider disclose to users",
+                               "what fine applies if it fails to?"]
+    assert len(split_question(
+        "A bank uses an AI system to set credit scores. Is it high-risk, and "
+        "must the bank do a fundamental rights impact assessment?")) == 3
+
+
+def test_split_deals_the_parts_in_turn_and_caps_each_article(monkeypatch):
+    from src.euactrag import retrieve
+
+    def hit(chunk, unit):
+        return {"chunk_id": chunk, "unit_id": unit, "kind": "article", "rank": 0}
+
+    runs = {
+        "Is it banned, and what is the fine?": [hit("a1", "art_5"), hit("a2", "art_5"),
+                                                hit("a3", "art_5"), hit("z", "art_2")],
+        "Is it banned": [hit("a1", "art_5"), hit("a2", "art_5")],
+        "what is the fine?": [hit("f1", "art_99"), hit("f2", "art_99"), hit("f3", "art_99")],
+    }
+    monkeypatch.setattr(retrieve, "hybrid", lambda q, k, **kw: runs[q])
+    out = retrieve.split("Is it banned, and what is the fine?", k=6)
+    # The fine's article is in at depth one, and no article gets a third chunk.
+    assert [h["chunk_id"] for h in out] == ["a1", "f1", "a2", "f2", "z"]
+    assert [h["rank"] for h in out] == [1, 2, 3, 4, 5]

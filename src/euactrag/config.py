@@ -66,7 +66,11 @@ QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 # --- Retrieval ------------------------------------------------------------
 TOP_K = int(os.getenv("TOP_K", "6"))
 RRF_K = 60  # reciprocal-rank-fusion damping constant (Cormack et al. 2009)
-RETRIEVAL_MODE = os.getenv("RETRIEVAL_MODE", "hybrid")  # dense | bm25 | hybrid
+# "split" is hybrid run on the question and on each of its parts, see
+# retrieve.split. It is the default for search and the app because it measured
+# better on two-part questions (eval/experiments.py). The published numbers were
+# measured on plain "hybrid", and run_eval.py still defaults to that.
+RETRIEVAL_MODE = os.getenv("RETRIEVAL_MODE", "split")  # dense | bm25 | hybrid | split
 
 # Recitals restate the operative rules in flowing prose, which makes them score
 # *higher* against a natural-language question than the terse article that
