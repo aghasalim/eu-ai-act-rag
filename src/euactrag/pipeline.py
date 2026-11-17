@@ -137,10 +137,12 @@ def answer(
     granularity: str | None = None,
     role: str | None = None,
     on: str | None = None,
+    guidelines: bool = False,
 ) -> Answer:
     mode = mode or config.RETRIEVAL_MODE
     hits = retrieve.search(question, k=k, mode=mode, version=version,
-                           granularity=granularity, role=role, on=on)
+                           granularity=granularity, role=role, on=on,
+                           guidelines=guidelines)
     res = Answer(question=question, answer="", contexts=hits, mode=mode,
                  model=model or config.LLM_MODEL)
 

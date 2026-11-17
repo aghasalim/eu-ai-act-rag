@@ -38,7 +38,17 @@ def _bm25(version: str, granularity: str = "article"):
 
 @functools.lru_cache(maxsize=None)
 def _collection(version: str, granularity: str = "article"):
-    return get_collection(version=version, granularity=granularity)
+    try:
+        return get_collection(version=version, granularity=granularity)
+    except Exception:
+        if granularity != config.GUIDANCE:
+            raise
+        # `index` does not embed the guidelines, so the first search that
+        # asks for them does. Under a minute, once.
+        from .index import build
+
+        build(version=version, granularity=granularity)
+        return get_collection(version=version, granularity=granularity)
 
 
 def _as_hit(chunk_id: str, text: str, meta: dict, score: float, rank: int) -> dict:
@@ -166,11 +176,14 @@ FILTER_POOL = 50  # passages ranked before a role or date filter is applied
 
 def search(query: str, k: int | None = None, mode: str | None = None,
            version: str | None = None, granularity: str | None = None,
-           role: str | None = None, on: str | None = None) -> list[dict]:
+           role: str | None = None, on: str | None = None,
+           guidelines: bool = False) -> list[dict]:
     """Ranked passages, each tagged with `roles`, `applies_from` and
     `applies_rule` (see scope.py). `role` drops passages that name other roles
     but not that one; `on`, an ISO date, drops articles that do not apply yet
-    on that date."""
+    on that date. `guidelines` adds, after the k passages of the Act, up to
+    config.GUIDELINE_K paragraphs of the Commission's guidelines (kind
+    "guideline"), found by a hybrid search of the guidelines alone."""
     k = k or config.TOP_K
     mode = mode or config.RETRIEVAL_MODE
     version = version or config.CORPUS_VERSION
@@ -191,4 +204,13 @@ def search(query: str, k: int | None = None, mode: str | None = None,
     if role or on:
         hits = [{**h, "rank": rank} for rank, h in enumerate(
             (h for h in hits if scope.keep(h, role, on)), 1)][:k]
+    if guidelines:
+        # One index for every version of the Act: the guidelines do not change
+        # with it. Three of the four predate the 2026 amendments.
+        extra = hybrid(query, FILTER_POOL if role else config.GUIDELINE_K,
+                       version=config.LATEST, granularity=config.GUIDANCE)
+        tags = scope.tags(config.LATEST, config.GUIDANCE)
+        extra = [{**h, **tags.get(h["chunk_id"], {"roles": []})} for h in extra]
+        extra = [h for h in extra if scope.keep(h, role)][:config.GUIDELINE_K]
+        hits += [{**h, "rank": len(hits) + i} for i, h in enumerate(extra, 1)]
     return hits

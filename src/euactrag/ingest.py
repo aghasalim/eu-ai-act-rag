@@ -498,8 +498,17 @@ def write_jsonl(chunks: list[Chunk], version: str, granularity: str = "article")
 
 
 def load_chunks(version: str | None = None, granularity: str | None = None) -> list[dict]:
-    path = config.chunks_path(version or config.CORPUS_VERSION,
-                              granularity or config.GRANULARITY)
+    granularity = granularity or config.GRANULARITY
+    if granularity == config.GUIDANCE:
+        # The Commission's guidelines (guidelines.py), the same for every version.
+        try:
+            with open(config.GUIDELINES_CHUNKS, encoding="utf-8") as f:
+                return [json.loads(l) for l in f if l.strip()]
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"{config.GUIDELINES_CHUNKS} is missing. Run `euactrag guidelines` "
+                f"once to download and chunk the Commission's guidelines.") from None
+    path = config.chunks_path(version or config.CORPUS_VERSION, granularity)
     with open(path, encoding="utf-8") as f:
         return [json.loads(l) for l in f if l.strip()]
 

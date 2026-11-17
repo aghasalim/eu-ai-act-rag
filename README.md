@@ -492,6 +492,52 @@ Both run after ranking, over the best 50 passages, so a narrow filter can return
 than you asked for. I haven't measured either one: no question in my sets depends on
 a role or a date.
 
+### With the Commission's guidelines
+
+The Commission has adopted four sets of guidelines on the Act. `euactrag guidelines`
+downloads them and cuts them into their numbered paragraphs, 793 in all:
+
+| guidelines on | number | adopted | paragraphs |
+|---|---|---|---|
+| the definition of an AI system | C(2025) 5053 final | 29 July 2025 | 64 |
+| prohibited AI practices | C(2025) 5052 final | 29 July 2025 | 433 |
+| the obligations for providers of general-purpose AI models | C(2025) 7719 final | 19 November 2025 | 141 |
+| the transparency obligations in Article 50 | C(2026) 7702 final | 5 November 2026 | 155 |
+
+`--guidelines` adds up to three of those paragraphs after the passages of the Act:
+
+```bash
+pip install ".[guidelines]"       # pypdf, to read the PDFs
+euactrag guidelines
+euactrag search "Is emotion recognition in the workplace prohibited?" -k 3 --guidelines
+```
+
+That returns three passages of the Act and then paragraphs 253 to 255 of the
+guidelines on prohibited practices, which are the ones about the workplace. Each is
+cited by its paragraph number and links to its page of the PDF.
+
+The guidelines are searched on their own and listed after the Act. My first version
+put them in one ranking with it, and on that same question the guidelines filled the
+candidate pool and Article 5(1) fell out of the top six. Commentary on a rule is
+longer than the rule and uses the same words. Searched apart, the passages of the Act
+are exactly what they are without the flag, so none of the numbers above move.
+
+Things to know about them:
+
+- They aren't law. The Commission says how it reads the Act, and only the Court of
+  Justice can settle it. Results are marked as guidance.
+- Three of the four predate the 2026 amendments. The guidelines on prohibited practices
+  cover Article 5(1)(a) to (h) and say nothing on the two prohibitions added since.
+- Drafts are left out, so the high-risk classification guidelines aren't here yet.
+- Only the Article 50 guidelines are in the Official Journal, so all four are read from
+  the PDFs the Commission publishes. Body text and footnotes differ in font size, and
+  the footnotes are dropped. The reader counts the numbered paragraphs and refuses a
+  file whose count is off.
+- I haven't measured how well they're retrieved. I have no questions whose answer is a
+  guideline paragraph.
+
+In Python it's `euactrag.search(..., guidelines=True)`.
+
 ### As an MCP server
 
 `euactrag mcp` serves the Act to an AI assistant over the
@@ -500,7 +546,7 @@ three read-only tools:
 
 | tool | what it returns |
 |---|---|
-| `eu_ai_act_search` | the passages most relevant to a question, each one paragraph with its citation, EUR-Lex link, the roles it names and the date it applies from. Takes a `role` and an `applies_on` date to filter by |
+| `eu_ai_act_search` | the passages most relevant to a question, each one paragraph with its citation, EUR-Lex link, the roles it names and the date it applies from. Takes a `role` and an `applies_on` date to filter by, and `guidelines` to add paragraphs of the Commission's guidelines |
 | `eu_ai_act_get_provision` | the exact text of an article, annex, recital or paragraph: `Article 6`, `Article 5(1)(f)`, `Annex III`, `art_6(3)` |
 | `eu_ai_act_list_provisions` | the table of contents |
 
@@ -555,7 +601,7 @@ Full list in [notes/METHODS.md](notes/METHODS.md#5-limitations).
 ## Repository layout
 
 ```
-src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline · scope.py (roles, dates) · mcp_server.py
+src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline · scope.py (roles, dates) · guidelines.py · mcp_server.py
 eval/            qa_set.jsonl · qa_amended.jsonl · metrics.py · judge.py · run_eval.py · report.py · experiments.py
 train/           synthetic questions and the embedder fine-tune
 site/            static site generator: a page per article, and the risk checker

@@ -15,3 +15,16 @@ consolidated text is a documentation tool with no legal effect; only the
 Official Journal texts are authentic. Reuse of Commission documents is governed by Decision
 2011/833/EU. This project is not affiliated with or endorsed by the European
 Union, and nothing here is legal advice.
+
+data/raw/guidelines/*.pdf
+-------------------------
+Four Communications from the European Commission, as published by it:
+Guidelines on the definition of an artificial intelligence system (C(2025) 5053
+final), Guidelines on prohibited artificial intelligence practices (C(2025)
+5052 final), Guidelines on the scope of the obligations for providers of
+general-purpose AI models (C(2025) 7719 final) and Guidelines on the
+implementation of the transparency obligations for certain AI systems under
+Article 50 (C(2026) 7702 final). (c) European Union. Reuse of Commission
+documents is governed by Decision 2011/833/EU. data/processed/
+chunks_guidelines.jsonl is their body text cut into numbered paragraphs, with
+footnotes left out; the PDFs are the reference.
