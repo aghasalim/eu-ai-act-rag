@@ -1,0 +1,7 @@
+# Only for `make train`: fine-tuning the embedding model on synthetic questions.
+# The questions are written by a local model through mlx-lm, which needs Apple
+# silicon; train/finetune.py itself runs anywhere.
+-r requirements.txt
+mlx-lm>=0.30; sys_platform == "darwin"
+datasets>=2.19
+accelerate>=1.0
