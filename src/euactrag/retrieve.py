@@ -1,4 +1,4 @@
-"""Dense, lexical and hybrid retrieval.
+"""Dense, lexical and hybrid retrieval, and hybrid over the parts of a question.
 
 Hybrid uses Reciprocal Rank Fusion rather than a weighted score blend. Cosine
 similarities and BM25 scores live on incompatible scales, so blending them needs
@@ -13,6 +13,7 @@ config.CORPUS_VERSION, the latest text unless the environment says otherwise.
 from __future__ import annotations
 
 import functools
+import re
 
 from . import config
 from .index import get_collection, tokenize
@@ -110,9 +111,58 @@ def hybrid(query: str, k: int = 10, pool: int = 30,
     return out
 
 
+POOL = 30   # candidates read per sub-question
+UNIT_CAP = 2  # chunks of any one article allowed in the result
+
+# A clause boundary: the end of a sentence, or a comma / "and" followed by a
+# word that starts a new question.
+_LEAD = (r"(?:what|when|who|whom|which|how|why|is|are|does|do|did|must|can|may|"
+         r"should|from|by|under|if|to)")
+_BOUNDARY = re.compile(
+    rf"(?<=[.?])\s+|,?\s+and\s+(?={_LEAD}\b)|,\s+(?={_LEAD}\b)", re.I)
+
+
+def split_question(query: str) -> list[str]:
+    """The parts of a question that asks more than one thing, or [] if it
+    asks one. "What must a chatbot provider disclose, and what fine applies if
+    it fails to?" is two searches: the rule and the penalty sit in different
+    articles, and embedded as one query the first half drowns the second."""
+    parts = [p.strip() for p in _BOUNDARY.split(query) if p and len(p.split()) >= 3]
+    return parts if len(parts) > 1 else []
+
+
+def split(query: str, k: int = 10, version: str | None = None,
+          granularity: str | None = None) -> list[dict]:
+    """Hybrid search for the question and for each of its parts, dealt out in
+    turn, with at most UNIT_CAP chunks per article.
+
+    Taking turns matters: fusing the runs by rank would reward chunks that
+    several parts agree on, and a two-part question needs the chunks they do
+    not share. Without the cap, paragraph chunks of one long article can fill
+    the whole top-k.
+    """
+    runs = [hybrid(q, POOL, version=version, granularity=granularity)
+            for q in [query] + split_question(query)]
+    out, seen, per_unit = [], set(), {}
+    for depth in range(POOL):
+        for run in runs:
+            if depth >= len(run) or run[depth]["chunk_id"] in seen:
+                continue
+            h = run[depth]
+            if per_unit.get(h["unit_id"], 0) >= UNIT_CAP:
+                continue
+            per_unit[h["unit_id"]] = per_unit.get(h["unit_id"], 0) + 1
+            seen.add(h["chunk_id"])
+            # Fused scores from different runs are not comparable, so the
+            # score reported is the depth at which the chunk was dealt.
+            out.append({**h, "rank": len(out) + 1,
+                        "score": 1.0 / (config.RRF_K + depth + 1)})
+    return out[:k]
+
+
 def search(query: str, k: int | None = None, mode: str | None = None,
            version: str | None = None, granularity: str | None = None) -> list[dict]:
     k = k or config.TOP_K
     mode = mode or config.RETRIEVAL_MODE
-    fn = {"dense": dense, "bm25": bm25, "hybrid": hybrid}[mode]
+    fn = {"dense": dense, "bm25": bm25, "hybrid": hybrid, "split": split}[mode]
     return fn(query, k, version=version, granularity=granularity)
