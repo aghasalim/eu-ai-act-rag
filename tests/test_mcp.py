@@ -73,3 +73,18 @@ def test_the_list_is_the_table_of_contents():
     annexes = call("eu_ai_act_list_provisions", kind="annex",
                    version=config.ORIGINAL).structured_content["result"]
     assert len(annexes) == 13
+
+
+def test_search_takes_a_role_and_a_date(monkeypatch):
+    from src.euactrag import mcp_server, retrieve
+    monkeypatch.setattr(mcp_server, "_ensure_index", lambda version: None)
+    monkeypatch.setattr(retrieve, "split", lambda q, k, **kw: [
+        {"chunk_id": c, "ref": c, "citation": c, "kind": "article", "text": "", "url": "",
+         "rank": i} for i, c in enumerate(["art_19(1)", "art_26(6)", "art_50(4)"], 1)])
+    out = call("eu_ai_act_search", query="what logs must I keep", role="deployer")
+    assert [p["ref"] for p in out.structured_content["result"]] == ["art_26(6)", "art_50(4)"]
+    out = call("eu_ai_act_search", query="what logs must I keep", applies_on="2026-11-17")
+    assert out.structured_content["result"] == [
+        {"ref": "art_50(4)", "citation": "art_50(4)", "kind": "article", "text": "", "url": "",
+         "roles": ["deployer"], "applies_from": "2026-08-02", "applies_rule": "art_113"}]
+    assert call("eu_ai_act_search", query="what logs", applies_on="soon").is_error

@@ -106,3 +106,7 @@ LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "2500"))
 JUDGE_MODEL = os.getenv("JUDGE_MODEL", "qwen/qwen3.6-27b")
 
 ABSTAIN_STRING = "NOT_IN_CORPUS"
+
+# The roles a search can be filtered by (scope.py). Here, not there, because
+# the command line lists them and must start without the parsing stack.
+ROLES = ("provider", "deployer", "importer", "distributor")
