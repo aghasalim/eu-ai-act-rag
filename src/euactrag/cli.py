@@ -5,6 +5,7 @@
     euactrag index                 embed the chunks into the local vector store
     euactrag search "question"     ranked passages with citations
     euactrag ask "question"        a generated answer (needs an LLM key)
+    euactrag mcp                   serve the Act to an AI assistant over MCP (stdio)
 """
 from __future__ import annotations
 
@@ -35,6 +36,8 @@ def build_parser() -> argparse.ArgumentParser:
     i = sub.add_parser("index", help="embed the chunks")
     _corpus(i)
     i.add_argument("--granularity", choices=config.GRANULARITIES)
+
+    sub.add_parser("mcp", help="serve search and the text over MCP on stdin/stdout")
 
     for name, helptext in (("search", "ranked passages"), ("ask", "a generated answer")):
         s = sub.add_parser(name, help=helptext)
@@ -70,6 +73,15 @@ def main(argv: list[str] | None = None) -> int:
                         granularity=a.granularity):
             print(f"{h['rank']:>2}. {h['citation']}  [{h['ref']}]  {h['score']:.4f}")
             print(f"    {h['url']}")
+    elif a.cmd == "mcp":
+        try:
+            from .mcp_server import main as mcp_main
+        except ModuleNotFoundError as e:
+            if e.name != "mcp":
+                raise
+            raise SystemExit('The MCP server needs one more package: '
+                             'pip install "euactrag[mcp]"') from None
+        mcp_main()
     elif a.cmd == "ask":
         from .pipeline import answer
         res = answer(a.query, k=a.k, mode=a.mode, version=a.corpus,
