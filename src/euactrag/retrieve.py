@@ -14,8 +14,9 @@ from __future__ import annotations
 
 import functools
 import re
+from datetime import date
 
-from . import config
+from . import config, scope
 from .index import get_collection, tokenize
 from .ingest import load_chunks
 
@@ -160,9 +161,34 @@ def split(query: str, k: int = 10, version: str | None = None,
     return out[:k]
 
 
+FILTER_POOL = 50  # passages ranked before a role or date filter is applied
+
+
 def search(query: str, k: int | None = None, mode: str | None = None,
-           version: str | None = None, granularity: str | None = None) -> list[dict]:
+           version: str | None = None, granularity: str | None = None,
+           role: str | None = None, on: str | None = None) -> list[dict]:
+    """Ranked passages, each tagged with `roles`, `applies_from` and
+    `applies_rule` (see scope.py). `role` drops passages that name other roles
+    but not that one; `on`, an ISO date, drops articles that do not apply yet
+    on that date."""
     k = k or config.TOP_K
     mode = mode or config.RETRIEVAL_MODE
+    version = version or config.CORPUS_VERSION
+    granularity = granularity or config.GRANULARITY
+    if role and role not in scope.ROLES:
+        raise ValueError(f"role must be one of {', '.join(scope.ROLES)}, not {role!r}")
+    on = on and date.fromisoformat(on).isoformat()
     fn = {"dense": dense, "bm25": bm25, "hybrid": hybrid, "split": split}[mode]
-    return fn(query, k, version=version, granularity=granularity)
+    # ponytail: a filter runs after ranking, over the best FILTER_POOL
+    # passages, so a narrow one can return fewer than k. Filter inside each
+    # run instead if that starts to bite.
+    hits = fn(query, max(k, FILTER_POOL) if role or on else k,
+              version=version, granularity=granularity)
+    tags = scope.tags(version, granularity)
+    # .get: an index built before the last ingest can hold a chunk the corpus
+    # no longer has. It goes untagged, and the filters keep untagged passages.
+    hits = [{**h, **tags.get(h["chunk_id"], {"roles": []})} for h in hits]
+    if role or on:
+        hits = [{**h, "rank": rank} for rank, h in enumerate(
+            (h for h in hits if scope.keep(h, role, on)), 1)][:k]
+    return hits

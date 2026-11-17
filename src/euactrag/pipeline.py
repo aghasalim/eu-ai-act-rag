@@ -135,10 +135,12 @@ def answer(
     provider: str | None = None,
     version: str | None = None,
     granularity: str | None = None,
+    role: str | None = None,
+    on: str | None = None,
 ) -> Answer:
     mode = mode or config.RETRIEVAL_MODE
     hits = retrieve.search(question, k=k, mode=mode, version=version,
-                           granularity=granularity)
+                           granularity=granularity, role=role, on=on)
     res = Answer(question=question, answer="", contexts=hits, mode=mode,
                  model=model or config.LLM_MODEL)
 

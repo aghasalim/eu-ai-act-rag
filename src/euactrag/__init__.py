@@ -14,12 +14,16 @@ __all__ = ["search", "answer", "__version__"]
 
 
 def search(query: str, k: int | None = None, mode: str | None = None,
-           version: str | None = None, granularity: str | None = None) -> list[dict]:
+           version: str | None = None, granularity: str | None = None,
+           role: str | None = None, on: str | None = None) -> list[dict]:
     """Ranked passages for a question. Each hit has `citation`, `ref` (e.g.
-    art_5(1)), `unit_id`, `text`, `score` and `url`."""
+    art_5(1)), `unit_id`, `text`, `score`, `url`, the `roles` it names and,
+    for an article, the date it `applies_from`. `role` ("deployer") and `on`
+    ("2026-12-01") filter on those."""
     from .retrieve import search as _search
 
-    return _search(query, k=k, mode=mode, version=version, granularity=granularity)
+    return _search(query, k=k, mode=mode, version=version, granularity=granularity,
+                   role=role, on=on)
 
 
 def answer(question: str, **kwargs):
