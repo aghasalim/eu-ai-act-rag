@@ -307,7 +307,9 @@ def main() -> None:
     p.add_argument("--modes", default="dense,bm25,hybrid")
     p.add_argument("--ks", default="3,5,10")
     p.add_argument("--k", type=int, default=config.TOP_K)
-    p.add_argument("--gen-mode", default=config.RETRIEVAL_MODE)
+    # Pinned, not config.RETRIEVAL_MODE: the published answers were generated
+    # from plain hybrid retrieval, and the default mode has since moved on.
+    p.add_argument("--gen-mode", default="hybrid")
     p.add_argument("--model", default=config.LLM_MODEL)
     p.add_argument("--judge-model", default=None)
     p.add_argument("--no-generation", action="store_true")

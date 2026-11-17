@@ -91,8 +91,10 @@ with st.sidebar:
         else f"{v} (original, superseded)",
         help="2026-07-27 is the consolidated text after the Digital Omnibus on AI. "
              "2024-07-12 is the original Official Journal text, kept for comparison.")
-    mode = st.radio("Strategy", ["hybrid", "dense", "bm25"], index=0,
-                    help="hybrid = dense + BM25 fused with reciprocal rank fusion")
+    mode = st.radio("Strategy", ["split", "hybrid", "dense", "bm25"], index=0,
+                    help="hybrid = dense + BM25 fused with reciprocal rank fusion. "
+                         "split = hybrid on the question and on each of its parts, "
+                         "for questions that ask two things")
     k = st.slider("Passages retrieved (k)", 3, 12, config.TOP_K)
     st.divider()
     st.header("Generation")

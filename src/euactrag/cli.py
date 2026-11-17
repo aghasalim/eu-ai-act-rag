@@ -40,7 +40,7 @@ def build_parser() -> argparse.ArgumentParser:
         s = sub.add_parser(name, help=helptext)
         s.add_argument("query")
         s.add_argument("-k", type=int, default=config.TOP_K)
-        s.add_argument("--mode", choices=("hybrid", "dense", "bm25"),
+        s.add_argument("--mode", choices=("split", "hybrid", "dense", "bm25"),
                        default=config.RETRIEVAL_MODE)
         s.add_argument("--granularity", choices=config.GRANULARITIES,
                        default=config.GRANULARITY)
