@@ -7,7 +7,8 @@ Three read-only tools: search, fetch a provision by its reference, and list
 what there is. The assistant on the other end writes the answer; this only
 hands it the text, cited to the paragraph, so there is no LLM key involved.
 Both texts of the Act are served, so "what did Article 6 say before the 2026
-amendments?" is a second call with the other version.
+amendments?" is a second call with the other version. So are French, German
+and Dutch, once fetched.
 """
 from __future__ import annotations
 
@@ -33,6 +34,14 @@ Version = Annotated[
                       f"2026/1744) and the default. {config.ORIGINAL} is the text as "
                       f"first published.")]
 
+
+
+Language = Annotated[
+    Literal[tuple(config.LANGUAGES)],  # type: ignore[valid-type]
+    Field(description="Language of the text: en (the default and the only one "
+                      "measured), fr, de or nl. References such as art_6(3) are the "
+                      "same in every language. The other three have to be downloaded "
+                      "once, and the error says how.")]
 
 
 class Passage(TypedDict):
@@ -77,9 +86,12 @@ server = MCPServer(
 
 @functools.lru_cache(maxsize=None)
 def _chunks(version: str) -> list[dict]:
+    """`version` is a corpus key and may carry a language: "2026-07-27.fr"."""
     try:
         return load_chunks(version, "paragraph")
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        if config.split_version(version)[1] != "en":
+            raise ToolError(str(e)) from None  # it says what to run
         raise ToolError(
             f"The {version} text has not been downloaded on this machine. Run "
             f"`euactrag fetch && euactrag ingest && euactrag index` once, then try "
@@ -128,6 +140,7 @@ def eu_ai_act_search(
     applies_on: Annotated[date | None, Field(
         description="A date, e.g. 2026-12-01. Leaves out articles that do not apply "
                     "yet on that date under Article 113.")] = None,
+    language: Language = "en",
     guidelines: Annotated[bool, Field(
         description="After the passages of the Act, add up to three paragraphs of the "
                     "Commission's guidelines on it (AI system definition, prohibited "
@@ -155,6 +168,10 @@ def eu_ai_act_search(
 
     # Indexing prints progress. That is safe: the SDK's stdio transport keeps
     # the protocol on its own descriptor and sends stray prints to stderr.
+    if guidelines and language != "en":
+        raise ToolError("The guidelines are indexed in English only. Search them "
+                        "with language 'en', or search this language without them.")
+    version = config.localized(version, language)
     _ensure_index(version)
     try:
         hits = retrieve.search(query, k=k, version=version, granularity="paragraph",
@@ -174,6 +191,7 @@ def eu_ai_act_get_provision(
         "'Article 5(1)(f)', 'Annex III', 'Recital 27', or a `ref` from a search "
         "result such as 'art_6(3)'."))],
     version: Version = config.LATEST,
+    language: Language = "en",
 ) -> Provision:
     """The exact text of one provision of the EU AI Act.
 
@@ -183,10 +201,11 @@ def eu_ai_act_get_provision(
     the 2026 amendments changed.
     """
     unit, want = parse_ref(ref)
-    chunks = [c for c in _chunks(version) if c["unit_id"] == unit]
+    key = lambda v: config.localized(v, language)  # noqa: E731
+    chunks = [c for c in _chunks(key(version)) if c["unit_id"] == unit]
     if not chunks:
         other = next((v for v in config.VERSIONS if v != version
-                      and any(c["unit_id"] == unit for c in _chunks(v))), None)
+                      and any(c["unit_id"] == unit for c in _chunks(key(v)))), None)
         raise ToolError(
             f"There is no {ref} in the {version} text."
             + (f" It exists in the {other} text." if other else
@@ -215,6 +234,7 @@ def eu_ai_act_list_provisions(
     kind: Annotated[Literal["article", "annex", "recital"], Field(
         description="Articles (with chapter and title), annexes or recitals.")] = "article",
     version: Version = config.LATEST,
+    language: Language = "en",
 ) -> list[Entry]:
     """The table of contents: every article, annex or recital in one version.
 
@@ -223,7 +243,7 @@ def eu_ai_act_list_provisions(
     titles, so they are listed by number only.
     """
     seen: dict[str, Entry] = {}
-    for c in _chunks(version):
+    for c in _chunks(config.localized(version, language)):
         if c["kind"] == kind and c["unit_id"] not in seen:
             seen[c["unit_id"]] = {"ref": c["unit_id"], "title": c["title"]}
             if kind == "article":

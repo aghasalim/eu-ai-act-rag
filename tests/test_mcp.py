@@ -103,3 +103,17 @@ def test_search_can_add_guidelines(monkeypatch):
     assert [(p["ref"], p["kind"]) for p in out.structured_content["result"]] == [
         ("art_50(4)", "article"), ("gl_transparency(12)", "guideline")]
     assert "applies_from" not in out.structured_content["result"][1]
+
+
+def test_a_language_that_was_not_downloaded_says_what_to_run(monkeypatch, tmp_path):
+    from src.euactrag import mcp_server
+    monkeypatch.setattr(config, "DATA", tmp_path)   # nothing fetched here
+    mcp_server._chunks.cache_clear()
+    try:
+        out = call("eu_ai_act_get_provision", ref="Article 6(3)", language="fr")
+        assert out.is_error and "euactrag fetch --lang fr" in out.content[0].text
+        assert call("eu_ai_act_search", query="logs", language="xx").is_error
+        out = call("eu_ai_act_search", query="logs", language="de", guidelines=True)
+        assert out.is_error and "English only" in out.content[0].text
+    finally:
+        mcp_server._chunks.cache_clear()
