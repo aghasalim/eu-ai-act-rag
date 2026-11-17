@@ -1,7 +1,7 @@
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup corpus guidelines index eval eval-retrieval eval-versions eval-paragraph eval-extended experiments train site check-qa agreement dist app test report report-check docker clean all
+.PHONY: setup corpus guidelines index eval eval-retrieval eval-versions eval-paragraph eval-extended eval-languages experiments train site check-qa agreement dist app test report report-check docker clean all
 
 setup:
 	python3 -m venv .venv && $(PIP) install -q -U pip && $(PIP) install -q -r requirements.txt
@@ -35,6 +35,9 @@ eval-extended:   ## all 122 questions current for the 2026 text, both chunkings,
 	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa extended --granularity $$g --no-generation --tag $${g}_extended_2026-07-27 && \
 	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa all --granularity $$g --no-generation --tag $${g}_all_2026-07-27 || exit 1; \
 	done
+
+eval-languages:  ## the original questions in French, German and Dutch against the Act in each, no API key
+	$(PY) eval/languages.py
 
 experiments:     ## split search, a reranker, reference titles and other embedders against the baseline, no API key
 	$(PY) eval/experiments.py --embed $(or $(wildcard train/bge-small-euaiact),aghasalim/bge-small-euaiact)

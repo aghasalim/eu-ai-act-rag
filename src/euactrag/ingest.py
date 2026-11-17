@@ -291,10 +291,18 @@ def _emit(base: Chunk, body: str, out: list[Chunk]) -> None:
 # art_6(3), art_5(1)(ba), art_3(12), art_113(c)(i), anx_III(4)(a), anx_I(A)(1).
 # Unnumbered paragraphs (Article 113's first lines, Article 4 in 2024) have no
 # marker of their own, so text there is cited to the unit alone.
-_M_PARA = re.compile(r"^(\d+[a-z]*)\.\s")           # 1.  1a.
-_M_NUM = re.compile(r"^\((\d+[a-z]*)\)\s")          # (1) (12a), definitions
-_M_ALPHA = re.compile(r"^\(([a-z]{1,3})\)\s")        # (a) (ba) (iv)
-_M_SECTION = re.compile(r"^Section\s+([A-Z]|\d+)(?:\.|\s+[—-]\s|$)")  # "Section A.", "Section A —", "Section 1"
+# Something inserted after paragraph 1 is "1a" in English and German and
+# "1 bis" in French and Dutch; after point (b), "(ba)" or "b bis)". References
+# use the letter form in every language, so they line up: art_5(1a), art_5(1)(ba).
+_LATIN = {"bis": "a", "ter": "b", "quater": "c", "quinquies": "d", "sexies": "e",
+          "septies": "f", None: ""}
+_BIS = r"(?: (bis|ter|quater|quinquies|sexies|septies) ?)?"  # French: "1 bis ."
+_M_PARA = re.compile(rf"^(\d+[a-z]*){_BIS}\.\s")           # 1.  1a.  1 bis.
+_M_NUM = re.compile(rf"^\(?(\d+[a-z]*){_BIS}\)\s")         # (1) (12a) 1) 14 bis), definitions
+# English writes points as "(a)"; French, German and Dutch write "a)".
+_M_ALPHA = re.compile(rf"^\(?([a-z]{{1,3}}){_BIS}\)\s")     # (a) (ba) (iv) a) b bis)
+# "Section A.", "Section A —", "Section 1"; "Abschnitt A —", "Afdeling A —"
+_M_SECTION = re.compile(r"^(?:Section|Abschnitt|Afdeling)\s+([A-Z]|\d+)(?:\.|\s+[—-]\s|$)")
 _ROMAN = re.compile(r"^(?=[ivx])x{0,3}(ix|iv|v?i{0,3})$")
 
 
@@ -316,12 +324,17 @@ def outline_paths(lines: list[str]) -> list[tuple[str, ...]]:
         for r, rx in ((-1, _M_SECTION), (0, _M_PARA), (1, _M_NUM)):
             m = rx.match(s)
             if m:
-                rank, val = r, m.group(1)
+                rank, val = r, m.group(1) + (_LATIN[m.group(2)] if r >= 0 else "")
+                # "(2)" level with the paragraph numbers is the next paragraph
+                # and not a definition under one: German numbers paragraphs
+                # that way, and the consolidated texts mix the two styles.
+                if r == 1 and any(rk == 0 and ind >= indent for rk, _, ind in stack):
+                    rank = 0
                 break
         else:
             m = _M_ALPHA.match(s)
             if m:
-                val = m.group(1)
+                val = m.group(1) + _LATIN[m.group(2)]
                 letters = [i for r, _, i in stack if r == 2]
                 nested = bool(letters) and indent > letters[-1]
                 rank = 3 if (_ROMAN.match(val) and nested) else 2
@@ -393,8 +406,8 @@ def _emit_paragraphs(base: Chunk, body: str, out: list[Chunk]) -> None:
 
 
 def parse(version: str = config.ORIGINAL, granularity: str = "article") -> list[Chunk]:
-    eli = config.VERSIONS[version]["eli"]
-    xhtml_path = config.VERSIONS[version]["raw"]
+    src = config.source(version)  # `version` may carry a language: "2026-07-27.fr"
+    eli, xhtml_path, lang = src["eli"], src["raw"], src["lang"]
     soup = BeautifulSoup(open(xhtml_path, encoding="utf-8").read(), "lxml")
     _fix_superscripts(soup)
     chunks: list[Chunk] = []
@@ -413,10 +426,12 @@ def parse(version: str = config.ORIGINAL, granularity: str = "article") -> list[
 
         if "oj-ti-section-1" in cls or "title-division-1" in cls:
             t = _clean(el.get_text(" "))
-            if t.upper().startswith("CHAPTER"):
+            # "CHAPTER III" or "SECTION 2", told apart by the number so that
+            # KAPITEL, HOOFDSTUK and AFDELING need no word list.
+            if re.fullmatch(r"[IVXL]+", t.split()[-1]):
                 chapter, chapter_title, pending = t, "", "chapter"
                 section = section_title = ""
-            elif t.upper().startswith("SECTION"):
+            elif t.split()[-1].isdigit():
                 section, section_title, pending = t, "", "section"
             continue
         if ("oj-ti-section-2" in cls or "title-division-2" in cls) and pending:
@@ -456,8 +471,9 @@ def parse(version: str = config.ORIGINAL, granularity: str = "article") -> list[
             body = re.sub(r"^\(\d+\)\s*", "", body).strip()
             base = Chunk(
                 chunk_id=eid, kind="recital", unit_id=eid,
-                citation=f"Recital ({num})", chapter="Recitals",
-                chapter_title="Recitals (non-binding interpretive context)",
+                citation=f"{config.RECITAL[lang]} ({num})", chapter="Recitals",
+                chapter_title=("Recitals (non-binding interpretive context)"
+                               if lang == "en" else config.RECITAL[lang]),
                 url=f"{eli}#{eid}", version=version, meta={"recital": num},
             )
             _emit(base, body, chunks)
@@ -483,8 +499,10 @@ def parse(version: str = config.ORIGINAL, granularity: str = "article") -> list[
     # 2024/1689 are not amended (the Omnibus has recitals of its own, which
     # explain the amendments but are not part of this Regulation), so the
     # original ones are carried over and still link to the Official Journal.
-    if version != config.ORIGINAL and not any(c.kind == "recital" for c in chunks):
-        chunks = [replace(c, version=version) for c in parse(config.ORIGINAL)
+    if (config.split_version(version)[0] != config.ORIGINAL
+            and not any(c.kind == "recital" for c in chunks)):
+        chunks = [replace(c, version=version)
+                  for c in parse(config.localized(config.ORIGINAL, lang))
                   if c.kind == "recital"] + chunks
     return chunks
 
@@ -509,14 +527,22 @@ def load_chunks(version: str | None = None, granularity: str | None = None) -> l
                 f"{config.GUIDELINES_CHUNKS} is missing. Run `euactrag guidelines` "
                 f"once to download and chunk the Commission's guidelines.") from None
     path = config.chunks_path(version or config.CORPUS_VERSION, granularity)
-    with open(path, encoding="utf-8") as f:
-        return [json.loads(l) for l in f if l.strip()]
+    try:
+        with open(path, encoding="utf-8") as f:
+            return [json.loads(l) for l in f if l.strip()]
+    except FileNotFoundError:
+        lang = config.split_version(version or config.CORPUS_VERSION)[1]
+        if lang == "en":
+            raise
+        raise FileNotFoundError(
+            f"{path} is missing. Run `euactrag fetch --lang {lang} && euactrag ingest "
+            f"--lang {lang}` once to download and chunk that text.") from None
 
 
-def main() -> None:
+def main(lang: str = "en") -> None:
     from collections import Counter
 
-    for version, gran in [(v, g) for v in sorted(config.VERSIONS)
+    for version, gran in [(config.localized(v, lang), g) for v in sorted(config.VERSIONS)
                           for g in config.GRANULARITIES]:
         chunks = parse(version, gran)
         write_jsonl(chunks, version, gran)
@@ -532,4 +558,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    main(*sys.argv[1:2])  # python -m src.euactrag.ingest fr

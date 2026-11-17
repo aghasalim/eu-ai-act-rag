@@ -13,19 +13,25 @@ from . import config
 from .ingest import load_chunks
 
 _TOKEN = re.compile(r"[a-z0-9]+")
+_WORD = re.compile(r"[^\W_]+")
 
 
-def tokenize(text: str) -> list[str]:
+def tokenize(text: str, any_alphabet: bool = False) -> list[str]:
     """Lexical tokenizer for BM25. Lowercase alphanumeric runs; we deliberately
     keep digits so that "Article 6" and "Annex III" stay searchable, which is
-    exactly where dense retrieval is weakest."""
-    return _TOKEN.findall(text.lower())
+    exactly where dense retrieval is weakest.
+
+    The English numbers were measured on ASCII runs, which cut "système" in
+    two, so the other languages ask for `any_alphabet` and English stays as it
+    was. ponytail: no stemming and no compound splitting, which German would
+    want; add them if BM25 there matters more than it measures."""
+    return (_WORD if any_alphabet else _TOKEN).findall(text.lower())
 
 
-def get_encoder():
+def get_encoder(model: str | None = None):
     from sentence_transformers import SentenceTransformer
 
-    return SentenceTransformer(config.EMBED_MODEL)
+    return SentenceTransformer(model or config.EMBED_MODEL)
 
 
 def get_collection(create: bool = False, version: str | None = None,
@@ -68,11 +74,13 @@ def build(include_recitals: bool = True, version: str | None = None,
     if not include_recitals:
         chunks = [c for c in chunks if c["kind"] != "recital"]
 
-    encoder = get_encoder()
+    model, _, prefix = config.embedder(version)
+    encoder = get_encoder(model)
     texts = [c["text"] for c in chunks]
-    print(f"encoding {len(texts)} chunks with {config.EMBED_MODEL} ...")
+    print(f"encoding {len(texts)} chunks with {model} ...")
     vecs = encoder.encode(
-        texts, batch_size=32, normalize_embeddings=True, show_progress_bar=True
+        [prefix + t for t in texts], batch_size=32, normalize_embeddings=True,
+        show_progress_bar=True
     )
 
     col = get_collection(create=True, version=version, granularity=granularity)
@@ -99,7 +107,9 @@ if __name__ == "__main__":
                    help="one corpus version; default is all of them")
     p.add_argument("--granularity", choices=config.GRANULARITIES,
                    help="one chunk granularity; default is all of them")
+    p.add_argument("--lang", choices=sorted(config.LANGUAGES), default="en")
     a = p.parse_args()
     for ver in [a.version] if a.version else sorted(config.VERSIONS):
         for gran in [a.granularity] if a.granularity else config.GRANULARITIES:
-            build(include_recitals=not a.no_recitals, version=ver, granularity=gran)
+            build(include_recitals=not a.no_recitals,
+                  version=config.localized(ver, a.lang), granularity=gran)

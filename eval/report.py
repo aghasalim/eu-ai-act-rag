@@ -214,6 +214,37 @@ def experiments_table() -> list[str]:
     return out[:-1]
 
 
+LANG_START = "<!-- LANGUAGES_TABLE:START -->"
+LANG_END = "<!-- LANGUAGES_TABLE:END -->"
+LANG_NAMES = {"en": "English", "fr": "French", "de": "German", "nl": "Dutch"}
+
+
+def languages_table() -> list[str]:
+    """What eval/languages.py measured: hybrid retrieval per language with one
+    multilingual embedder, each language paired with English by question."""
+    path = config.RESULTS_DIR / "languages.json"
+    if not path.exists():
+        return ["_Not run yet: `make eval-languages`._"]
+    d = json.loads(path.read_text())
+    n = next(iter(d["rows"].values()))["n"]
+    out = [f"{n} questions with an answer, {d['version']} text, {d['granularity']} "
+           f"chunks, hybrid, k={d['k']}", "",
+           "| language | hit rate | full recall | multi-hop full recall | MRR "
+           "| dense alone | BM25 alone | better / worse than English | p |",
+           "|---|---|---|---|---|---|---|---|---|"]
+    for name, r in d["rows"].items():
+        v = r.get("vs_english")
+        paired = (f"{v['better']} / {v['worse']} | {v['p']:.3f}"
+                  if v and name != "en" else "n/a | n/a")
+        alone = (f"{fmt(r['dense_full_recall'], True)} | {fmt(r['bm25_full_recall'], True)}"
+                 if "dense_full_recall" in r else "n/a | n/a")
+        out.append(f"| {LANG_NAMES.get(name, name)} | {fmt(r['hit_rate'], True)} | "
+                   f"{fmt(r['full_recall'], True)} | "
+                   f"{fmt(r['multi_hop_full_recall'], True)} | {fmt(r['mrr'])} | "
+                   f"{alone} | {paired} |")
+    return out
+
+
 def _replace_between(text: str, start: str, end: str, body: str) -> str | None:
     if start not in text or end not in text:
         return None
@@ -235,6 +266,7 @@ def update_readme(d: dict, k: str, check: bool = False) -> None:
         ("retrieval", README_START, README_END, readme_table(d, k)),
         ("stale-law", STALE_START, STALE_END, stale_table(k)),
         ("experiments", EXP_START, EXP_END, experiments_table()),
+        ("languages", LANG_START, LANG_END, languages_table()),
     ):
         new = _replace_between(want, start, end, "\n".join(body))
         if new is None:

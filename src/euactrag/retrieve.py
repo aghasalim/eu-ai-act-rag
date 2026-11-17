@@ -21,11 +21,11 @@ from .index import get_collection, tokenize
 from .ingest import load_chunks
 
 
-@functools.lru_cache(maxsize=1)
-def _encoder():
+@functools.lru_cache(maxsize=None)
+def _encoder(model: str):
     from .index import get_encoder
 
-    return get_encoder()
+    return get_encoder(model)
 
 
 @functools.lru_cache(maxsize=None)
@@ -33,7 +33,8 @@ def _bm25(version: str, granularity: str = "article"):
     from rank_bm25 import BM25Okapi
 
     chunks = load_chunks(version, granularity)
-    return BM25Okapi([tokenize(c["text"]) for c in chunks]), chunks
+    uni = config.split_version(version)[1] != "en"
+    return BM25Okapi([tokenize(c["text"], uni) for c in chunks]), chunks
 
 
 @functools.lru_cache(maxsize=None)
@@ -41,10 +42,10 @@ def _collection(version: str, granularity: str = "article"):
     try:
         return get_collection(version=version, granularity=granularity)
     except Exception:
-        if granularity != config.GUIDANCE:
+        if granularity != config.GUIDANCE and config.split_version(version)[1] == "en":
             raise
-        # `index` does not embed the guidelines, so the first search that
-        # asks for them does. Under a minute, once.
+        # `index` does not embed the guidelines or the other languages unless
+        # asked, so the first search that wants them does. About a minute, once.
         from .index import build
 
         build(version=version, granularity=granularity)
@@ -64,9 +65,8 @@ def _as_hit(chunk_id: str, text: str, meta: dict, score: float, rank: int) -> di
 
 def dense(query: str, k: int = 10, version: str | None = None,
           granularity: str | None = None) -> list[dict]:
-    q = _encoder().encode(
-        [config.QUERY_PREFIX + query], normalize_embeddings=True
-    )[0].tolist()
+    model, prefix, _ = config.embedder(version or config.CORPUS_VERSION)
+    q = _encoder(model).encode([prefix + query], normalize_embeddings=True)[0].tolist()
     r = _collection(version or config.CORPUS_VERSION,
                     granularity or config.GRANULARITY).query(query_embeddings=[q], n_results=k)
     return [
@@ -80,9 +80,9 @@ def dense(query: str, k: int = 10, version: str | None = None,
 
 def bm25(query: str, k: int = 10, version: str | None = None,
          granularity: str | None = None) -> list[dict]:
-    model, chunks = _bm25(version or config.CORPUS_VERSION,
-                          granularity or config.GRANULARITY)
-    scores = model.get_scores(tokenize(query))
+    version = version or config.CORPUS_VERSION
+    model, chunks = _bm25(version, granularity or config.GRANULARITY)
+    scores = model.get_scores(tokenize(query, config.split_version(version)[1] != "en"))
     order = sorted(range(len(scores)), key=lambda i: -scores[i])[:k]
     return [
         _as_hit(chunks[i]["chunk_id"], chunks[i]["text"], chunks[i], scores[i], rank)
@@ -177,16 +177,20 @@ FILTER_POOL = 50  # passages ranked before a role or date filter is applied
 def search(query: str, k: int | None = None, mode: str | None = None,
            version: str | None = None, granularity: str | None = None,
            role: str | None = None, on: str | None = None,
-           guidelines: bool = False) -> list[dict]:
+           guidelines: bool = False, lang: str | None = None) -> list[dict]:
     """Ranked passages, each tagged with `roles`, `applies_from` and
     `applies_rule` (see scope.py). `role` drops passages that name other roles
     but not that one; `on`, an ISO date, drops articles that do not apply yet
     on that date. `guidelines` adds, after the k passages of the Act, up to
     config.GUIDELINE_K paragraphs of the Commission's guidelines (kind
-    "guideline"), found by a hybrid search of the guidelines alone."""
+    "guideline"), found by a hybrid search of the guidelines alone. `lang`
+    searches the Act in that language (config.LANGUAGES); the question should
+    be in it too."""
     k = k or config.TOP_K
     mode = mode or config.RETRIEVAL_MODE
-    version = version or config.CORPUS_VERSION
+    version = config.localized(version, lang)
+    if guidelines and config.split_version(version)[1] != "en":
+        raise ValueError("The guidelines are indexed in English only.")
     granularity = granularity or config.GRANULARITY
     if role and role not in scope.ROLES:
         raise ValueError(f"role must be one of {', '.join(scope.ROLES)}, not {role!r}")
