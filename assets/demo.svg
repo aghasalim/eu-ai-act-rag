@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 254" width="880" role="img" aria-label="Terminal: euactrag search on a two-part question returns the disclosure rule and the penalty article">
+<style>text{font:13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.d{fill:#9aa1b2}.g{fill:#f5b700}.b{fill:#8fb0ff}</style>
+<rect width="880" height="254" rx="12" fill="#0f1218"/>
+<circle cx="24" cy="22" r="6" fill="#ff5f57"/><circle cx="44" cy="22" r="6" fill="#febc2e"/><circle cx="64" cy="22" r="6" fill="#28c840"/>
+<clipPath id="type"><rect x="40" y="48" height="24" width="0"><animate attributeName="width" dur="14.0s" repeatCount="indefinite" keyTimes="0;0.04;0.26;0.96;1" values="0;0;791;791;0"/></rect></clipPath>
+<text x="24" y="66" class="g">$</text>
+<text x="40" y="66" fill="#e8e6df" clip-path="url(#type)">euactrag search &quot;A deployer publishes a deep fake without disclosing it. What fine can it face?&quot; -k 4</text>
+<text x="24" y="98" class="d" opacity="0"># searched as two parts: A deployer publishes a deep fake without disclosing it. | What fine can it face?<animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" keyTimes="0;0.286;0.307;0.96;1" values="0;0;1;1;0"/></text>
+<text x="24" y="122" fill="#e8e6df" opacity="0"> 1. <tspan class="b">Article 3(60) - Definitions</tspan><tspan class="d">  [art_3(60)]</tspan><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" keyTimes="0;0.336;0.357;0.96;1" values="0;0;1;1;0"/></text>
+<text x="24" y="146" fill="#e8e6df" opacity="0"> 2. <tspan class="b">Article 101(5) - Fines for providers of general-purpose AI models</tspan><tspan class="d">  [art_101(5)]</tspan><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" keyTimes="0;0.371;0.393;0.96;1" values="0;0;1;1;0"/></text>
+<text x="24" y="170" fill="#e8e6df" opacity="0"> 3. <tspan class="b">Article 50(4) - Transparency obligations for providers and deployers of certai</tspan><tspan class="d">  [art_50(4)]</tspan><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" keyTimes="0;0.407;0.429;0.96;1" values="0;0;1;1;0"/></text>
+<text x="24" y="194" fill="#e8e6df" opacity="0"> 4. <tspan class="b">Article 99(7) - Penalties</tspan><tspan class="d">  [art_99(7)]</tspan><animate attributeName="opacity" dur="14.0s" repeatCount="indefinite" keyTimes="0;0.443;0.464;0.96;1" values="0;0;1;1;0"/></text>
+</svg>
