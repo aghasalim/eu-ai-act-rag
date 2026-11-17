@@ -110,3 +110,44 @@ ABSTAIN_STRING = "NOT_IN_CORPUS"
 # The roles a search can be filtered by (scope.py). Here, not there, because
 # the command line lists them and must start without the parsing stack.
 ROLES = ("provider", "deployer", "importer", "distributor")
+
+# --- Commission guidelines ---------------------------------------------------
+# The guidelines the Commission has adopted on the Act, as the PDFs it
+# publishes: only the Article 50 ones are in the Official Journal, so one
+# source format serves all four. Drafts are left out. `paragraphs` is how many
+# numbered paragraphs the text has; the parser checks it, so a changed file
+# fails instead of being cut wrongly. They are not law and not part of what the
+# published numbers measure: search reads them only when asked.
+GUIDELINES = {
+    "definition": {
+        "title": "Guidelines on the definition of an AI system",
+        "number": "C(2025) 5053 final", "adopted": "2025-07-29",
+        "doc": 112455, "paragraphs": 64,
+    },
+    "prohibited": {
+        "title": "Guidelines on prohibited AI practices",
+        "number": "C(2025) 5052 final", "adopted": "2025-07-29",
+        "doc": 112367, "paragraphs": 433,
+    },
+    "gpai": {
+        "title": "Guidelines on the obligations for providers of general-purpose AI models",
+        "number": "C(2025) 7719 final", "adopted": "2025-11-19",
+        "doc": 118340, "paragraphs": 141,
+    },
+    "transparency": {
+        "title": "Guidelines on the transparency obligations in Article 50",
+        "number": "C(2026) 7702 final", "adopted": "2026-11-05",
+        "doc": 131215, "paragraphs": 155,
+    },
+}
+GUIDELINE_URL = "https://ec.europa.eu/newsroom/dae/redirection/document/{doc}"
+GUIDELINES_RAW = DATA / "raw" / "guidelines"
+GUIDELINES_CHUNKS = DATA / "processed" / "chunks_guidelines.jsonl"
+# The guidelines as a chunk set of their own, next to GRANULARITIES. Kept out
+# of that tuple so `index`, `ingest` and the Docker image do not build it; the
+# first search that asks for the guidelines does. They are searched apart from
+# the Act and added after it, GUIDELINE_K passages at most: mixed into one
+# ranking, some 850 chunks of commentary pushed the article they comment on out
+# of the candidate pool.
+GUIDANCE = "guidance"
+GUIDELINE_K = 3
