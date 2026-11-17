@@ -310,11 +310,14 @@ questions attached. That's what adapting an embedder to one fixed text means, an
 says nothing about how it would do on a different law. The synthetic questions also
 come from one model and one prompt.
 
-The weights are 128 MB and aren't in the repository. `make train` rebuilds them from
-the committed questions (27 minutes on an M5 Max that was busy with other work), and
-`EMBED_MODEL=train/bge-small-euaiact make index` switches search to them. The default
-is still the off-the-shelf model, because the hosted demo has nowhere to load the
-fine-tuned one from yet.
+The weights are on Hugging Face as
+[aghasalim/bge-small-euaiact](https://huggingface.co/aghasalim/bge-small-euaiact), and
+`make experiments` downloads them, so the table above reproduces without training
+anything. `make train` rebuilds them from the committed questions (27 minutes on an M5
+Max that was busy with other work), and a model trained that way is used in place of
+the download. `EMBED_MODEL=aghasalim/bge-small-euaiact make index` switches search to
+them. The default is still the off-the-shelf model. The published numbers above were
+measured with it, and changing the default would change what `make eval` measures.
 
 ## The Act as a website
 
