@@ -1,7 +1,11 @@
+<p align="center"><img src="assets/banner.svg" alt="EU AI Act RAG: answers cited to the paragraph, with an evaluation I actually ran" width="880"></p>
+
 # EU AI Act RAG, with an evaluation I actually ran
 
 **[▶ Live demo](https://eu-ai-act-rag-eval.streamlit.app/)** · every
 answer shows the passages it came from.
+**[Browse the Act](https://aghasalim.github.io/eu-ai-act-rag/)** · every article on its own page, cross-references linked.
+**[Risk checker](https://aghasalim.github.io/eu-ai-act-rag/checker.html)** · prohibited, high-risk or neither, in the Act's own words.
 
 [![ci](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/ci.yml)
 [![demo-link](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/demo.yml/badge.svg)](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/demo.yml)
@@ -27,6 +31,8 @@ disagree.
 
 Long write-up: **[notes/METHODS.md](notes/METHODS.md)**. Per-question numbers:
 **[RESULTS.md](RESULTS.md)**.
+
+<p align="center"><img src="assets/demo.svg" alt="euactrag search on a two-part question returns the disclosure rule and the penalty article" width="880"></p>
 
 ---
 
@@ -220,6 +226,126 @@ better than article chunks on all of it, by 2.7 points of full recall on the 110
 There are 13 questions that need the amended wording. With paragraph chunks, 10 of them
 get it in the top 6. With article chunks, 11 do.
 
+## Two-part questions
+
+Multi-hop was the weakest number here, so that's where I looked next. Most of the
+misses have the same shape. The question asks two things, like what a chatbot
+provider must disclose and what the fine is, and the two answers sit in different
+articles. Embedded as one query, the first half drowns the second.
+
+`split` mode cuts the question at sentence ends, and at an "and" or a comma that
+starts a new question. It runs hybrid search on the whole question and on each part,
+and deals the results out in turn. It also keeps at most two chunks of any one
+article, because paragraph chunks of a single long article were filling the top 6.
+A question with one part gets plain hybrid with that cap. There's no model in it, so
+it adds a few milliseconds.
+
+I tried two other things on the same questions: a cross-encoder reranker
+(`bge-reranker-base` over the top 30), and a copy of the embedder fine-tuned on
+synthetic questions (next section). `make experiments` runs all of it with no API key.
+The last two columns compare each row with the first, question by question, on full
+recall: how many questions got better and worse, and the exact sign test on those.
+
+<!-- EXPERIMENTS_TABLE:START -->
+**original 45, 2024 text, article chunks** (33 with an answer), k=6
+
+| variant | hit rate | full recall | multi-hop full recall | MRR | better / worse | p |
+|---|---|---|---|---|---|---|
+| hybrid, bge-small (baseline) | 90.9% | 69.7% | 41.7% | 0.795 | n/a | n/a |
+| + reranker | 97.0% | 84.9% | 66.7% | 0.813 | 5 / 0 | 0.062 |
+| + split and cap (mode: split) | 93.9% | 78.8% | 58.3% | 0.817 | 4 / 1 | 0.375 |
+| hybrid, bge-small-euaiact | 97.0% | 84.9% | 66.7% | 0.846 | 5 / 0 | 0.062 |
+| + split and cap, bge-small-euaiact | 100.0% | 84.9% | 58.3% | 0.848 | 6 / 1 | 0.125 |
+
+**all 122, 2026 text, paragraph chunks** (110 with an answer), k=6
+
+| variant | hit rate | full recall | multi-hop full recall | MRR | better / worse | p |
+|---|---|---|---|---|---|---|
+| hybrid, bge-small (baseline) | 97.3% | 84.5% | 26.3% | 0.862 | n/a | n/a |
+| + reranker | 97.3% | 87.3% | 42.1% | 0.852 | 4 / 1 | 0.375 |
+| + split and cap (mode: split) | 97.3% | 90.0% | 57.9% | 0.856 | 6 / 0 | 0.031 |
+| hybrid, bge-small-euaiact | 99.1% | 88.2% | 36.8% | 0.896 | 5 / 1 | 0.219 |
+| + split and cap, bge-small-euaiact | 99.1% | 92.7% | 63.2% | 0.890 | 9 / 0 | 0.004 |
+<!-- EXPERIMENTS_TABLE:END -->
+
+On the 110 questions with an answer, split search took six questions from missing
+something to full recall and none the other way. Multi-hop full recall went from
+26.3% to 57.9%. That starting point is lower than the 41.7% above because this is the
+bigger set on paragraph chunks, with 19 multi-hop questions where the original set
+has 12. The reranker helped less there and added nothing on top of splitting, so it
+stays in the experiment script and out of the package. On the original 45 it was the
+other way round, the reranker did a little better than splitting, and neither gap is
+significant on 33 questions.
+
+Two warnings. I wrote the splitting rule after reading the failing questions, and 19
+multi-hop questions is a small set, so this needs new questions before I'd trust the
+size of the gain. It also doesn't fix dates. Of the eight multi-hop questions split
+search still fails, five need Article 113, which names chapters ("Chapters I and II
+shall apply from 2 February 2025") and never the thing the question asks about.
+
+Dense search runs in memory in this script and through Chroma's approximate index
+everywhere else, so the baseline row can sit a question away from the tables above.
+
+`split` is now the default for search and the app. The published numbers above were
+measured on plain hybrid, and `make eval` still uses that.
+
+## Fine-tuning the embedder
+
+The embedder is `bge-small-en-v1.5` off the shelf, and BM25 beats it on this text. So
+I fine-tuned it on questions about this text. A local model (Qwen2.5-14B through
+mlx-lm) wrote three questions for each of the 779 binding chunks of the 2026 text: a
+short search, a scenario and one in everyday words. That gave 2,267 questions, in
+`train/synthetic_queries.jsonl`. `train/finetune.py` holds out a tenth of the chunks
+with their questions, trains on the rest with in-batch negatives for four epochs, and
+is one run with fixed settings. It refuses to start if a synthetic question is also
+an eval question.
+
+On the held-out tenth, 225 questions about chunks the model never trained on, dense
+recall at 6 went from 60.0% to 86.7%. On the hand-written questions it's the
+`bge-small-euaiact` rows in the table above. With split search that is nine questions
+better and none worse on the 110, and 92.7% full recall.
+
+The model has seen most of the passages the eval questions are about, with other
+questions attached. That's what adapting an embedder to one fixed text means, and it
+says nothing about how it would do on a different law. The synthetic questions also
+come from one model and one prompt.
+
+The weights are 128 MB and aren't in the repository. `make train` rebuilds them from
+the committed questions (27 minutes on an M5 Max that was busy with other work), and
+`EMBED_MODEL=train/bge-small-euaiact make index` switches search to them. The default
+is still the off-the-shelf model, because the hosted demo has nowhere to load the
+fine-tuned one from yet.
+
+## The Act as a website
+
+`make site` turns the corpus into a static site with no dependencies: one page per
+article and annex, each numbered paragraph with its own link, every reference to
+another article or annex linked, and a list of the articles that refer back.
+References to other laws ("Article 9 of Regulation (EU) 2016/679") are left
+unlinked on purpose. It deploys to GitHub Pages from `.github/workflows/pages.yml`.
+
+Because the corpus holds both texts, each amended article also shows what changed
+against the 2024 original, word by word, and `changes.html` lists the 7 articles and
+annexes the 2026 amendments added and the 51 they changed. I looked for another free
+site that shows the consolidated text next to the original and didn't find one. The
+comparison is computed, so a layout difference between the two source documents can
+show up as a change. Footnote markers and spacing are evened out first. The same text
+is published as `act.json`, every line with its anchor.
+
+<p align="center">
+<img src="assets/site-index.jpg" alt="The site's index page" width="49%">
+<img src="assets/site-checker.jpg" alt="The risk checker showing a high-risk result" width="49%">
+</p>
+
+The risk checker asks which points of Article 5(1), Article 6, Annex III and
+Article 50 describe a system, and shows the provisions those answers point to,
+with the date from Article 113. I didn't write any of its questions. Each option is
+the text of the point, read from the corpus when the site is built, so an amendment
+that changes a point changes the checker. The build fails if Article 6(3), 6(4) or the
+points of Article 113 it quotes stop saying what the result panels rely on. The
+selection is kept in the URL, so a result can be shared as a link. It's a reading
+aid. It doesn't decide anything, and it only covers those provisions.
+
 ## Checking the judge
 
 The answer grades above come from an LLM judge, so I graded 41 of the same answers
@@ -282,7 +408,8 @@ make eval-retrieval
 That reproduces every retrieval number above. It needs no API key and makes no LLM calls, so it's free.
 `make eval-versions` adds the runs on the amended text and the amended questions.
 `make eval-paragraph` compares article and paragraph chunks, and `make eval-extended`
-runs the 122-question set.
+runs the 122-question set. `make experiments` compares split search, the reranker and
+a fine-tuned embedder with the baseline. `make site` builds the website into `_site/`.
 
 For generated answers, add a free [Groq](https://console.groq.com/keys) key:
 
@@ -323,7 +450,9 @@ docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest
 
 ## Limitations
 
-- **41.7% full recall on multi-hop questions.** It's the biggest weakness by far.
+- **41.7% full recall on multi-hop questions** with plain hybrid. It's the biggest
+  weakness by far. Split search helps, but questions about dates still miss
+  Article 113, and I wrote the rule after reading the failures.
 - **I wrote every question myself** for a system I also built. The headline numbers
   rest on the original 45, and small differences there are noise. The 67 added later
   share wording with the text they were written from, so they flatter retrieval.
@@ -342,7 +471,10 @@ Full list in [notes/METHODS.md](notes/METHODS.md#5-limitations).
 
 ```
 src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline
-eval/            qa_set.jsonl · qa_amended.jsonl · metrics.py · judge.py · run_eval.py · report.py
+eval/            qa_set.jsonl · qa_amended.jsonl · metrics.py · judge.py · run_eval.py · report.py · experiments.py
+train/           synthetic questions and the embedder fine-tune
+site/            static site generator: a page per article, and the risk checker
+assets/          README banner, terminal animation and its generator
 app/             Streamlit UI, shows the answer next to its sources
 tests/           corpus integrity, metric maths, citation parsing
 deploy/          Hugging Face Space template
