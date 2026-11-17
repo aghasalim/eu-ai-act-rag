@@ -237,7 +237,9 @@ then the wrong answer is counted as a retrieval problem and not blamed on the mo
   between numbers here are noise.
 - **No questions where a recital is the right answer**, which makes the recital
   down-weighting look better than it probably is.
-- **English only.** The Act is equally valid in 24 languages and I've tested one.
+- **Four languages of 24, and only English measured properly.** French, German and
+  Dutch are searchable and held up on 33 machine-translated questions
+  (`eval/languages.py`). Answers, guidelines, the app and the site are English only.
 - **The generation half of the evaluation hasn't been run yet** (needs an API key).
 - **Hybrid retrieval was not deterministic across machines until 2026-09-17.** The
   weekly eval had failed every Monday since 1 September on eight hybrid rows, all

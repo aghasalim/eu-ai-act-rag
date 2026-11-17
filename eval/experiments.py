@@ -106,13 +106,15 @@ def memory_dense(model_name: str, expand: bool = False):
 
     def dense(query, k=10, version=None, granularity=None):
         key = (version or config.CORPUS_VERSION, granularity or config.GRANULARITY)
+        # The prefixes go with the model: bge wants one on the query, e5 on both.
+        _, on_query, on_passage = config.embedder(key[0], model_name)
         if key not in cache:
             chunks = load_chunks(*key)
             texts = expanded(chunks) if expand else [c["text"] for c in chunks]
-            cache[key] = (chunks, enc.encode(texts, normalize_embeddings=True,
-                                             batch_size=32))
+            cache[key] = (chunks, enc.encode([on_passage + t for t in texts],
+                                             normalize_embeddings=True, batch_size=32))
         chunks, vecs = cache[key]
-        q = enc.encode([config.QUERY_PREFIX + query], normalize_embeddings=True)[0]
+        q = enc.encode([on_query + query], normalize_embeddings=True)[0]
         scores = vecs @ q
         order = np.argsort(-scores, kind="stable")[:k]
         return [retrieve._as_hit(chunks[i]["chunk_id"], chunks[i]["text"], chunks[i],

@@ -538,6 +538,63 @@ Things to know about them:
 
 In Python it's `euactrag.search(..., guidelines=True)`.
 
+### In French, German and Dutch
+
+The Act is equally authentic in 24 languages. The same parser reads three more of
+them, Belgium's three, from the same official source:
+
+```bash
+euactrag fetch --lang fr && euactrag ingest --lang fr     # or de, nl
+euactrag search "La reconnaissance des émotions sur le lieu de travail est-elle interdite ?" --lang fr
+```
+
+The passages, titles and EUR-Lex links come back in that language. The first search
+in a language embeds its text, which takes about a minute. These texts aren't
+committed, only English is.
+
+A reference means the same thing in every language. French and Dutch number an
+inserted paragraph "1 bis" where English and German write "1a", and German writes
+paragraphs as "(1)" where the others write "1.". The parser reads all of those into
+the English form, so `art_5(1a)` is the same paragraph everywhere. Every paragraph
+reference in the English text exists in the other three, in both versions, except
+one: the Dutch 2024 text numbers Article 73(10) as a second "11". Because the
+references line up, the role and date tags are worked out on the English text and
+carried over.
+
+English search uses `bge-small-en`, which reads English only, so the other languages
+use `multilingual-e5-small`, a multilingual model of about the same size. Keyword
+search splits on Unicode letters there. Nothing is stemmed and German compounds stay
+whole.
+
+To see whether retrieval holds up, I ran the 33 answerable questions of the original
+set in each language against the 2024 text in that language. English is run with the
+same multilingual model, so each row differs from the English one by the language
+alone:
+
+<!-- LANGUAGES_TABLE:START -->
+33 questions with an answer, 2024-07-12 text, article chunks, hybrid, k=6
+
+| language | hit rate | full recall | multi-hop full recall | MRR | dense alone | BM25 alone | better / worse than English | p |
+|---|---|---|---|---|---|---|---|---|
+| English, bge-small (as published) | 90.9% | 69.7% | 41.7% | 0.795 | n/a | n/a | n/a | n/a |
+| English | 90.9% | 69.7% | 41.7% | 0.785 | 63.6% | 63.6% | n/a | n/a |
+| French | 93.9% | 75.8% | 50.0% | 0.795 | 51.5% | 75.8% | 4 / 2 | 0.688 |
+| German | 93.9% | 72.7% | 41.7% | 0.785 | 54.5% | 66.7% | 3 / 2 | 1.000 |
+| Dutch | 90.9% | 69.7% | 41.7% | 0.746 | 54.5% | 54.5% | 1 / 1 | 1.000 |
+<!-- LANGUAGES_TABLE:END -->
+
+No language is measurably worse than English. The paired columns count the questions
+that gained or lost full recall against English, and none of those differences is
+more than a few questions either way. Two warnings. The translations are a machine's
+(Claude's), using each language version's own terms for things like "deployer", and
+no native speaker has checked them. And 33 questions can't show a small difference,
+so this says retrieval isn't broken in these languages, not that it's equally good.
+
+What isn't there in the other languages: `ask` answers in English only, the
+Commission's guidelines are indexed in English only, two-part questions aren't
+split (the splitter looks for English question words), and the app and the site are
+English. `make eval-languages` reproduces the table.
+
 ### As an MCP server
 
 `euactrag mcp` serves the Act to an AI assistant over the
@@ -551,7 +608,8 @@ three read-only tools:
 | `eu_ai_act_list_provisions` | the table of contents |
 
 Every tool takes a `version`, so the assistant can read a provision as published in
-2024 and as amended in 2026 and say what changed. There's no LLM key involved: the
+2024 and as amended in 2026 and say what changed. Every tool also takes a `language`
+(`en`, `fr`, `de` or `nl`). There's no LLM key involved: the
 assistant on the other end writes the answer, and this hands it the text.
 
 ```bash
@@ -593,7 +651,9 @@ docker run -p 8501:8501 ghcr.io/aghasalim/eu-ai-act-rag:latest
   authentic. I checked every change I rely on against the amending act itself.
 - **No questions where a recital is the right answer.** That makes the recital
   down-weighting look better than it probably is.
-- **English only.** The Act is equally valid in 24 languages and I've tested one.
+- **Four languages of 24, and only English measured properly.** French, German and
+  Dutch are searchable and held up on 33 machine-translated questions. Answers,
+  guidelines, the app and the site are English only.
 - This is a student project and it isn't legal advice. Please don't make compliance decisions with it.
 
 Full list in [notes/METHODS.md](notes/METHODS.md#5-limitations).
@@ -602,7 +662,7 @@ Full list in [notes/METHODS.md](notes/METHODS.md#5-limitations).
 
 ```
 src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline · scope.py (roles, dates) · guidelines.py · mcp_server.py
-eval/            qa_set.jsonl · qa_amended.jsonl · metrics.py · judge.py · run_eval.py · report.py · experiments.py
+eval/            qa_set.jsonl · qa_amended.jsonl · metrics.py · judge.py · run_eval.py · report.py · experiments.py · languages.py
 train/           synthetic questions and the embedder fine-tune
 site/            static site generator: a page per article, and the risk checker
 assets/          README banner, terminal animation and its generator

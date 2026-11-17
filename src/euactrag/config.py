@@ -39,6 +39,45 @@ LATEST = max(VERSIONS)
 CORPUS_VERSION = os.getenv("CORPUS_VERSION", LATEST)
 
 
+# --- Languages ---------------------------------------------------------------
+# The Act is equally authentic in 24 languages. English is the one everything
+# here was measured on and the only one committed. The others listed are read
+# by the same parser and fetched on demand: `euactrag fetch --lang fr`.
+# ponytail: three of the other 23. Adding one is its Publications Office token
+# and its word for a recital here, then a run of tests/test_languages.py.
+LANGUAGES = {"en": "eng", "fr": "fra", "de": "deu", "nl": "nld"}
+RECITAL = {"en": "Recital", "fr": "Considérant", "de": "Erwägungsgrund", "nl": "Overweging"}
+
+
+def localized(version: str | None, lang: str | None) -> str:
+    """The corpus key for a version in a language: "2026-07-27.fr". English
+    keeps the bare date, so every key written before languages still holds."""
+    version = version or CORPUS_VERSION
+    if lang not in (None, "en") and lang not in LANGUAGES:
+        raise ValueError(f"language must be one of {', '.join(LANGUAGES)}, not {lang!r}")
+    return version if lang in (None, "en") else f"{version}.{lang}"
+
+
+def split_version(version: str) -> tuple[str, str]:
+    base, _, lang = version.partition(".")
+    return base, lang or "en"
+
+
+def source(version: str) -> dict:
+    """Where a corpus key comes from: CELEX number, raw file, EUR-Lex link and
+    the language token the Publications Office wants."""
+    base, lang = split_version(version)
+    v = VERSIONS[base]
+    if lang == "en":
+        return {**v, "lang": lang, "token": LANGUAGES[lang]}
+    return {
+        "celex": v["celex"], "lang": lang, "token": LANGUAGES[lang],
+        "raw": v["raw"].with_suffix(f".{lang}.xhtml"),
+        "eli": v["eli"].replace("/oj/eng", f"/oj/{LANGUAGES[lang]}")
+                       .replace("/EN/TXT/", f"/{lang.upper()}/TXT/"),
+    }
+
+
 # "article" is the unit the published numbers were measured on. "paragraph",
 # the default for search and the app since it measured better on both sets,
 # cuts one chunk per numbered paragraph (or top-level point) so that a retrieved
@@ -62,6 +101,17 @@ MIN_CHUNK_TOKENS = 24  # below this we merge into the previous chunk
 EMBED_MODEL = os.getenv("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 # bge models are trained with an asymmetric query instruction; documents get none.
 QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
+
+# bge-small-en reads English only, so the other languages get a multilingual
+# model of about the same size. The e5 family wants a prefix on both sides.
+MULTILINGUAL_EMBED = os.getenv("MULTILINGUAL_EMBED", "intfloat/multilingual-e5-small")
+
+
+def embedder(version: str, model: str | None = None) -> tuple[str, str, str]:
+    """(model, query prefix, passage prefix) for a corpus key."""
+    model = model or (EMBED_MODEL if split_version(version)[1] == "en" else MULTILINGUAL_EMBED)
+    return (model, "query: ", "passage: ") if "e5" in model.lower() else (model, QUERY_PREFIX, "")
+
 
 # --- Retrieval ------------------------------------------------------------
 TOP_K = int(os.getenv("TOP_K", "6"))
