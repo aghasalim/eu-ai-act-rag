@@ -1,0 +1,40 @@
+name: pages
+
+# Builds the static site from the committed corpus and publishes it to GitHub
+# Pages. Needs Pages set to "GitHub Actions" once, under Settings > Pages.
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", "data/processed/**", "src/euactrag/config.py", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - id: pages
+        uses: actions/configure-pages@v5
+      # Standard library only, so there is nothing to install.
+      - name: Build
+        run: python site/build.py --base-url "${{ steps.pages.outputs.base_url }}"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4
