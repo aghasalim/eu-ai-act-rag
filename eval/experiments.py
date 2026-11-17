@@ -28,7 +28,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.euactrag import config, retrieve  # noqa: E402
 from src.euactrag.ingest import load_chunks  # noqa: E402
 from eval import metrics as M  # noqa: E402
-from eval.run_eval import load_qa, mean  # noqa: E402
 
 BASE = "BAAI/bge-small-en-v1.5"
 RERANKER = "BAAI/bge-reranker-base"
@@ -173,6 +172,9 @@ def sign_test(a: list[float], b: list[float]) -> tuple[int, int, float]:
 
 
 def score(search, qa: list[dict], k: int, version: str, granularity: str) -> dict:
+    # Imported here so the tests can load this file without the eval's dependencies.
+    from eval.run_eval import mean
+
     answerable = [q for q in qa if q["gold_units"]]
     per_q = {}
     for q in answerable:
@@ -192,6 +194,8 @@ def score(search, qa: list[dict], k: int, version: str, granularity: str) -> dic
 
 
 def main() -> None:
+    from eval.run_eval import load_qa
+
     p = argparse.ArgumentParser()
     p.add_argument("--embed", action="append", default=[],
                    help="extra embedding model (name or path); repeatable")
