@@ -37,7 +37,7 @@ eval-extended:   ## all 122 questions current for the 2026 text, both chunkings,
 	done
 
 experiments:     ## split search, a reranker and other embedders against the baseline, no API key
-	$(PY) eval/experiments.py $(if $(wildcard train/bge-small-euaiact),--embed train/bge-small-euaiact)
+	$(PY) eval/experiments.py --embed $(or $(wildcard train/bge-small-euaiact),aghasalim/bge-small-euaiact)
 
 train:           ## write synthetic questions (Apple silicon) and fine-tune the embedder on them
 	$(PIP) install -q -r requirements-train.txt
