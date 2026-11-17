@@ -30,6 +30,7 @@ dependencies = [
 
 [project.optional-dependencies]
 app = ["streamlit>=1.36"]
+mcp = ["mcp>=2,<3"]
 
 [project.scripts]
 euactrag = "euactrag.cli:main"
