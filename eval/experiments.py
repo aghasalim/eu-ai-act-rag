@@ -1,4 +1,5 @@
-"""Retrieval variants side by side: question splitting, a reranker, other embedders.
+"""Retrieval variants side by side: question splitting, a reranker, other embedders,
+and passages indexed together with the titles of what they refer to.
 
 Everything here is retrieval, so it needs no API key. Each variant is scored on
 the same questions as the baseline and compared with an exact paired test on
@@ -15,7 +16,9 @@ from __future__ import annotations
 
 import argparse
 import functools
+import importlib.util
 import json
+import re
 import sys
 from math import comb
 from pathlib import Path
@@ -25,7 +28,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.euactrag import config, retrieve  # noqa: E402
 from src.euactrag.ingest import load_chunks  # noqa: E402
 from eval import metrics as M  # noqa: E402
-from eval.run_eval import load_qa, mean  # noqa: E402
 
 BASE = "BAAI/bge-small-en-v1.5"
 RERANKER = "BAAI/bge-reranker-base"
@@ -37,8 +39,64 @@ SETTINGS = [
 ]
 
 
+# The site builder already knows which "Article 5" belongs to another law.
+_spec = importlib.util.spec_from_file_location(
+    "site_build", Path(__file__).resolve().parents[1] / "site" / "build.py")
+_site = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_site)
+
+_NUM = r"(\d+[a-z]?|[IVX]+)\b(?:\(\w+\))*"
+_NUMS = _NUM.replace("(", "(?:", 1)
+# "Chapters I and II", "Sections 1, 2, and 3", "Articles 102 to 110", "Article 6(2)"
+_REF = re.compile(rf"\b(Article|Annex|Chapter|Section)(?:s|es)?\s+"
+                  rf"({_NUMS}(?:(?:,\s*|,?\s+and\s+|\s+to\s+){_NUMS})*)" + _site._OTHER_LAW)
+
+
+def expanded(chunks: list[dict]) -> list[str]:
+    """Each chunk's text plus the titles of the chapters, sections, articles and
+    annexes it refers to. Article 113(b) says "Chapter V ... shall apply from
+    2 August 2025" and never says "general-purpose AI models", so a question
+    about when the general-purpose rules apply has nothing to match it on."""
+    tail = lambda t: t.split(" - ", 1)[-1]
+    unit = {c["unit_id"]: c["title"] for c in chunks if c["kind"] != "recital"}
+    chap = {c["chapter"].split()[-1]: tail(c["chapter_title"])
+            for c in chunks if c["kind"] == "article"}
+    sect = {(c["chapter"].split()[-1], c["section"].split()[-1]): tail(c["section_title"])
+            for c in chunks if c["section"]}
+    out = []
+    for c in chunks:
+        here = c["chapter"].split()[-1] if c["chapter"] else ""
+        titles: dict[str, str] = {}
+        for m in _REF.finditer(c["body"]):
+            kind = m.group(1)
+            # ponytail: a range ("Articles 102 to 110") adds its two ends only.
+            for n in re.findall(_NUM, m.group(2)):
+                if kind == "Chapter":
+                    here, t = n, chap.get(n)
+                elif kind == "Section":
+                    t = sect.get((here, n))
+                else:
+                    uid = f"{'art' if kind == 'Article' else 'anx'}_{n}"
+                    t = unit.get(uid) if uid != c["unit_id"] else None
+                if t:
+                    titles.setdefault(t.lower(), t)
+        out.append(c["text"] + ("\nRefers to: " + "; ".join(titles.values())
+                                if titles else ""))
+    return out
+
+
 @functools.lru_cache(maxsize=None)
-def memory_dense(model_name: str):
+def expanded_bm25(version: str, granularity: str = "article"):
+    """A drop-in for retrieve._bm25 over the expanded text. Hits still carry
+    the passage as written."""
+    from rank_bm25 import BM25Okapi
+
+    chunks = load_chunks(version, granularity)
+    return BM25Okapi([retrieve.tokenize(t) for t in expanded(chunks)]), chunks
+
+
+@functools.lru_cache(maxsize=None)
+def memory_dense(model_name: str, expand: bool = False):
     """A drop-in for retrieve.dense backed by a numpy matrix."""
     import numpy as np
     from sentence_transformers import SentenceTransformer
@@ -50,8 +108,9 @@ def memory_dense(model_name: str):
         key = (version or config.CORPUS_VERSION, granularity or config.GRANULARITY)
         if key not in cache:
             chunks = load_chunks(*key)
-            cache[key] = (chunks, enc.encode([c["text"] for c in chunks],
-                                             normalize_embeddings=True, batch_size=32))
+            texts = expanded(chunks) if expand else [c["text"] for c in chunks]
+            cache[key] = (chunks, enc.encode(texts, normalize_embeddings=True,
+                                             batch_size=32))
         chunks, vecs = cache[key]
         q = enc.encode([config.QUERY_PREFIX + query], normalize_embeddings=True)[0]
         scores = vecs @ q
@@ -79,18 +138,21 @@ def reranked(query, k, version, granularity):
     return [{**hits[i], "rank": rank} for rank, i in enumerate(order[:k], 1)]
 
 
-def variant(embed: str, fn=None):
-    """`fn` (default: plain hybrid) run with `embed` as the dense model."""
+def variant(embed: str, fn=None, expand: bool = False):
+    """`fn` (default: plain hybrid) run with `embed` as the dense model, over
+    the expanded passages if `expand`."""
     fn = fn or (lambda q, k, version, granularity:
                 retrieve.hybrid(q, k, version=version, granularity=granularity))
 
     def search(query, k, version, granularity):
-        old = retrieve.dense
-        retrieve.dense = memory_dense(embed)
+        old = retrieve.dense, retrieve._bm25
+        retrieve.dense = memory_dense(embed, expand)
+        if expand:
+            retrieve._bm25 = expanded_bm25
         try:
             return fn(query, k, version, granularity)
         finally:
-            retrieve.dense = old
+            retrieve.dense, retrieve._bm25 = old
     return search
 
 
@@ -110,6 +172,9 @@ def sign_test(a: list[float], b: list[float]) -> tuple[int, int, float]:
 
 
 def score(search, qa: list[dict], k: int, version: str, granularity: str) -> dict:
+    # Imported here so the tests can load this file without the eval's dependencies.
+    from eval.run_eval import mean
+
     answerable = [q for q in qa if q["gold_units"]]
     per_q = {}
     for q in answerable:
@@ -129,6 +194,8 @@ def score(search, qa: list[dict], k: int, version: str, granularity: str) -> dic
 
 
 def main() -> None:
+    from eval.run_eval import load_qa
+
     p = argparse.ArgumentParser()
     p.add_argument("--embed", action="append", default=[],
                    help="extra embedding model (name or path); repeatable")
@@ -138,11 +205,14 @@ def main() -> None:
 
     variants = {"hybrid, bge-small (baseline)": variant(BASE),
                 "+ reranker": variant(BASE, reranked),
-                "+ split and cap (mode: split)": variant(BASE, split)}
+                "+ split and cap (mode: split)": variant(BASE, split),
+                "+ reference titles": variant(BASE, expand=True),
+                "+ split and cap + reference titles": variant(BASE, split, expand=True)}
     for e in a.embed:
         name = Path(e).name if Path(e).exists() else e.split("/")[-1]
         variants[f"hybrid, {name}"] = variant(e)
         variants[f"+ split and cap, {name}"] = variant(e, split)
+        variants[f"+ split and cap + reference titles, {name}"] = variant(e, split, expand=True)
 
     out = {"k": a.k, "reranker": RERANKER, "settings": {}}
     for label, version, gran, qa_name in SETTINGS:
