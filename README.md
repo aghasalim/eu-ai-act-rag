@@ -461,6 +461,37 @@ hits = euactrag.search("When do the Annex III rules apply?", k=3)
 print(hits[0]["citation"], hits[0]["ref"])
 ```
 
+### By role and by date
+
+Every passage search returns says which of provider, deployer, importer and
+distributor it names. Every article also says the date it applies from and the point
+of Article 113 that sets it. Two options filter on those:
+
+```bash
+euactrag search "What logs must I keep for a high-risk AI system?" --role deployer
+euactrag search "What obligations do deployers have?" --on 2026-12-01
+```
+
+`--role deployer` leaves out passages that name other roles but not deployers. On the
+first question Article 19(1), where providers keep the logs, goes and Article 26(6)
+stays. A passage that names nobody stays too, because Articles 9 to 15 bind providers
+through Article 16(a) without naming them. It's a word match and not a reading of who
+an obligation falls on, and "operators" counts as all four roles.
+
+`--on` leaves out articles that don't apply yet on that date. I didn't type the dates
+in. They're read from Article 113 of whichever text is searched, so Article 26 is
+dated 2 August 2026 in the 2024 text and 2 December 2027 in the 2026 one. If an
+amendment rewords Article 113 so that it can't be read, search raises an error
+instead of dating passages wrongly. Where Article 113 gives two dates, as it now does
+for high-risk systems, the passage carries the earlier one and names the point to
+read. Recitals and annexes carry no date, so a date never filters them out. The
+transitional periods in Article 111 aren't applied.
+
+In Python the same options are `euactrag.search(..., role="deployer", on="2026-12-01")`.
+Both run after ranking, over the best 50 passages, so a narrow filter can return fewer
+than you asked for. I haven't measured either one: no question in my sets depends on
+a role or a date.
+
 ### As an MCP server
 
 `euactrag mcp` serves the Act to an AI assistant over the
@@ -469,7 +500,7 @@ three read-only tools:
 
 | tool | what it returns |
 |---|---|
-| `eu_ai_act_search` | the passages most relevant to a question, each one paragraph with its citation and EUR-Lex link |
+| `eu_ai_act_search` | the passages most relevant to a question, each one paragraph with its citation, EUR-Lex link, the roles it names and the date it applies from. Takes a `role` and an `applies_on` date to filter by |
 | `eu_ai_act_get_provision` | the exact text of an article, annex, recital or paragraph: `Article 6`, `Article 5(1)(f)`, `Annex III`, `art_6(3)` |
 | `eu_ai_act_list_provisions` | the table of contents |
 
@@ -524,7 +555,7 @@ Full list in [notes/METHODS.md](notes/METHODS.md#5-limitations).
 ## Repository layout
 
 ```
-src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline · mcp_server.py
+src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline · scope.py (roles, dates) · mcp_server.py
 eval/            qa_set.jsonl · qa_amended.jsonl · metrics.py · judge.py · run_eval.py · report.py · experiments.py
 train/           synthetic questions and the embedder fine-tune
 site/            static site generator: a page per article, and the risk checker

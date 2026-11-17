@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import functools
 import re
+from datetime import date
 from typing import Annotated, Literal
 
 from mcp.server.mcpserver import MCPServer
@@ -23,6 +24,7 @@ from typing_extensions import NotRequired, TypedDict
 
 from . import __version__, config
 from .ingest import load_chunks
+from .scope import ROLES
 
 Version = Annotated[
     Literal[tuple(sorted(config.VERSIONS, reverse=True))],  # type: ignore[valid-type]
@@ -39,6 +41,9 @@ class Passage(TypedDict):
     kind: str
     text: str
     url: str
+    roles: list[str]
+    applies_from: NotRequired[str]
+    applies_rule: NotRequired[str]
 
 
 class Provision(TypedDict):
@@ -117,13 +122,24 @@ def eu_ai_act_search(
         "work prohibited?'. Two-part questions are fine."))],
     k: Annotated[int, Field(ge=1, le=20, description="How many passages.")] = config.TOP_K,
     version: Version = config.LATEST,
+    role: Annotated[Literal[ROLES] | None, Field(  # type: ignore[valid-type]
+        description="Who is asking. Leaves out passages that name other roles but "
+                    "not this one. Passages that name no role are kept.")] = None,
+    applies_on: Annotated[date | None, Field(
+        description="A date, e.g. 2026-12-01. Leaves out articles that do not apply "
+                    "yet on that date under Article 113.")] = None,
 ) -> list[Passage]:
     """Find the passages of the EU AI Act most relevant to a question.
 
     Returns up to `k` passages, best first, each one paragraph of an article,
     annex or recital, with `ref` (e.g. art_5(1), usable with
     eu_ai_act_get_provision), `citation`, `kind` (article, annex or recital),
-    `text` and the EUR-Lex `url`. Search is hybrid (embeddings plus keywords);
+    `text` and the EUR-Lex `url`. `roles` lists which of provider, deployer,
+    importer and distributor the passage names, by a word match. Articles
+    also carry `applies_from`, the earliest date Article 113 sets for them,
+    and `applies_rule`, the point of Article 113 to read for the detail (the
+    2026 text gives high-risk rules two dates). Neither covers the
+    transitional periods in Article 111. Search is hybrid (embeddings plus keywords);
     it finds one right provision for almost every question but can miss the
     second article of a two-article question, and dates of application
     (Article 113) in particular, so fetch those directly when they matter.
@@ -133,9 +149,10 @@ def eu_ai_act_search(
     # Indexing prints progress. That is safe: the SDK's stdio transport keeps
     # the protocol on its own descriptor and sends stray prints to stderr.
     _ensure_index(version)
-    hits = retrieve.search(query, k=k, version=version, granularity="paragraph")
-    return [{key: h[key] for key in ("ref", "citation", "kind", "text", "url")}
-            for h in hits]
+    hits = retrieve.search(query, k=k, version=version, granularity="paragraph",
+                           role=role, on=applies_on and applies_on.isoformat())
+    keys = ("ref", "citation", "kind", "text", "url", "roles", "applies_from", "applies_rule")
+    return [{key: h[key] for key in keys if key in h} for h in hits]
 
 
 @server.tool(annotations=ToolAnnotations(title="Get a provision of the EU AI Act",

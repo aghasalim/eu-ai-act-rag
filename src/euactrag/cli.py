@@ -4,12 +4,14 @@
     euactrag ingest                chunk them, by article and by paragraph
     euactrag index                 embed the chunks into the local vector store
     euactrag search "question"     ranked passages with citations
+                                   (--role deployer, --on 2026-12-01 to filter)
     euactrag ask "question"        a generated answer (needs an LLM key)
     euactrag mcp                   serve the Act to an AI assistant over MCP (stdio)
 """
 from __future__ import annotations
 
 import argparse
+from datetime import date
 
 from . import __version__, config
 
@@ -48,6 +50,10 @@ def build_parser() -> argparse.ArgumentParser:
         s.add_argument("--granularity", choices=config.GRANULARITIES,
                        default=config.GRANULARITY)
         _corpus(s, config.CORPUS_VERSION)
+        s.add_argument("--role", choices=config.ROLES,
+                       help="leave out passages that name other roles but not this one")
+        s.add_argument("--on", metavar="YYYY-MM-DD", type=date.fromisoformat,
+                       help="leave out articles that do not apply yet on this date")
     return p
 
 
@@ -69,9 +75,12 @@ def main(argv: list[str] | None = None) -> int:
                 build(version=v, granularity=g)
     elif a.cmd == "search":
         from .retrieve import search
+        filters = {"role": a.role, "on": a.on and a.on.isoformat()}
         for h in search(a.query, k=a.k, mode=a.mode, version=a.corpus,
-                        granularity=a.granularity):
+                        granularity=a.granularity, **filters):
             print(f"{h['rank']:>2}. {h['citation']}  [{h['ref']}]  {h['score']:.4f}")
+            if h.get("applies_from"):
+                print(f"    applies from {h['applies_from']}  [{h['applies_rule']}]")
             print(f"    {h['url']}")
     elif a.cmd == "mcp":
         try:
@@ -85,7 +94,8 @@ def main(argv: list[str] | None = None) -> int:
     elif a.cmd == "ask":
         from .pipeline import answer
         res = answer(a.query, k=a.k, mode=a.mode, version=a.corpus,
-                     granularity=a.granularity)
+                     granularity=a.granularity, role=a.role,
+                     on=a.on and a.on.isoformat())
         print(res.answer, "\nSources:")
         for h in res.contexts:
             print(f"  {h['rank']}. {h['citation']}  {h['url']}")
