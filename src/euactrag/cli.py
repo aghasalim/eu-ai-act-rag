@@ -6,6 +6,8 @@
     euactrag search "question"     ranked passages with citations
                                    (--role deployer, --on 2026-12-01 to filter)
     euactrag ask "question"        a generated answer (needs an LLM key)
+    euactrag guidelines            download and chunk the Commission's guidelines
+                                   (then: search "..." --guidelines)
     euactrag mcp                   serve the Act to an AI assistant over MCP (stdio)
 """
 from __future__ import annotations
@@ -39,6 +41,9 @@ def build_parser() -> argparse.ArgumentParser:
     _corpus(i)
     i.add_argument("--granularity", choices=config.GRANULARITIES)
 
+    g = sub.add_parser("guidelines", help="download and chunk the Commission's guidelines")
+    g.add_argument("--force", action="store_true", help="download again")
+
     sub.add_parser("mcp", help="serve search and the text over MCP on stdin/stdout")
 
     for name, helptext in (("search", "ranked passages"), ("ask", "a generated answer")):
@@ -52,6 +57,9 @@ def build_parser() -> argparse.ArgumentParser:
         _corpus(s, config.CORPUS_VERSION)
         s.add_argument("--role", choices=config.ROLES,
                        help="leave out passages that name other roles but not this one")
+        s.add_argument("--guidelines", action="store_true",
+                       help="add up to three paragraphs of the Commission's guidelines "
+                            "(not law) after the passages of the Act")
         s.add_argument("--on", metavar="YYYY-MM-DD", type=date.fromisoformat,
                        help="leave out articles that do not apply yet on this date")
     return p
@@ -75,13 +83,25 @@ def main(argv: list[str] | None = None) -> int:
                 build(version=v, granularity=g)
     elif a.cmd == "search":
         from .retrieve import search
-        filters = {"role": a.role, "on": a.on and a.on.isoformat()}
+        filters = {"role": a.role, "on": a.on and a.on.isoformat(),
+                   "guidelines": a.guidelines}
         for h in search(a.query, k=a.k, mode=a.mode, version=a.corpus,
                         granularity=a.granularity, **filters):
             print(f"{h['rank']:>2}. {h['citation']}  [{h['ref']}]  {h['score']:.4f}")
             if h.get("applies_from"):
                 print(f"    applies from {h['applies_from']}  [{h['applies_rule']}]")
+            if h.get("kind") == "guideline":
+                print("    Commission guidance, not law")
             print(f"    {h['url']}")
+    elif a.cmd == "guidelines":
+        try:
+            from .guidelines import main as guidelines_main
+            guidelines_main(force=a.force)
+        except ModuleNotFoundError as e:
+            if e.name != "pypdf":
+                raise
+            raise SystemExit('Reading the guidelines needs one more package: '
+                             'pip install "euactrag[guidelines]"') from None
     elif a.cmd == "mcp":
         try:
             from .mcp_server import main as mcp_main
@@ -95,7 +115,7 @@ def main(argv: list[str] | None = None) -> int:
         from .pipeline import answer
         res = answer(a.query, k=a.k, mode=a.mode, version=a.corpus,
                      granularity=a.granularity, role=a.role,
-                     on=a.on and a.on.isoformat())
+                     on=a.on and a.on.isoformat(), guidelines=a.guidelines)
         print(res.answer, "\nSources:")
         for h in res.contexts:
             print(f"  {h['rank']}. {h['citation']}  {h['url']}")

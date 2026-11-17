@@ -1,7 +1,7 @@
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup corpus index eval eval-retrieval eval-versions eval-paragraph eval-extended experiments train site check-qa agreement dist app test report report-check docker clean all
+.PHONY: setup corpus guidelines index eval eval-retrieval eval-versions eval-paragraph eval-extended experiments train site check-qa agreement dist app test report report-check docker clean all
 
 setup:
 	python3 -m venv .venv && $(PIP) install -q -U pip && $(PIP) install -q -r requirements.txt
@@ -43,6 +43,9 @@ train:           ## write synthetic questions (Apple silicon) and fine-tune the 
 	$(PIP) install -q -r requirements-train.txt
 	$(PY) train/gen_queries.py data/processed/chunks_2026-07-27_paragraph.jsonl
 	$(PY) train/finetune.py data/processed/chunks_2026-07-27_paragraph.jsonl
+
+guidelines:      ## download and chunk the Commission's guidelines (needs pypdf)
+	$(PY) -m src.euactrag.guidelines
 
 site:            ## build the static site into _site/, standard library only
 	python3 site/build.py

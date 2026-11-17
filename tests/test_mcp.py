@@ -88,3 +88,18 @@ def test_search_takes_a_role_and_a_date(monkeypatch):
         {"ref": "art_50(4)", "citation": "art_50(4)", "kind": "article", "text": "", "url": "",
          "roles": ["deployer"], "applies_from": "2026-08-02", "applies_rule": "art_113"}]
     assert call("eu_ai_act_search", query="what logs", applies_on="soon").is_error
+
+
+def test_search_can_add_guidelines(monkeypatch):
+    from src.euactrag import mcp_server, retrieve
+    monkeypatch.setattr(mcp_server, "_ensure_index", lambda version: None)
+    hit = {"citation": "c", "text": "", "url": "", "rank": 1}
+    monkeypatch.setattr(retrieve, "split", lambda q, k, **kw: [
+        {**hit, "chunk_id": "art_50(4)", "ref": "art_50(4)", "kind": "article"}])
+    monkeypatch.setattr(retrieve, "hybrid", lambda q, k, **kw: [
+        {**hit, "chunk_id": "gl_transparency(12)", "ref": "gl_transparency(12)",
+         "kind": "guideline"}])
+    out = call("eu_ai_act_search", query="who is a deployer", guidelines=True)
+    assert [(p["ref"], p["kind"]) for p in out.structured_content["result"]] == [
+        ("art_50(4)", "article"), ("gl_transparency(12)", "guideline")]
+    assert "applies_from" not in out.structured_content["result"][1]

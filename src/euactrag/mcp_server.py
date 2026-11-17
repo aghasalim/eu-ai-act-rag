@@ -128,12 +128,19 @@ def eu_ai_act_search(
     applies_on: Annotated[date | None, Field(
         description="A date, e.g. 2026-12-01. Leaves out articles that do not apply "
                     "yet on that date under Article 113.")] = None,
+    guidelines: Annotated[bool, Field(
+        description="After the passages of the Act, add up to three paragraphs of the "
+                    "Commission's guidelines on it (AI system definition, prohibited "
+                    "practices, general-purpose AI models, Article 50 transparency). "
+                    "They explain the law and are not binding.")] = False,
 ) -> list[Passage]:
     """Find the passages of the EU AI Act most relevant to a question.
 
     Returns up to `k` passages, best first, each one paragraph of an article,
     annex or recital, with `ref` (e.g. art_5(1), usable with
-    eu_ai_act_get_provision), `citation`, `kind` (article, annex or recital),
+    eu_ai_act_get_provision), `citation`, `kind` (article, annex, recital or,
+    with `guidelines`, guideline: one numbered paragraph of a Commission
+    guideline, listed after the Act, to cite as guidance and not as law),
     `text` and the EUR-Lex `url`. `roles` lists which of provider, deployer,
     importer and distributor the passage names, by a word match. Articles
     also carry `applies_from`, the earliest date Article 113 sets for them,
@@ -149,8 +156,12 @@ def eu_ai_act_search(
     # Indexing prints progress. That is safe: the SDK's stdio transport keeps
     # the protocol on its own descriptor and sends stray prints to stderr.
     _ensure_index(version)
-    hits = retrieve.search(query, k=k, version=version, granularity="paragraph",
-                           role=role, on=applies_on and applies_on.isoformat())
+    try:
+        hits = retrieve.search(query, k=k, version=version, granularity="paragraph",
+                               role=role, on=applies_on and applies_on.isoformat(),
+                               guidelines=guidelines)
+    except FileNotFoundError as e:  # the guidelines have not been downloaded
+        raise ToolError(str(e)) from None
     keys = ("ref", "citation", "kind", "text", "url", "roles", "applies_from", "applies_rule")
     return [{key: h[key] for key in keys if key in h} for h in hits]
 
