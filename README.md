@@ -6,6 +6,7 @@
 answer shows the passages it came from.
 **[Browse the Act](https://aghasalim.github.io/eu-ai-act-rag/)** · every article on its own page, cross-references linked.
 **[Risk checker](https://aghasalim.github.io/eu-ai-act-rag/checker.html)** · prohibited, high-risk or neither, in the Act's own words.
+**[The questions on Hugging Face](https://huggingface.co/datasets/aghasalim/eu-ai-act-qa)** · all 123, with gold articles, paragraphs and answers.
 
 [![ci](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/ci.yml)
 [![demo-link](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/demo.yml/badge.svg)](https://github.com/aghasalim/eu-ai-act-rag/actions/workflows/demo.yml)
@@ -196,6 +197,11 @@ answer rests on. `make check-qa` (also a test in CI) checks all three files agai
 the corpus. Every gold reference has to exist and every quote has to sit inside a gold
 paragraph. In the new set, every gold paragraph also has to hold a quote. The check
 works out which questions quote wording the 2024 text doesn't have, too. 13 of the 67 do.
+
+All three files are also on Hugging Face as
+[aghasalim/eu-ai-act-qa](https://huggingface.co/datasets/aghasalim/eu-ai-act-qa), byte
+for byte, so they load with `load_dataset("aghasalim/eu-ai-act-qa", "extended")`
+(or `"original"`, `"amended"`).
 
 | topic | questions |
 |---|---|
