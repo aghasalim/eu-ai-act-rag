@@ -18,6 +18,7 @@ import functools
 import re
 from datetime import datetime
 
+from . import config
 from .config import ROLES
 from .ingest import load_chunks
 
@@ -126,7 +127,25 @@ def tag(chunk: dict) -> dict:
 
 @functools.lru_cache(maxsize=None)
 def tags(version: str, granularity: str) -> dict[str, dict]:
-    return {c["chunk_id"]: tag(c) for c in load_chunks(version, granularity)}
+    base, lang = config.split_version(version)
+    if lang == "en":
+        return {c["chunk_id"]: tag(c) for c in load_chunks(version, granularity)}
+    # The law is the same in every language, so the tags are worked out on the
+    # English text and carried over by reference: art_26(6) is art_26(6).
+    # Where English cut a paragraph into parts, the parts' tags are merged.
+    ref = lambda c: c["meta"].get("ref", c["unit_id"])  # noqa: E731
+    by_ref: dict[str, dict] = {}
+    for c in load_chunks(base, granularity):
+        t, old = tag(c), by_ref.get(ref(c))
+        if old:
+            t = {**old, **t, "roles": [r for r in ROLES if r in old["roles"] + t["roles"]]}
+            if "applies_from" in old:
+                t["applies_from"], t["applies_rule"] = min(
+                    (old["applies_from"], old["applies_rule"]),
+                    (t["applies_from"], t["applies_rule"]))
+        by_ref[ref(c)] = t
+    return {c["chunk_id"]: by_ref.get(ref(c), {"roles": []})
+            for c in load_chunks(version, granularity)}
 
 
 def keep(t: dict, role: str | None = None, on: str | None = None) -> bool:

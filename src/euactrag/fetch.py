@@ -13,11 +13,10 @@ import httpx
 
 from . import config
 
-HEADERS = {"Accept": "application/xhtml+xml", "Accept-Language": "eng"}
 
 
 def fetch(version: str, force: bool = False) -> int:
-    v = config.VERSIONS[version]
+    v = config.source(version)  # `version` may carry a language: "2026-07-27.fr"
     raw = v["raw"]
     if raw.exists() and not force:
         n = raw.stat().st_size
@@ -25,7 +24,8 @@ def fetch(version: str, force: bool = False) -> int:
         return n
     raw.parent.mkdir(parents=True, exist_ok=True)
     url = f"http://publications.europa.eu/resource/celex/{v['celex']}"
-    r = httpx.get(url, headers=HEADERS, timeout=120, follow_redirects=True)
+    r = httpx.get(url, timeout=120, follow_redirects=True, headers={
+        "Accept": "application/xhtml+xml", "Accept-Language": v["token"]})
     r.raise_for_status()
     if b"eli-subdivision" not in r.content:
         raise RuntimeError(
@@ -44,6 +44,7 @@ if __name__ == "__main__":
     p.add_argument("--force", action="store_true")
     p.add_argument("--version", choices=sorted(config.VERSIONS),
                    help="one corpus version; default is all of them")
+    p.add_argument("--lang", choices=sorted(config.LANGUAGES), default="en")
     a = p.parse_args()
     for ver in [a.version] if a.version else sorted(config.VERSIONS):
-        fetch(ver, force=a.force)
+        fetch(config.localized(ver, a.lang), force=a.force)

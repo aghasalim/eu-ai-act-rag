@@ -16,16 +16,17 @@ __all__ = ["search", "answer", "__version__"]
 def search(query: str, k: int | None = None, mode: str | None = None,
            version: str | None = None, granularity: str | None = None,
            role: str | None = None, on: str | None = None,
-           guidelines: bool = False) -> list[dict]:
+           guidelines: bool = False, lang: str | None = None) -> list[dict]:
     """Ranked passages for a question. Each hit has `citation`, `ref` (e.g.
     art_5(1)), `unit_id`, `text`, `score`, `url`, the `roles` it names and,
     for an article, the date it `applies_from`. `role` ("deployer") and `on`
     ("2026-12-01") filter on those. `guidelines=True` adds up to three
-    paragraphs of the Commission's guidelines after them, `kind` "guideline"."""
+    paragraphs of the Commission's guidelines after them, `kind` "guideline".
+    `lang` ("fr", "de", "nl") searches the Act in that language, once fetched."""
     from .retrieve import search as _search
 
     return _search(query, k=k, mode=mode, version=version, granularity=granularity,
-                   role=role, on=on, guidelines=guidelines)
+                   role=role, on=on, guidelines=guidelines, lang=lang)
 
 
 def answer(question: str, **kwargs):

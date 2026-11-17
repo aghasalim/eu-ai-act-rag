@@ -13,3 +13,7 @@ build/
 _site/
 train/bge-small-euaiact/
 train/runs/
+# The Act in other languages is fetched on demand: euactrag fetch --lang fr
+data/raw/ai_act*.[a-z][a-z].xhtml
+data/processed/chunks_*.[a-z][a-z].jsonl
+data/processed/chunks_*.[a-z][a-z]_*.jsonl

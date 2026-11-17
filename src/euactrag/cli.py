@@ -6,6 +6,8 @@
     euactrag search "question"     ranked passages with citations
                                    (--role deployer, --on 2026-12-01 to filter)
     euactrag ask "question"        a generated answer (needs an LLM key)
+    euactrag fetch --lang fr       the same three steps for French, German (de)
+                                   or Dutch (nl), then: search "..." --lang fr
     euactrag guidelines            download and chunk the Commission's guidelines
                                    (then: search "..." --guidelines)
     euactrag mcp                   serve the Act to an AI assistant over MCP (stdio)
@@ -16,6 +18,11 @@ import argparse
 from datetime import date
 
 from . import __version__, config
+
+
+def _lang(p: argparse.ArgumentParser) -> None:
+    p.add_argument("--lang", choices=sorted(config.LANGUAGES), default="en",
+                   help="language of the text (default: en)")
 
 
 def _corpus(p: argparse.ArgumentParser, default=None) -> None:
@@ -33,12 +40,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     f = sub.add_parser("fetch", help="download the text of the Act")
     _corpus(f)
+    _lang(f)
     f.add_argument("--force", action="store_true", help="download again")
 
-    sub.add_parser("ingest", help="chunk every downloaded text")
+    _lang(sub.add_parser("ingest", help="chunk every downloaded text"))
 
     i = sub.add_parser("index", help="embed the chunks")
     _corpus(i)
+    _lang(i)
     i.add_argument("--granularity", choices=config.GRANULARITIES)
 
     g = sub.add_parser("guidelines", help="download and chunk the Commission's guidelines")
@@ -57,6 +66,8 @@ def build_parser() -> argparse.ArgumentParser:
         _corpus(s, config.CORPUS_VERSION)
         s.add_argument("--role", choices=config.ROLES,
                        help="leave out passages that name other roles but not this one")
+        if name == "search":  # `ask` writes its answer in English
+            _lang(s)
         s.add_argument("--guidelines", action="store_true",
                        help="add up to three paragraphs of the Commission's guidelines "
                             "(not law) after the passages of the Act")
@@ -72,19 +83,19 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "fetch":
         from .fetch import fetch
         for v in versions:
-            fetch(v, force=a.force)
+            fetch(config.localized(v, a.lang), force=a.force)
     elif a.cmd == "ingest":
         from .ingest import main as ingest_main
-        ingest_main()
+        ingest_main(a.lang)
     elif a.cmd == "index":
         from .index import build
         for v in versions:
             for g in [a.granularity] if a.granularity else config.GRANULARITIES:
-                build(version=v, granularity=g)
+                build(version=config.localized(v, a.lang), granularity=g)
     elif a.cmd == "search":
         from .retrieve import search
         filters = {"role": a.role, "on": a.on and a.on.isoformat(),
-                   "guidelines": a.guidelines}
+                   "guidelines": a.guidelines, "lang": a.lang}
         for h in search(a.query, k=a.k, mode=a.mode, version=a.corpus,
                         granularity=a.granularity, **filters):
             print(f"{h['rank']:>2}. {h['citation']}  [{h['ref']}]  {h['score']:.4f}")
