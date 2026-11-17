@@ -20,12 +20,16 @@ jobs:
 
       # The heavy ML stack (torch, chromadb) is imported lazily, so the corpus
       # and metric tests run without it. Keeps CI at ~30s instead of ~6min.
-      # mcp is here so the MCP server's tools are tested, not skipped.
+      # mcp is here so the MCP server's tools are tested, not skipped, and
+      # pypdf so the guidelines are re-read from their PDFs.
       - name: Install light deps
-        run: pip install beautifulsoup4 lxml httpx pytest "mcp>=2,<3"
+        run: pip install beautifulsoup4 lxml httpx pytest "mcp>=2,<3" "pypdf>=6,<8"
 
       - name: Rebuild corpus from the committed source document
         run: python -m src.euactrag.ingest
+
+      - name: Rebuild the guideline chunks from the committed PDFs
+        run: python -m src.euactrag.guidelines
 
       - name: Test
         run: python -m pytest tests/ -q
