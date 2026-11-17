@@ -14,7 +14,6 @@ import argparse
 from datetime import date
 
 from . import __version__, config
-from .scope import ROLES
 
 
 def _corpus(p: argparse.ArgumentParser, default=None) -> None:
@@ -51,7 +50,7 @@ def build_parser() -> argparse.ArgumentParser:
         s.add_argument("--granularity", choices=config.GRANULARITIES,
                        default=config.GRANULARITY)
         _corpus(s, config.CORPUS_VERSION)
-        s.add_argument("--role", choices=ROLES,
+        s.add_argument("--role", choices=config.ROLES,
                        help="leave out passages that name other roles but not this one")
         s.add_argument("--on", metavar="YYYY-MM-DD", type=date.fromisoformat,
                        help="leave out articles that do not apply yet on this date")
