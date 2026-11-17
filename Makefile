@@ -1,7 +1,7 @@
 PY := .venv/bin/python
 PIP := .venv/bin/pip
 
-.PHONY: setup corpus index eval eval-retrieval eval-versions eval-paragraph eval-extended check-qa agreement dist app test report report-check docker clean all
+.PHONY: setup corpus index eval eval-retrieval eval-versions eval-paragraph eval-extended experiments train site check-qa agreement dist app test report report-check docker clean all
 
 setup:
 	python3 -m venv .venv && $(PIP) install -q -U pip && $(PIP) install -q -r requirements.txt
@@ -35,6 +35,17 @@ eval-extended:   ## all 122 questions current for the 2026 text, both chunkings,
 	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa extended --granularity $$g --no-generation --tag $${g}_extended_2026-07-27 && \
 	  $(PY) eval/run_eval.py --corpus 2026-07-27 --qa all --granularity $$g --no-generation --tag $${g}_all_2026-07-27 || exit 1; \
 	done
+
+experiments:     ## split search, a reranker and other embedders against the baseline, no API key
+	$(PY) eval/experiments.py $(if $(wildcard train/bge-small-euaiact),--embed train/bge-small-euaiact)
+
+train:           ## write synthetic questions (Apple silicon) and fine-tune the embedder on them
+	$(PIP) install -q -r requirements-train.txt
+	$(PY) train/gen_queries.py data/processed/chunks_2026-07-27_paragraph.jsonl
+	$(PY) train/finetune.py data/processed/chunks_2026-07-27_paragraph.jsonl
+
+site:            ## build the static site into _site/, standard library only
+	python3 site/build.py
 
 check-qa:        ## every gold reference and quote checked against the text
 	$(PY) eval/check_qa.py

@@ -1,0 +1,13 @@
+{
+  "base": "BAAI/bge-small-en-v1.5",
+  "train_pairs": 2042,
+  "held_out_pairs": 225,
+  "epochs": 4,
+  "batch": 64,
+  "lr": 2e-05,
+  "seed": 13,
+  "held_out_recall_at_6": {
+    "before": 0.6,
+    "after": 0.8667
+  }
+}
