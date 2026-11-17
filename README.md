@@ -446,7 +446,7 @@ make eval && make report && make app
 
 ### As a package
 
-The code installs as `euactrag`, with a command and two functions:
+The code installs as `euactrag`, with a command, two functions and an MCP server:
 
 ```bash
 pip install .            # or: pip install dist/euactrag-0.1.0-py3-none-any.whl
@@ -460,6 +460,34 @@ import euactrag
 hits = euactrag.search("When do the Annex III rules apply?", k=3)
 print(hits[0]["citation"], hits[0]["ref"])
 ```
+
+### As an MCP server
+
+`euactrag mcp` serves the Act to an AI assistant over the
+[Model Context Protocol](https://modelcontextprotocol.io), on stdin and stdout. It has
+three read-only tools:
+
+| tool | what it returns |
+|---|---|
+| `eu_ai_act_search` | the passages most relevant to a question, each one paragraph with its citation and EUR-Lex link |
+| `eu_ai_act_get_provision` | the exact text of an article, annex, recital or paragraph: `Article 6`, `Article 5(1)(f)`, `Annex III`, `art_6(3)` |
+| `eu_ai_act_list_provisions` | the table of contents |
+
+Every tool takes a `version`, so the assistant can read a provision as published in
+2024 and as amended in 2026 and say what changed. There's no LLM key involved: the
+assistant on the other end writes the answer, and this hands it the text.
+
+```bash
+pip install ".[mcp]"
+euactrag fetch && euactrag ingest && euactrag index
+claude mcp add eu-ai-act -- euactrag mcp      # Claude Code
+```
+
+For Claude Desktop and other clients, the entry is
+`{"mcpServers": {"eu-ai-act": {"command": "euactrag", "args": ["mcp"]}}}`, with the
+full path to `euactrag` if it lives in a virtual environment. Search is the same
+`split` mode measured above, with the same weak spots, and the tool description tells
+the assistant about them.
 
 Outside a checkout the corpus and index go to `~/.cache/euactrag`, or wherever
 `EUACTRAG_DATA` points. `make dist` builds the sdist and wheel and checks them, and
@@ -496,13 +524,13 @@ Full list in [notes/METHODS.md](notes/METHODS.md#5-limitations).
 ## Repository layout
 
 ```
-src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline
+src/euactrag/    fetch → ingest (chunking) → index → retrieve → pipeline · mcp_server.py
 eval/            qa_set.jsonl · qa_amended.jsonl · metrics.py · judge.py · run_eval.py · report.py · experiments.py
 train/           synthetic questions and the embedder fine-tune
 site/            static site generator: a page per article, and the risk checker
 assets/          README banner, terminal animation and its generator
 app/             Streamlit UI, shows the answer next to its sources
-tests/           corpus integrity, metric maths, citation parsing
+tests/           corpus integrity, metric maths, citation parsing, the MCP tools
 deploy/          Hugging Face Space template
 notes/           METHODS.md, the long-form write-up · AMENDMENTS.md, the 2026 changes
 verify/          the same numbers, recomputed independently
