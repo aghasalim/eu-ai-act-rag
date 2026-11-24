@@ -37,6 +37,26 @@ Long write-up: **[notes/METHODS.md](notes/METHODS.md)**. Per-question numbers:
 
 ---
 
+<details>
+<summary>Contents</summary>
+
+- [Retrieval](#retrieval)
+- [Answers](#answers)
+- [The law changed under it](#the-law-changed-under-it)
+- [Citing the paragraph, not the article](#citing-the-paragraph-not-the-article)
+- [A bigger question set](#a-bigger-question-set)
+- [Two-part questions](#two-part-questions)
+- [Fine-tuning the embedder](#fine-tuning-the-embedder)
+- [The Act as a website](#the-act-as-a-website)
+- [Checking the judge](#checking-the-judge)
+- [Method, briefly](#method-briefly)
+- [Running it](#running-it)
+- [Limitations](#limitations)
+- [Repository layout](#repository-layout)
+- [Credit](#credit)
+
+</details>
+
 ## Retrieval
 
 ![retrieval strategies across k](eval/figures/retrieval-across-k.png)
